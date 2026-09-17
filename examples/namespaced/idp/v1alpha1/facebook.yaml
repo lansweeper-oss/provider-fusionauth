@@ -1,0 +1,26 @@
+apiVersion: idp.fusionauth.m.crossplane.io/v1alpha1
+kind: Facebook
+metadata:
+  annotations:
+    meta.upbound.io/example-id: idp/v1alpha1/facebook
+  labels:
+    testing.upbound.io/example-name: facebook
+  name: facebook
+  namespace: crossplane-system
+spec:
+  forProvider:
+    appId: "9876543210"
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: myapp
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Facebook
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret
+    debug: false
+    enabled: true
+    fields: email
+    permissions: email

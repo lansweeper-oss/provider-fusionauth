@@ -1,0 +1,11 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    uptest.upbound.io/timeout: "120"
+  name: testapp
+spec:
+  forProvider:
+    name: testapp
+  providerConfigRef:
+    name: default

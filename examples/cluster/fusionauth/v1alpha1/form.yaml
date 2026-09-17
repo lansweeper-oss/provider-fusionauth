@@ -1,0 +1,21 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Form
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/form
+  labels:
+    testing.upbound.io/example-name: form
+  name: form
+spec:
+  forProvider:
+    data: |-
+      ${jsonencode({
+          createdBy = "jared@fusionauth.io"
+        })}
+    name: Custom Registration Form
+    steps:
+    - fields:
+      - 91909721-7d4f-b110-8f21-cfdee2a1edb8
+    - fields:
+      - 8ed89a31-c325-3156-72ed-6e89183af917
+      - a977cfd4-a9ed-c4cf-650f-f4539268ac38

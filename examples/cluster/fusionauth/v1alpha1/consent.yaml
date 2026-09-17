@@ -1,0 +1,34 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Consent
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/consent
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    consentEmailTemplateIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    countryMinimumAgeForSelfConsent:
+      de: 17
+      uk: 16
+      us: 13
+    data: |-
+      ${jsonencode({
+          description = "Marketing consent for newsletter"
+          internal_id = "MKT-001"
+        })}
+    defaultMinimumAgeForSelfConsent: 16
+    emailPlus:
+    - emailTemplateId: 847de2b9-14ba-45fc-9726-9d9c9fcee4b6
+      enabled: true
+      maximumTimeToSendEmailInHours: 48
+      minimumTimeToSendEmailInHours: 24
+    multipleValuesAllowed: true
+    name: Newsletter Signup
+    values:
+    - Email
+    - SMS
+    - Phone

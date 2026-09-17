@@ -1,0 +1,33 @@
+apiVersion: generic.fusionauth.crossplane.io/v1alpha1
+kind: Messenger
+metadata:
+  annotations:
+    meta.upbound.io/example-id: generic/v1alpha1/messenger
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    connectTimeout: 1000
+    data: |-
+      ${jsonencode({
+          "foo" : "bar"
+        })}
+    debug: false
+    headers:
+      Content-Type: application/json
+    httpAuthenticationPasswordSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    httpAuthenticationUsernameSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    name: Generic Messenger
+    readTimeout: 1000
+    sslCertificateSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    url: https://www.example.com/webhook

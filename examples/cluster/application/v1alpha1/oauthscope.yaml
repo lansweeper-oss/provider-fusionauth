@@ -1,0 +1,23 @@
+apiVersion: application.fusionauth.crossplane.io/v1alpha1
+kind: OauthScope
+metadata:
+  annotations:
+    meta.upbound.io/example-id: application/v1alpha1/oauthscope
+  labels:
+    testing.upbound.io/example-name: this
+  name: this
+spec:
+  forProvider:
+    applicationIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: this
+    data: |-
+      ${jsonencode({
+          createdBy = "jared@fusionauth.io"
+        })}
+    defaultConsentDetail: This will provide the requesting application read-only access
+      to your data
+    defaultConsentMessage: View your data
+    description: Provides an application read-only access to a user's data
+    name: data:read
+    required: true

@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fusionauth
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  namespace: fusionauth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:18-bookworm
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: fusionauth
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  namespace: fusionauth
+spec:
+  selector:
+    app: postgresql
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fusionauth-kickstart
+  namespace: fusionauth
+data:
+  kickstart.json: |
+    {
+      "apiKeys": [
+        {
+          "key": "e2e-test-api-key-00000000000000000000",
+          "description": "E2E test superuser key"
+        }
+      ],
+      "requests": []
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fusionauth
+  namespace: fusionauth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fusionauth
+  template:
+    metadata:
+      labels:
+        app: fusionauth
+    spec:
+      containers:
+        - name: fusionauth
+          image: fusionauth/fusionauth-app:1.69.2
+          env:
+            - name: DATABASE_URL
+              value: "jdbc:postgresql://postgresql.fusionauth.svc.cluster.local:5432/fusionauth"
+            - name: DATABASE_ROOT_USERNAME
+              value: postgres
+            - name: DATABASE_ROOT_PASSWORD
+              value: postgres
+            - name: DATABASE_USERNAME
+              value: postgres
+            - name: DATABASE_PASSWORD
+              value: postgres
+            - name: FUSIONAUTH_APP_MEMORY
+              value: "256M"
+            - name: SEARCH_TYPE
+              value: database
+            - name: FUSIONAUTH_APP_KICKSTART_FILE
+              value: /kickstart/kickstart.json
+            - name: FUSIONAUTH_APP_RUNTIME_MODE
+              value: development
+          ports:
+            - containerPort: 9011
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 200m
+            limits:
+              memory: 512Mi
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: 9011
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+          volumeMounts:
+            - name: kickstart
+              mountPath: /kickstart
+      volumes:
+        - name: kickstart
+          configMap:
+            name: fusionauth-kickstart
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fusionauth
+  namespace: fusionauth
+spec:
+  selector:
+    app: fusionauth
+  ports:
+    - port: 9011
+      targetPort: 9011

@@ -1,0 +1,31 @@
+apiVersion: generic.fusionauth.crossplane.io/v1alpha1
+kind: Connector
+metadata:
+  annotations:
+    meta.upbound.io/example-id: generic/v1alpha1/connector
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    authenticationUrl: http://mygameserver.local:7001/fusionauth-connector
+    connectTimeout: 1000
+    data:
+      foo: bar
+    debug: false
+    headers:
+      bar: baz
+      foo: bar
+    httpAuthenticationPasswordSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    httpAuthenticationUsernameSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    name: my connector
+    readTimeout: 2000
+    sslCertificateKeyIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example

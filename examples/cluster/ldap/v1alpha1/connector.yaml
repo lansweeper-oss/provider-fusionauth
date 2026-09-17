@@ -1,0 +1,32 @@
+apiVersion: ldap.fusionauth.crossplane.io/v1alpha1
+kind: Connector
+metadata:
+  annotations:
+    meta.upbound.io/example-id: ldap/v1alpha1/connector
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    authenticationUrl: ldap://localhost:389
+    baseStructure: dc=example,dc=com
+    connectTimeout: 1000
+    identifyingAttribute: uid
+    lambdaConfiguration:
+    - reconcileIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: example
+    loginIdAttribute: uid
+    name: example
+    readTimeout: 1000
+    requestedAttributes:
+    - uid
+    - cn
+    - sn
+    - mail
+    securityMethod: None
+    systemAccountDn: cn=admin,dc=example,dc=com
+    systemAccountPasswordSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system

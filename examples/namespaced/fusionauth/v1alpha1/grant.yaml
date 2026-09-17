@@ -1,0 +1,29 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: Grant
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/grant
+  labels:
+    testing.upbound.io/example-name: david
+  name: david
+  namespace: crossplane-system
+spec:
+  forProvider:
+    data: |-
+      ${jsonencode({
+          expiresAt = 1695361142909
+        })}
+    entityIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: raviga
+    permissions:
+    - ${fusionauth_entity_type_permission.read.name}
+    - ${fusionauth_entity_type_permission.write.name}
+    - ${fusionauth_entity_type_permission.sue.name}
+    - ${fusionauth_entity_type_permission.file_lawsuit.name}
+    tenantIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: default
+    userIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: david

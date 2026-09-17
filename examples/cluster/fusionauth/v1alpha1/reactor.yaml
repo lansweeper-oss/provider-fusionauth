@@ -1,0 +1,18 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Reactor
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/reactor
+  labels:
+    testing.upbound.io/example-name: reactor
+  name: reactor
+spec:
+  forProvider:
+    licenseIdSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    licenseSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system

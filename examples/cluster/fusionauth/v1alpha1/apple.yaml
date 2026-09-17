@@ -1,0 +1,25 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Apple
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/apple
+  labels:
+    testing.upbound.io/example-name: apple
+  name: apple
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: example
+      createRegistration: true
+      enabled: true
+    buttonText: Sign in with Apple
+    debug: false
+    enabled: true
+    keyIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    scope: email name
+    servicesId: com.piedpiper.webapp
+    teamId: R4NQ1P4UEB

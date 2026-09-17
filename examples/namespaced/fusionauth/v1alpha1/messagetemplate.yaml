@@ -1,0 +1,21 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: MessageTemplate
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/messagetemplate
+  labels:
+    testing.upbound.io/example-name: two_factor
+  name: two-factor
+  namespace: crossplane-system
+spec:
+  forProvider:
+    data: |-
+      ${jsonencode({
+          updatedBy = "admin@example.com"
+        })}
+    defaultTemplate: 'Here''s your Two Factor Code: ${code}'
+    localizedTemplates:
+      de: 'Hier ist Ihr Zwei-Faktoren-Code: ${code}'
+      es: 'Este es su código de dos factores: ${code}'
+      fr: 'Voici votre code à deux facteurs: ${code}'
+    name: Two Factor Authentication

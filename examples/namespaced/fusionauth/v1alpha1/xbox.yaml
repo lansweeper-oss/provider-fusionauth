@@ -1,0 +1,23 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: Xbox
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/xbox
+  labels:
+    testing.upbound.io/example-name: xbox
+  name: xbox
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: GPS_Insight
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Xbox
+    clientId: 0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret
+    scope: Xboxlive.signin Xboxlive.offline_access

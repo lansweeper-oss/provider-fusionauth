@@ -1,0 +1,20 @@
+apiVersion: form.fusionauth.m.crossplane.io/v1alpha1
+kind: Field
+metadata:
+  annotations:
+    meta.upbound.io/example-id: form/v1alpha1/field
+  labels:
+    testing.upbound.io/example-name: field
+  name: field
+  namespace: crossplane-system
+spec:
+  forProvider:
+    confirm: true
+    data: |-
+      ${jsonencode({
+          createdBy = "jared@fusionauth.io"
+        })}
+    description: Information about this custom field
+    key: user.firstName
+    name: Custom first-name Form Field
+    required: true

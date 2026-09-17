@@ -1,0 +1,27 @@
+apiVersion: idp.fusionauth.m.crossplane.io/v1alpha1
+kind: SAMLV2
+metadata:
+  annotations:
+    meta.upbound.io/example-id: idp/v1alpha1/samlv2
+  labels:
+    testing.upbound.io/example-name: Saml
+  name: saml
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: myapp
+      buttonText: Login with SAML (app text)
+      createRegistration: true
+      enabled: true
+    buttonText: Login with SAML
+    debug: false
+    emailClaim: email
+    idpEndpoint: https://www.example.com/login
+    name: My SAML provider
+    postRequest: true
+    requestSigningKey: 3168129b-91fa-46f4-9676-947f5509fdce
+    signRequest: true
+    useNameForEmail: true

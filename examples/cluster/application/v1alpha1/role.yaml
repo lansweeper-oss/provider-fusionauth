@@ -1,0 +1,17 @@
+apiVersion: application.fusionauth.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  annotations:
+    meta.upbound.io/example-id: application/v1alpha1/role
+  labels:
+    testing.upbound.io/example-name: my_app_admin_role
+  name: my-app-admin-role
+spec:
+  forProvider:
+    applicationIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: my_app
+    description: ""
+    isDefault: false
+    isSuperRole: true
+    name: admin
