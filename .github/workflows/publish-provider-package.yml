@@ -84,7 +84,7 @@ jobs:
 
       - name: Mirror to Upbound
         run: |
-          crane copy ghcr.io/${{ github.repository }}:${{ github.event.inputs.version }} xpkg.upbound.io/lansweeper/provider-fusionaugh:${{ github.event.inputs.version }} --allow-nondistributable-artifacts
+          crane copy ghcr.io/${{ github.repository }}:${{ github.event.inputs.version }} xpkg.upbound.io/lansweeper/provider-fusionauth:${{ github.event.inputs.version }} --allow-nondistributable-artifacts
 
   add-extensions:
     needs:
