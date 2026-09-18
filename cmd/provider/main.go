@@ -74,9 +74,9 @@ var cli struct {
 	EnableChangeLogs         bool   `name:"enable-changelogs" help:"Enable support for capturing change logs during reconciliation" default:"false" env:"ENABLE_CHANGE_LOGS"`
 	ChangelogsSocketPath     string `help:"Path for changelogs socket (if enabled)" default:"/var/run/changelogs/changelogs.sock" env:"CHANGELOGS_SOCKET_PATH"`
 
-	WebhookPort        int           `help:"The port the webhook listens on" default:"9443" env:"WEBHOOK_PORT"`
-	MetricsBindAddress string        `help:"The address the metrics server listens on" default:":8080" env:"METRICS_BIND_ADDRESS"`
-	CertsDir           certsDir      `help:"The directory that contains the server key and certificate" default:"${defaultCertsDir}" env:"${defaultCertsDirEnvVar}"`
+	WebhookPort        int      `help:"The port the webhook listens on" default:"9443" env:"WEBHOOK_PORT"`
+	MetricsBindAddress string   `help:"The address the metrics server listens on" default:":8080" env:"METRICS_BIND_ADDRESS"`
+	CertsDir           certsDir `help:"The directory that contains the server key and certificate" default:"${defaultCertsDir}" env:"${defaultCertsDirEnvVar}"`
 }
 
 func main() {
