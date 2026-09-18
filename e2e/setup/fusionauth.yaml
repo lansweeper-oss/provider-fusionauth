@@ -58,6 +58,52 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: fusionauth-logback
+  namespace: fusionauth
+data:
+  logback.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <configuration scan="true" scanPeriod="60 seconds">
+      <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+          <pattern>%d{"MMM dd, yyyy h:mm:ss.SSS a"} %-5level %logger{75} - %msg%n</pattern>
+        </encoder>
+      </appender>
+      <logger name="io.fusionauth" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.primeframework" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="com.inversoft.migration" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="com.inversoft.maintenance" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.apache.kafka.common.utils.AppInfoParser" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.apache.kafka.clients.consumer.ConsumerConfig" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.apache.kafka.clients.producer.ProducerConfig" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.apache.kafka.clients.producer.KafkaProducer" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <logger name="org.apache.kafka.clients.NetworkClient" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+      </logger>
+      <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+      </root>
+    </configuration>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: fusionauth-kickstart
   namespace: fusionauth
 data:
@@ -109,6 +155,8 @@ spec:
               value: /kickstart/kickstart.json
             - name: FUSIONAUTH_APP_RUNTIME_MODE
               value: development
+            - name: FUSIONAUTH_ADDITIONAL_JAVA_ARGS
+              value: "-Dlogback.configurationFile=/config/logback.xml"
           ports:
             - containerPort: 9011
           resources:
@@ -128,10 +176,15 @@ spec:
           volumeMounts:
             - name: kickstart
               mountPath: /kickstart
+            - name: logback
+              mountPath: /config
       volumes:
         - name: kickstart
           configMap:
             name: fusionauth-kickstart
+        - name: logback
+          configMap:
+            name: fusionauth-logback
 ---
 apiVersion: v1
 kind: Service

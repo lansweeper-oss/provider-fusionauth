@@ -241,7 +241,16 @@ type ThemeInitParameters struct {
 
 	// The Id of an existing Theme to copy when creating this Theme. The default_messages, localized_messages, templates, and stylesheet are copied from the source Theme, and any of those fields you set are applied on top on the first apply. Only used at create time.
 	// The optional Id of an existing Theme to make a copy of. If present, the defaultMessages, localizedMessages, templates, and stylesheet from the source Theme will be copied to the new Theme.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.Theme
 	SourceThemeID *string `json:"sourceThemeId,omitempty" tf:"source_theme_id,omitempty"`
+
+	// Reference to a Theme in fusionauth to populate sourceThemeId.
+	// +kubebuilder:validation:Optional
+	SourceThemeIDRef *v2.Reference `json:"sourceThemeIdRef,omitempty" tf:"-"`
+
+	// Selector for a Theme in fusionauth to populate sourceThemeId.
+	// +kubebuilder:validation:Optional
+	SourceThemeIDSelector *v2.Selector `json:"sourceThemeIdSelector,omitempty" tf:"-"`
 
 	// A CSS stylesheet used to style the templates.
 	// A CSS stylesheet used to style the templates.
@@ -785,8 +794,17 @@ type ThemeParameters struct {
 
 	// The Id of an existing Theme to copy when creating this Theme. The default_messages, localized_messages, templates, and stylesheet are copied from the source Theme, and any of those fields you set are applied on top on the first apply. Only used at create time.
 	// The optional Id of an existing Theme to make a copy of. If present, the defaultMessages, localizedMessages, templates, and stylesheet from the source Theme will be copied to the new Theme.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.Theme
 	// +kubebuilder:validation:Optional
 	SourceThemeID *string `json:"sourceThemeId,omitempty" tf:"source_theme_id,omitempty"`
+
+	// Reference to a Theme in fusionauth to populate sourceThemeId.
+	// +kubebuilder:validation:Optional
+	SourceThemeIDRef *v2.Reference `json:"sourceThemeIdRef,omitempty" tf:"-"`
+
+	// Selector for a Theme in fusionauth to populate sourceThemeId.
+	// +kubebuilder:validation:Optional
+	SourceThemeIDSelector *v2.Selector `json:"sourceThemeIdSelector,omitempty" tf:"-"`
 
 	// A CSS stylesheet used to style the templates.
 	// A CSS stylesheet used to style the templates.

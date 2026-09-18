@@ -1,0 +1,42 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: lambda-create-cluster
+# Validates basic Lambda CRUD lifecycle for cluster-scoped resources
+# (fusionauth.crossplane.io). Creates a Lambda, asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-lambda
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: e2e-test-lambda
+              spec:
+                forProvider:
+                  name: e2e-test-lambda
+                  type: JWTPopulate
+                  body: "function populate(jwt, user, registration) { }"
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: e2e-test-lambda
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Lambda
+              name: e2e-test-lambda

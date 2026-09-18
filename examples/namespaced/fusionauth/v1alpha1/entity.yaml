@@ -1,4 +1,4 @@
-apiVersion: fusionauth.fusionauth.m.crossplane.io/v1alpha1
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
 kind: Entity
 metadata:
   annotations:
@@ -31,7 +31,7 @@ apiVersion: fusionauth.m.crossplane.io/v1alpha1
 kind: EntityType
 metadata:
   annotations:
-    meta.upbound.io/example-id: fusionauth/v1alpha1/entity
+    meta.upbound.io/example-id: /v1alpha1/entity
   labels:
     testing.upbound.io/example-name: company
   name: company

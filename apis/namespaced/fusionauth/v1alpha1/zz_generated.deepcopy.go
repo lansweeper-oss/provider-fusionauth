@@ -18720,6 +18720,16 @@ func (in *ThemeInitParameters) DeepCopyInto(out *ThemeInitParameters) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.SourceThemeIDRef != nil {
+		in, out := &in.SourceThemeIDRef, &out.SourceThemeIDRef
+		*out = new(v2.NamespacedReference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.SourceThemeIDSelector != nil {
+		in, out := &in.SourceThemeIDSelector, &out.SourceThemeIDSelector
+		*out = new(v2.NamespacedSelector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Stylesheet != nil {
 		in, out := &in.Stylesheet, &out.Stylesheet
 		*out = new(string)
@@ -19390,6 +19400,16 @@ func (in *ThemeParameters) DeepCopyInto(out *ThemeParameters) {
 		in, out := &in.SourceThemeID, &out.SourceThemeID
 		*out = new(string)
 		**out = **in
+	}
+	if in.SourceThemeIDRef != nil {
+		in, out := &in.SourceThemeIDRef, &out.SourceThemeIDRef
+		*out = new(v2.NamespacedReference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.SourceThemeIDSelector != nil {
+		in, out := &in.SourceThemeIDSelector, &out.SourceThemeIDSelector
+		*out = new(v2.NamespacedSelector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Stylesheet != nil {
 		in, out := &in.Stylesheet, &out.Stylesheet

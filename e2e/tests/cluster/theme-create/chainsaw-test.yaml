@@ -1,0 +1,41 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: theme-create-cluster
+# Validates basic Theme CRUD lifecycle for cluster-scoped resources
+# (fusionauth.crossplane.io). Creates a Theme, asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-theme
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: e2e-test-theme
+              spec:
+                forProvider:
+                  name: e2e-test-theme
+                  sourceThemeId: "75a068fd-e94b-451a-9aeb-3ddb9a3b5987"
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: e2e-test-theme
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Theme
+              name: e2e-test-theme

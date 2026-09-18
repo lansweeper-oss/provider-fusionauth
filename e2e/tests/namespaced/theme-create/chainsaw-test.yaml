@@ -1,0 +1,43 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: theme-create-namespaced
+# Validates basic Theme CRUD lifecycle for namespaced resources
+# (fusionauth.m.crossplane.io). Creates a Theme using ClusterProviderConfig,
+# asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-theme
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: e2e-ns-test-theme
+              spec:
+                forProvider:
+                  name: e2e-ns-test-theme
+                  sourceThemeId: "75a068fd-e94b-451a-9aeb-3ddb9a3b5987"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: e2e-ns-test-theme
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              name: e2e-ns-test-theme

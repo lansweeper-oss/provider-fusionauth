@@ -19,6 +19,9 @@ func (tr *Consent) Hub() {}
 func (tr *Email) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *Entity) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *EntityType) Hub() {}
 
 // Hub marks this type as a conversion hub.

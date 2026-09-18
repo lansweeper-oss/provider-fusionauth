@@ -78,6 +78,14 @@ Run e2e tests (locally in a KinD cluster):
 make e2e
 ```
 
+or from a running KinD cluster:
+
+```console
+make uptest
+# or
+make chainsaw-e2e
+```
+
 Build, push, and install:
 
 ```console

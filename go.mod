@@ -6,6 +6,7 @@ tool golang.org/x/tools/cmd/goimports
 
 require (
 	dario.cat/mergo v1.0.2
+	github.com/FusionAuth/go-client v1.69.0
 	github.com/FusionAuth/terraform-provider-fusionauth v1.3.8
 	github.com/alecthomas/kong v1.16.1
 	github.com/crossplane/crossplane-runtime/v2 v2.4.0
@@ -25,7 +26,6 @@ require (
 
 require (
 	cloud.google.com/go v0.123.0 // indirect
-	github.com/FusionAuth/go-client v1.69.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect

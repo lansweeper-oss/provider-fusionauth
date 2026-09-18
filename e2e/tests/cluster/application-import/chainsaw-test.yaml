@@ -1,0 +1,71 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: application-import-cluster
+# Validates that an existing FusionAuth application can be imported into a
+# Crossplane managed resource by setting the external-name annotation to the
+# application's FusionAuth ID.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-application-in-fusionauth
+      try:
+        - script:
+            timeout: 30s
+            content: |
+              FA_HOST="http://fusionauth.fusionauth.svc.cluster.local:9011"
+              FA_KEY="e2e-test-api-key-00000000000000000000"
+
+              APP_ID=$(curl -sf -X POST "${FA_HOST}/api/application" \
+                -H "Authorization: ${FA_KEY}" \
+                -H "Content-Type: application/json" \
+                -d '{"application":{"name":"e2e-import-app"}}' \
+                | jq -r '.application.id')
+
+              if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
+                echo "Failed to create application in FusionAuth"
+                exit 1
+              fi
+              echo "Created FusionAuth application: $APP_ID"
+
+              cat <<EOF | ${KUBECTL} apply -f -
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-app
+                annotations:
+                  crossplane.io/external-name: "${APP_ID}"
+              spec:
+                forProvider:
+                  name: e2e-import-app
+                providerConfigRef:
+                  name: default
+              EOF
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-app
+              status:
+                atProvider:
+                  (id != ''):
+                    true
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-import-app

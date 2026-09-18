@@ -3105,6 +3105,50 @@ func (mg *Tenant) ResolveReferences(ctx context.Context, c client.Reader) error 
 	return nil
 }
 
+// ResolveReferences of this Theme.
+func (mg *Theme) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPINamespacedResolver(c, mg)
+
+	var rsp reference.NamespacedResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.NamespacedResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.SourceThemeID),
+		Extract:      reference.ExternalName(),
+		Namespace:    mg.GetNamespace(),
+		Reference:    mg.Spec.ForProvider.SourceThemeIDRef,
+		Selector:     mg.Spec.ForProvider.SourceThemeIDSelector,
+		To: reference.To{
+			List:    &ThemeList{},
+			Managed: &Theme{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.SourceThemeID")
+	}
+	mg.Spec.ForProvider.SourceThemeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.SourceThemeIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.NamespacedResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.SourceThemeID),
+		Extract:      reference.ExternalName(),
+		Namespace:    mg.GetNamespace(),
+		Reference:    mg.Spec.InitProvider.SourceThemeIDRef,
+		Selector:     mg.Spec.InitProvider.SourceThemeIDSelector,
+		To: reference.To{
+			List:    &ThemeList{},
+			Managed: &Theme{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.SourceThemeID")
+	}
+	mg.Spec.InitProvider.SourceThemeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.SourceThemeIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this User.
 func (mg *User) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPINamespacedResolver(c, mg)

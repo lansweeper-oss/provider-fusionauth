@@ -1,0 +1,44 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: key-create-namespaced
+# Validates basic Key CRUD lifecycle for namespaced resources
+# (fusionauth.m.crossplane.io). Creates a Key using ClusterProviderConfig,
+# asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-key
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: e2e-ns-test-key
+              spec:
+                forProvider:
+                  algorithm: RS256
+                  name: e2e-ns-test-key
+                  length: 2048
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: e2e-ns-test-key
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              name: e2e-ns-test-key

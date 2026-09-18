@@ -1,0 +1,46 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: email-create-namespaced
+# Validates basic Email template CRUD lifecycle for namespaced resources
+# (fusionauth.m.crossplane.io). Creates an Email using ClusterProviderConfig,
+# asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-email
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: e2e-ns-test-email
+              spec:
+                forProvider:
+                  name: e2e-ns-test-email
+                  defaultHtmlTemplate: "<p>Test</p>"
+                  defaultSubject: "Test"
+                  defaultTextTemplate: "Test"
+                  defaultFromName: "Test"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: e2e-ns-test-email
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              name: e2e-ns-test-email
