@@ -1,0 +1,108 @@
+name: Publish Provider Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version string to use while publishing the package (e.g. v1.0.0-alpha.1)
+        default: ""
+        required: false
+
+jobs:
+  publish-provider-package:
+    runs-on: ubuntu-26.04
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4
+        with:
+          platforms: all
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Fetch History
+        run: git fetch --prune --unshallow
+
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Vendor Dependencies
+        run: make vendor vendor.check
+
+      - name: Find the version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            make common.buildvars >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Artifacts
+        run: |-
+          make -j2 XPKG_REG_ORGS="ghcr.io/${{ github.repository_owner }}" XPKG_REG_ORGS_NO_PROMOTE="ghcr.io/${{ github.repository_owner }}" BRANCH_NAME="main" VERSION="${{ steps.version.outputs.VERSION }}" build.all
+        env:
+          BUILD_ARGS: "--load"
+
+      - name: Publish Artifacts
+        run: |-
+          make -j2 REGISTRY_ORGS="" XPKG_REG_ORGS="ghcr.io/${{ github.repository_owner }}" XPKG_REG_ORGS_NO_PROMOTE="ghcr.io/${{ github.repository_owner }}" BRANCH_NAME="main" VERSION="${{ steps.version.outputs.VERSION }}" publish
+
+  mirror-to-upbound:
+    needs: publish-provider-package
+    runs-on: ubuntu-26.04
+    if: ${{ github.event.inputs.version != '' }}
+    steps:
+      - name: Setup crane
+        uses: imjasonh/setup-crane@feee3b6bb0d4c68370f256a4502498c9227e5c6b # v0.7
+
+      - name: Login to Upbound
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: xpkg.upbound.io
+          username: ${{ secrets.XPKG_MIRROR_ACCESS_ID }}
+          password: ${{ secrets.XPKG_MIRROR_TOKEN }}
+
+      - name: Mirror to Upbound
+        run: |
+          crane copy ghcr.io/${{ github.repository }}:${{ github.event.inputs.version }} xpkg.upbound.io/lansweeper/provider-clickhousedbops:${{ github.event.inputs.version }} --allow-nondistributable-artifacts
+
+  add-extensions:
+    needs:
+      - publish-provider-package
+      - mirror-to-upbound
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Login to Upbound Marketplace
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: xpkg.upbound.io
+          username: ${{ secrets.XPKG_MIRROR_ACCESS_ID }}
+          password: ${{ secrets.XPKG_MIRROR_TOKEN }}
+
+      - name: Append extensions
+        run: make xpkg.append VERSION=${{ github.event.inputs.version }}
