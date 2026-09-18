@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - release-*
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Common versions
+  DOCKER_BUILDX_VERSION: "v0.33.1"
+
+jobs:
+  detect-noop:
+    runs-on: ubuntu-latest.04
+    outputs:
+      noop: ${{ steps.noop.outputs.should_skip }}
+    steps:
+      - name: Detect No-op Changes
+        id: noop
+        uses: fkirc/skip-duplicate-actions@b974a9395958c231af965b70070979a577efa578 # v5.3.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          paths_ignore: '["**.md", "**.png", "**.jpg"]'
+          do_not_skip: '["workflow_dispatch", "schedule", "push"]'
+
+  report-breaking-changes:
+    runs-on: ubuntu-latest.04
+    needs: detect-noop
+    if: needs.detect-noop.outputs.noop != 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Fetch base
+        run: git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+
+      - name: Get modified CRDs
+        id: modified-crds
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        with:
+          files: |
+            package/crds/**
+
+      - name: Report breaking CRD OpenAPI v3 schema changes
+        if: steps.modified-crds.outputs.any_changed == 'true'
+        env:
+          MODIFIED_CRD_LIST: ${{ steps.modified-crds.outputs.all_changed_files }}
+        run: |
+          make crddiff
+
+      - name: Report native schema version changes
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref || github.event.repository.default_branch }}
+        run: |
+          make schema-version-diff
+
+  lint:
+    runs-on: ubuntu-latest.04
+    needs: detect-noop
+    if: needs.detect-noop.outputs.noop != 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Install goimports
+        run: go install golang.org/x/tools/cmd/goimports
+
+      - name: Vendor Dependencies
+        run: make vendor vendor.check
+
+      - name: Detect golangci-lint version
+        id: golangci-lint-version
+        run: |
+          VERSION=$(awk '/^GOLANGCILINT_VERSION/{gsub(/[[:space:]]/, "", $3); print $3}' Makefile)
+          echo "version=v${VERSION}" | tee -a "$GITHUB_OUTPUT"
+
+      # We could run 'make lint' but we prefer this action because it leaves
+      # 'annotations' (i.e. it comments on PRs to point out linter violations).
+      - name: Lint
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: ${{ steps.golangci-lint-version.outputs.version }}
+          args: --timeout 10m0s
+
+      - name: Check Diff
+        run: make check-diff
+
+  e2e:
+    runs-on: ubuntu-latest.04
+    needs: detect-noop
+    if: needs.detect-noop.outputs.noop != 'true'
+    steps:
+      - name: Cleanup Disk
+        # Postgres+FusionAuth (~1 GB) + Kind + provider image consume significant disk space.
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
+          swap-storage: false
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Run E2E Tests
+        run: make e2e
+
+      - name: Dump Provider Logs
+        if: failure()
+        run: |
+          echo "::group::Provider pod logs"
+          kubectl -n crossplane-system logs -l pkg.crossplane.io/revision --tail=500 --all-containers || true
+          echo "::endgroup::"
+          echo "::group::Provider pod status"
+          kubectl -n crossplane-system get pods -l pkg.crossplane.io/revision -o wide || true
+          echo "::endgroup::"
+          echo "::group::All managed resources"
+          kubectl get managed -o wide || true
+          echo "::endgroup::"

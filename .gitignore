@@ -1,7 +1,8 @@
 **/.*
+!.github
 !.gitignore
-!.golangci.yml
 !.gitmodules
+!.golangci.yml
 
 /_output
 cover.out
