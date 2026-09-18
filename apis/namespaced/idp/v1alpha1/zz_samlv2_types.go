@@ -377,7 +377,7 @@ type SAMLV2InitParameters struct {
 	// +kubebuilder:validation:Optional
 	LambdaReconcileIDSelector *v2.NamespacedSelector `json:"lambdaReconcileIdSelector,omitempty" tf:"-"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user.
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`
 
@@ -513,7 +513,7 @@ type SAMLV2Observation struct {
 	// The id of a SAML reconcile lambda that is applied when the identity provider sends back a successful SAML response.
 	LambdaReconcileID *string `json:"lambdaReconcileId,omitempty" tf:"lambda_reconcile_id,omitempty"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user.
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`
 
@@ -671,7 +671,7 @@ type SAMLV2Parameters struct {
 	// +kubebuilder:validation:Optional
 	LambdaReconcileIDSelector *v2.NamespacedSelector `json:"lambdaReconcileIdSelector,omitempty" tf:"-"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user.
 	// +kubebuilder:validation:Optional
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`

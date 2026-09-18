@@ -19,7 +19,7 @@ env:
 
 jobs:
   detect-noop:
-    runs-on: ubuntu-latest.04
+    runs-on: ubuntu-latest
     outputs:
       noop: ${{ steps.noop.outputs.should_skip }}
     steps:
@@ -32,7 +32,7 @@ jobs:
           do_not_skip: '["workflow_dispatch", "schedule", "push"]'
 
   report-breaking-changes:
-    runs-on: ubuntu-latest.04
+    runs-on: ubuntu-latest
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
     steps:
@@ -65,7 +65,7 @@ jobs:
           make schema-version-diff
 
   lint:
-    runs-on: ubuntu-latest.04
+    runs-on: ubuntu-latest
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
 
@@ -104,7 +104,7 @@ jobs:
         run: make check-diff
 
   e2e:
-    runs-on: ubuntu-latest.04
+    runs-on: ubuntu-latest
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
     steps:

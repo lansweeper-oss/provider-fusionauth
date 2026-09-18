@@ -34,7 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: SonyPsn is the Schema for the SonyPsns API. Sony Playstation
+        description: SonyPsn is the Schema for the SonyPsns API. Sony PlayStation
           Network Identity Provider Resource
         properties:
           apiVersion:
@@ -316,7 +316,7 @@ spec:
                     type: object
                   linkingStrategy:
                     description: |-
-                      The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
                       The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user.
                     type: string
                   name:
@@ -792,7 +792,7 @@ spec:
                     type: object
                   linkingStrategy:
                     description: |-
-                      The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
                       The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user.
                     type: string
                   name:
@@ -1145,7 +1145,7 @@ spec:
                     type: string
                   linkingStrategy:
                     description: |-
-                      The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
                       The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user.
                     type: string
                   name:

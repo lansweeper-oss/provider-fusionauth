@@ -14,7 +14,7 @@ spec:
           testing.upbound.io/example-name: my_app
       createRegistration: true
       enabled: true
-    buttonText: Login with Playstation
+    buttonText: Login with PlayStation
     clientId: 0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc
     clientSecretSecretRef:
       key: example-key
