@@ -19,7 +19,7 @@ env:
 
 jobs:
   detect-noop:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest.04
     outputs:
       noop: ${{ steps.noop.outputs.should_skip }}
     steps:
@@ -32,7 +32,7 @@ jobs:
           do_not_skip: '["workflow_dispatch", "schedule", "push"]'
 
   report-breaking-changes:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
     steps:
@@ -65,7 +65,7 @@ jobs:
           make schema-version-diff
 
   lint:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
 
@@ -104,12 +104,12 @@ jobs:
         run: make check-diff
 
   e2e:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest.04
     needs: detect-noop
     if: needs.detect-noop.outputs.noop != 'true'
     steps:
       - name: Cleanup Disk
-        # ClickHouse (~1 GB) + Kind + provider image consume significant disk space.
+        # Postgres+FusionAuth (~1 GB) + Kind + provider image consume significant disk space.
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
         with:
           large-packages: false
@@ -136,9 +136,6 @@ jobs:
           echo "::endgroup::"
           echo "::group::Provider pod status"
           kubectl -n crossplane-system get pods -l pkg.crossplane.io/revision -o wide || true
-          echo "::endgroup::"
-          echo "::group::GrantPrivilege resources"
-          kubectl get grantprivilege.clickhousedbops.crossplane.io -o yaml || true
           echo "::endgroup::"
           echo "::group::All managed resources"
           kubectl get managed -o wide || true
