@@ -1,0 +1,43 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: application-create-cluster
+# Validates basic Application CRUD lifecycle for cluster-scoped resources
+# (fusionauth.crossplane.io). Creates an Application, asserts
+# Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-cluster-app
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: e2e-cluster-app
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-cluster-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-cluster-app

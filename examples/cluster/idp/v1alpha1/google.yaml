@@ -1,0 +1,24 @@
+apiVersion: idp.fusionauth.crossplane.io/v1alpha1
+kind: Google
+metadata:
+  annotations:
+    meta.upbound.io/example-id: idp/v1alpha1/google
+  labels:
+    testing.upbound.io/example-name: google
+  name: google
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: myapp
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Google
+    clientId: 254311943570-8e2i2hds0qdnee4124socceeh2q2mtjl.apps.googleusercontent.com
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    debug: false
+    scope: profile

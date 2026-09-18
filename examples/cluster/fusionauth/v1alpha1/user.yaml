@@ -1,0 +1,36 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: User
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/user
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    birthDate: "1976-05-30"
+    data: |-
+      ${jsonencode({
+          displayName = "Johnny Boy"
+          favoriteColors = [
+            "Red",
+            "Blue"
+          ]
+        })}
+    email: example@fusionauth.io
+    encryptionScheme: salted-sha256
+    expiry: 1571786483322
+    firstName: John
+    fullName: John Doe
+    imageUrl: http://65.media.tumblr.com/tumblr_l7dbl0MHbU1qz50x3o1_500.png
+    lastName: Doe
+    middleName: William
+    mobilePhone: 303-555-1234
+    passwordChangeRequired: false
+    preferredLanguages:
+    - en
+    - fr
+    timezone: America/Denver
+    userId: 4c4511df-0d0d-4029-8c2b-f6c01b9e138d
+    username: johnny123
+    usernameStatus: ACTIVE

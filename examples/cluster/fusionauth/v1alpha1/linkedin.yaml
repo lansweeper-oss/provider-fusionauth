@@ -1,0 +1,25 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Linkedin
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/linkedin
+  labels:
+    testing.upbound.io/example-name: linkedin
+  name: linkedin
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: myapp
+      createRegistration: true
+      enabled: true
+    buttonText: Login with LinkedIn
+    clientId: "9876543210"
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system
+    debug: false
+    enabled: true
+    scope: r_emailaddress r_liteprofile

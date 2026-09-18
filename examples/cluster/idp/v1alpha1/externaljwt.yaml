@@ -1,0 +1,21 @@
+apiVersion: idp.fusionauth.crossplane.io/v1alpha1
+kind: ExternalJwt
+metadata:
+  annotations:
+    meta.upbound.io/example-id: idp/v1alpha1/externaljwt
+  labels:
+    testing.upbound.io/example-name: jwt
+  name: jwt
+spec:
+  forProvider:
+    claimMap:
+      dept: RegistrationData
+      first_name: firstName
+      last_name: lastName
+    debug: false
+    enabled: true
+    headerKeyParameter: kid
+    name: Acme Corp. ADFS
+    oauth2AuthorizationEndpoint: https://acme.com/adfs/oauth2/authorize?client_id=cf3b00da-9551-460a-ad18-33232e6cbff0&response_type=code&redirect_uri=https://acme.com/oauth2/redirect
+    oauth2TokenEndpoint: https://acme.com/adfs/oauth2/token
+    uniqueIdentityClaim: email

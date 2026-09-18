@@ -1,0 +1,14 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/key
+  labels:
+    testing.upbound.io/example-name: admin_id
+  name: admin-id
+  namespace: crossplane-system
+spec:
+  forProvider:
+    algorithm: RS256
+    length: 2048
+    name: Id token signing key generated for application Administrator Login

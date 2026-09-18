@@ -1,0 +1,22 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: SonyPsn
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/sonypsn
+  labels:
+    testing.upbound.io/example-name: sony_psn
+  name: sony-psn
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: my_app
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Playstation
+    clientId: 0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret

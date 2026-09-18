@@ -1,0 +1,1485 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.22.0
+  name: webhooks.fusionauth.m.crossplane.io
+spec:
+  group: fusionauth.m.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - fusionauth
+    kind: Webhook
+    listKind: WebhookList
+    plural: webhooks
+    singular: webhook
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Webhook is the Schema for the Webhooks API. Webhook Resource
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: WebhookSpec defines the desired state of Webhook
+            properties:
+              forProvider:
+                properties:
+                  connectTimeout:
+                    description: |-
+                      The connection timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  data:
+                    description: |-
+                      A JSON string that can hold any information about the Webhook that should be persisted.
+                      An object that can hold any information about the Webhook that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema. Must be a JSON string.
+                    type: string
+                  description:
+                    description: |-
+                      A description of the Webhook. This is used for display purposes only.
+                    type: string
+                  eventsEnabled:
+                    description: A mapping for the events that are enabled for this
+                      Webhook.
+                    items:
+                      properties:
+                        auditLogCreate:
+                          description: |-
+                            An audit log was created
+                          type: boolean
+                        eventLogCreate:
+                          description: |-
+                            An event log was created
+                          type: boolean
+                        groupCreate:
+                          description: |-
+                            A group is being created
+                          type: boolean
+                        groupCreateComplete:
+                          description: |-
+                            A create group request completed
+                          type: boolean
+                        groupDelete:
+                          description: |-
+                            A group is being deleted
+                          type: boolean
+                        groupDeleteComplete:
+                          description: |-
+                            A group delete request completed
+                          type: boolean
+                        groupMemberAdd:
+                          description: |-
+                            A user is being added to a group
+                          type: boolean
+                        groupMemberAddComplete:
+                          description: |-
+                            A user add request has completed
+                          type: boolean
+                        groupMemberRemove:
+                          description: |-
+                            A user is being removed from a group
+                          type: boolean
+                        groupMemberRemoveComplete:
+                          description: |-
+                            A user remove request has completed
+                          type: boolean
+                        groupMemberUpdate:
+                          description: |-
+                            A groups membership is being updated
+                          type: boolean
+                        groupMemberUpdateComplete:
+                          description: |-
+                            A group member update request has completed
+                          type: boolean
+                        groupUpdate:
+                          description: |-
+                            A group is being updated
+                          type: boolean
+                        groupUpdateComplete:
+                          description: |-
+                            A request to update a group has completed
+                          type: boolean
+                        jwtPublicKeyUpdate:
+                          description: |-
+                            A configuration occurred that may affect public keys used to verify a JWT signed by FusionAuth
+                          type: boolean
+                        jwtRefresh:
+                          description: |-
+                            A JWT was refreshed using a refresh token
+                          type: boolean
+                        jwtRefreshTokenRevoke:
+                          description: |-
+                            One or more refresh tokens were revoked
+                          type: boolean
+                        kickstartSuccess:
+                          description: |-
+                            Kickstart completed successfully the system is ready for use
+                          type: boolean
+                        userAction:
+                          description: |-
+                            An action was taken on a user, or an existing event may be changing states if the action is time based
+                          type: boolean
+                        userBulkCreate:
+                          description: |-
+                            One or more users were created using the Bulk create API
+                          type: boolean
+                        userCreate:
+                          description: |-
+                            A user is being created
+                          type: boolean
+                        userCreateComplete:
+                          description: |-
+                            A create user request completed
+                          type: boolean
+                        userDeactivate:
+                          description: |-
+                            A user is being de-activated, this is synonymous with a soft-delete when using the API
+                          type: boolean
+                        userDelete:
+                          description: |-
+                            A user is being deleted
+                          type: boolean
+                        userDeleteComplete:
+                          description: |-
+                            A user delete request has completed
+                          type: boolean
+                        userEmailUpdate:
+                          description: |-
+                            A user updated their email address
+                          type: boolean
+                        userEmailVerified:
+                          description: |-
+                            A user has verified their email address
+                          type: boolean
+                        userIdentityProviderLink:
+                          description: |-
+                            A link has been established between a user and an identity provider
+                          type: boolean
+                        userIdentityProviderUnlink:
+                          description: |-
+                            An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityVerified:
+                          description: |-
+                            When a user's identity is verified
+                          type: boolean
+                        userLoginFailed:
+                          description: |-
+                            A login request has failed
+                          type: boolean
+                        userLoginIdDuplicateCreate:
+                          description: |-
+                            A user attempted to register using an email address or username of an existing user
+                          type: boolean
+                        userLoginIdDuplicateUpdate:
+                          description: |-
+                            A user attempted to modify their email address or username to that of an existing user
+                          type: boolean
+                        userLoginNewDevice:
+                          description: |-
+                            A user has logged in from a new device
+                          type: boolean
+                        userLoginSuccess:
+                          description: |-
+                            A login request has succeeded
+                          type: boolean
+                        userLoginSuspicious:
+                          description: |-
+                            A suspicious login request has succeeded. This may be due to an impossible travel calculation, or other indicators
+                          type: boolean
+                        userPasswordBreach:
+                          description: |-
+                            A user's password has been identified as vulnerable due to being found in one or more breached data sets
+                          type: boolean
+                        userPasswordResetSend:
+                          description: |-
+                            A user has been sent an email as part of a password reset workflow
+                          type: boolean
+                        userPasswordResetStart:
+                          description: |-
+                            A user has started a password reset workflow
+                          type: boolean
+                        userPasswordResetSuccess:
+                          description: |-
+                            A user has completed a password reset workflow
+                          type: boolean
+                        userPasswordUpdate:
+                          description: |-
+                            A user has updated their password
+                          type: boolean
+                        userReactivate:
+                          description: |-
+                            A user has been re-activated
+                          type: boolean
+                        userRegistrationCreate:
+                          description: |-
+                            A user registration is being created
+                          type: boolean
+                        userRegistrationCreateComplete:
+                          description: |-
+                            A user registration has been created
+                          type: boolean
+                        userRegistrationDelete:
+                          description: |-
+                            A user registration has been deleted
+                          type: boolean
+                        userRegistrationDeleteComplete:
+                          description: |-
+                            A user registration delete request has completed
+                          type: boolean
+                        userRegistrationUpdate:
+                          description: |-
+                            A user registration is being updated
+                          type: boolean
+                        userRegistrationUpdateComplete:
+                          description: |-
+                            A user registration update request has completed
+                          type: boolean
+                        userRegistrationVerified:
+                          description: |-
+                            A user registration has been verified
+                          type: boolean
+                        userTwoFactorChallenge:
+                          description: |-
+                            A user has been issued a two-factor challenge
+                          type: boolean
+                        userTwoFactorFailedAttempt:
+                          description: |-
+                            A user has failed a two-factor challenge attempt
+                          type: boolean
+                        userTwoFactorMethodAdd:
+                          description: |-
+                            A user has added a two-factor method
+                          type: boolean
+                        userTwoFactorMethodRemove:
+                          description: |-
+                            A user has removed a two-factor method
+                          type: boolean
+                        userTwoFactorSuccess:
+                          description: |-
+                            A user has successfully completed a two-factor challenge
+                          type: boolean
+                        userUpdate:
+                          description: |-
+                            A user is being updated
+                          type: boolean
+                        userUpdateComplete:
+                          description: |-
+                            A user update request has completed
+                          type: boolean
+                      type: object
+                    type: array
+                  global:
+                    description: |-
+                      Whether or not this Webhook is used for all events or just for specific Applications.
+                    type: boolean
+                  headers:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      An object that contains headers that are sent as part of the HTTP request for the events.
+                    type: object
+                  httpAuthenticationPasswordSecretRef:
+                    description: |-
+                      The HTTP basic authentication password that is sent as part of the HTTP request for the events.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  httpAuthenticationUsernameSecretRef:
+                    description: |-
+                      The HTTP basic authentication username that is sent as part of the HTTP request for the events.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  readTimeout:
+                    description: |-
+                      The read timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  signatureConfiguration:
+                    description: Configuration for webhook signing.
+                    items:
+                      properties:
+                        enabled:
+                          description: |-
+                            Whether or not webhook events are signed.
+                            Indicates if the Webhook request should be signed.
+                          type: boolean
+                        signingKeyId:
+                          description: |-
+                            The Id of the key used to sign webhook events. Required when signature_configuration is set to true.
+                            The Id of the key used to sign the Webhook request.
+                          type: string
+                        signingKeyIdRef:
+                          description: Reference to a Key in fusionauth to populate
+                            signingKeyId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            namespace:
+                              description: Namespace of the referenced object
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        signingKeyIdSelector:
+                          description: Selector for a Key in fusionauth to populate
+                            signingKeyId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            namespace:
+                              description: Namespace for the selector
+                              type: string
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                  sslCertificate:
+                    description: |-
+                      An SSL certificate in PEM format that is used to establish the a SSL (TLS specifically) connection to the Webhook.
+                    type: string
+                  sslCertificateKeyId:
+                    description: |-
+                      The Id of an existing Key. The X.509 certificate is used for client certificate authentication in requests to the Webhook.
+                    type: string
+                  sslCertificateKeyIdRef:
+                    description: Reference to a Key in fusionauth to populate sslCertificateKeyId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      namespace:
+                        description: Namespace of the referenced object
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  sslCertificateKeyIdSelector:
+                    description: Selector for a Key in fusionauth to populate sslCertificateKeyId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      namespace:
+                        description: Namespace for the selector
+                        type: string
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  url:
+                    description: |-
+                      The fully qualified URL of the Webhook’s endpoint that will accept the event requests from FusionAuth.
+                    type: string
+                  webhookId:
+                    description: |-
+                      The Id to use for the new Webhook. If not specified a secure random UUID will be generated.
+                      The Id of the Webhook.
+                    type: string
+                type: object
+              initProvider:
+                description: |-
+                  THIS IS A BETA FIELD. It will be honored
+                  unless the Management Policies feature flag is disabled.
+                  InitProvider holds the same fields as ForProvider, with the exception
+                  of Identifier and other resource reference fields. The fields that are
+                  in InitProvider are merged into ForProvider when the resource is created.
+                  The same fields are also added to the terraform ignore_changes hook, to
+                  avoid updating them after creation. This is useful for fields that are
+                  required on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them, like an
+                  autoscaler.
+                properties:
+                  connectTimeout:
+                    description: |-
+                      The connection timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  data:
+                    description: |-
+                      A JSON string that can hold any information about the Webhook that should be persisted.
+                      An object that can hold any information about the Webhook that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema. Must be a JSON string.
+                    type: string
+                  description:
+                    description: |-
+                      A description of the Webhook. This is used for display purposes only.
+                    type: string
+                  eventsEnabled:
+                    description: A mapping for the events that are enabled for this
+                      Webhook.
+                    items:
+                      properties:
+                        auditLogCreate:
+                          description: |-
+                            An audit log was created
+                          type: boolean
+                        eventLogCreate:
+                          description: |-
+                            An event log was created
+                          type: boolean
+                        groupCreate:
+                          description: |-
+                            A group is being created
+                          type: boolean
+                        groupCreateComplete:
+                          description: |-
+                            A create group request completed
+                          type: boolean
+                        groupDelete:
+                          description: |-
+                            A group is being deleted
+                          type: boolean
+                        groupDeleteComplete:
+                          description: |-
+                            A group delete request completed
+                          type: boolean
+                        groupMemberAdd:
+                          description: |-
+                            A user is being added to a group
+                          type: boolean
+                        groupMemberAddComplete:
+                          description: |-
+                            A user add request has completed
+                          type: boolean
+                        groupMemberRemove:
+                          description: |-
+                            A user is being removed from a group
+                          type: boolean
+                        groupMemberRemoveComplete:
+                          description: |-
+                            A user remove request has completed
+                          type: boolean
+                        groupMemberUpdate:
+                          description: |-
+                            A groups membership is being updated
+                          type: boolean
+                        groupMemberUpdateComplete:
+                          description: |-
+                            A group member update request has completed
+                          type: boolean
+                        groupUpdate:
+                          description: |-
+                            A group is being updated
+                          type: boolean
+                        groupUpdateComplete:
+                          description: |-
+                            A request to update a group has completed
+                          type: boolean
+                        jwtPublicKeyUpdate:
+                          description: |-
+                            A configuration occurred that may affect public keys used to verify a JWT signed by FusionAuth
+                          type: boolean
+                        jwtRefresh:
+                          description: |-
+                            A JWT was refreshed using a refresh token
+                          type: boolean
+                        jwtRefreshTokenRevoke:
+                          description: |-
+                            One or more refresh tokens were revoked
+                          type: boolean
+                        kickstartSuccess:
+                          description: |-
+                            Kickstart completed successfully the system is ready for use
+                          type: boolean
+                        userAction:
+                          description: |-
+                            An action was taken on a user, or an existing event may be changing states if the action is time based
+                          type: boolean
+                        userBulkCreate:
+                          description: |-
+                            One or more users were created using the Bulk create API
+                          type: boolean
+                        userCreate:
+                          description: |-
+                            A user is being created
+                          type: boolean
+                        userCreateComplete:
+                          description: |-
+                            A create user request completed
+                          type: boolean
+                        userDeactivate:
+                          description: |-
+                            A user is being de-activated, this is synonymous with a soft-delete when using the API
+                          type: boolean
+                        userDelete:
+                          description: |-
+                            A user is being deleted
+                          type: boolean
+                        userDeleteComplete:
+                          description: |-
+                            A user delete request has completed
+                          type: boolean
+                        userEmailUpdate:
+                          description: |-
+                            A user updated their email address
+                          type: boolean
+                        userEmailVerified:
+                          description: |-
+                            A user has verified their email address
+                          type: boolean
+                        userIdentityProviderLink:
+                          description: |-
+                            A link has been established between a user and an identity provider
+                          type: boolean
+                        userIdentityProviderUnlink:
+                          description: |-
+                            An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityVerified:
+                          description: |-
+                            When a user's identity is verified
+                          type: boolean
+                        userLoginFailed:
+                          description: |-
+                            A login request has failed
+                          type: boolean
+                        userLoginIdDuplicateCreate:
+                          description: |-
+                            A user attempted to register using an email address or username of an existing user
+                          type: boolean
+                        userLoginIdDuplicateUpdate:
+                          description: |-
+                            A user attempted to modify their email address or username to that of an existing user
+                          type: boolean
+                        userLoginNewDevice:
+                          description: |-
+                            A user has logged in from a new device
+                          type: boolean
+                        userLoginSuccess:
+                          description: |-
+                            A login request has succeeded
+                          type: boolean
+                        userLoginSuspicious:
+                          description: |-
+                            A suspicious login request has succeeded. This may be due to an impossible travel calculation, or other indicators
+                          type: boolean
+                        userPasswordBreach:
+                          description: |-
+                            A user's password has been identified as vulnerable due to being found in one or more breached data sets
+                          type: boolean
+                        userPasswordResetSend:
+                          description: |-
+                            A user has been sent an email as part of a password reset workflow
+                          type: boolean
+                        userPasswordResetStart:
+                          description: |-
+                            A user has started a password reset workflow
+                          type: boolean
+                        userPasswordResetSuccess:
+                          description: |-
+                            A user has completed a password reset workflow
+                          type: boolean
+                        userPasswordUpdate:
+                          description: |-
+                            A user has updated their password
+                          type: boolean
+                        userReactivate:
+                          description: |-
+                            A user has been re-activated
+                          type: boolean
+                        userRegistrationCreate:
+                          description: |-
+                            A user registration is being created
+                          type: boolean
+                        userRegistrationCreateComplete:
+                          description: |-
+                            A user registration has been created
+                          type: boolean
+                        userRegistrationDelete:
+                          description: |-
+                            A user registration has been deleted
+                          type: boolean
+                        userRegistrationDeleteComplete:
+                          description: |-
+                            A user registration delete request has completed
+                          type: boolean
+                        userRegistrationUpdate:
+                          description: |-
+                            A user registration is being updated
+                          type: boolean
+                        userRegistrationUpdateComplete:
+                          description: |-
+                            A user registration update request has completed
+                          type: boolean
+                        userRegistrationVerified:
+                          description: |-
+                            A user registration has been verified
+                          type: boolean
+                        userTwoFactorChallenge:
+                          description: |-
+                            A user has been issued a two-factor challenge
+                          type: boolean
+                        userTwoFactorFailedAttempt:
+                          description: |-
+                            A user has failed a two-factor challenge attempt
+                          type: boolean
+                        userTwoFactorMethodAdd:
+                          description: |-
+                            A user has added a two-factor method
+                          type: boolean
+                        userTwoFactorMethodRemove:
+                          description: |-
+                            A user has removed a two-factor method
+                          type: boolean
+                        userTwoFactorSuccess:
+                          description: |-
+                            A user has successfully completed a two-factor challenge
+                          type: boolean
+                        userUpdate:
+                          description: |-
+                            A user is being updated
+                          type: boolean
+                        userUpdateComplete:
+                          description: |-
+                            A user update request has completed
+                          type: boolean
+                      type: object
+                    type: array
+                  global:
+                    description: |-
+                      Whether or not this Webhook is used for all events or just for specific Applications.
+                    type: boolean
+                  headers:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      An object that contains headers that are sent as part of the HTTP request for the events.
+                    type: object
+                  httpAuthenticationPasswordSecretRef:
+                    description: |-
+                      The HTTP basic authentication password that is sent as part of the HTTP request for the events.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  httpAuthenticationUsernameSecretRef:
+                    description: |-
+                      The HTTP basic authentication username that is sent as part of the HTTP request for the events.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  readTimeout:
+                    description: |-
+                      The read timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  signatureConfiguration:
+                    description: Configuration for webhook signing.
+                    items:
+                      properties:
+                        enabled:
+                          description: |-
+                            Whether or not webhook events are signed.
+                            Indicates if the Webhook request should be signed.
+                          type: boolean
+                        signingKeyId:
+                          description: |-
+                            The Id of the key used to sign webhook events. Required when signature_configuration is set to true.
+                            The Id of the key used to sign the Webhook request.
+                          type: string
+                        signingKeyIdRef:
+                          description: Reference to a Key in fusionauth to populate
+                            signingKeyId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            namespace:
+                              description: Namespace of the referenced object
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        signingKeyIdSelector:
+                          description: Selector for a Key in fusionauth to populate
+                            signingKeyId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            namespace:
+                              description: Namespace for the selector
+                              type: string
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                  sslCertificate:
+                    description: |-
+                      An SSL certificate in PEM format that is used to establish the a SSL (TLS specifically) connection to the Webhook.
+                    type: string
+                  sslCertificateKeyId:
+                    description: |-
+                      The Id of an existing Key. The X.509 certificate is used for client certificate authentication in requests to the Webhook.
+                    type: string
+                  sslCertificateKeyIdRef:
+                    description: Reference to a Key in fusionauth to populate sslCertificateKeyId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      namespace:
+                        description: Namespace of the referenced object
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  sslCertificateKeyIdSelector:
+                    description: Selector for a Key in fusionauth to populate sslCertificateKeyId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      namespace:
+                        description: Namespace for the selector
+                        type: string
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  url:
+                    description: |-
+                      The fully qualified URL of the Webhook’s endpoint that will accept the event requests from FusionAuth.
+                    type: string
+                  webhookId:
+                    description: |-
+                      The Id to use for the new Webhook. If not specified a secure random UUID will be generated.
+                      The Id of the Webhook.
+                    type: string
+                type: object
+              managementPolicies:
+                default:
+                - '*'
+                description: |-
+                  THIS IS A BETA FIELD. It is on by default but can be opted out
+                  through a Crossplane feature flag.
+                  ManagementPolicies specify the array of actions Crossplane is allowed to
+                  take on the managed and external resources.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
+                items:
+                  description: |-
+                    A ManagementAction represents an action that the Crossplane controllers
+                    can take on an external resource.
+                  enum:
+                  - Observe
+                  - Create
+                  - Update
+                  - Delete
+                  - LateInitialize
+                  - '*'
+                  type: string
+                type: array
+              providerConfigRef:
+                default:
+                  kind: ClusterProviderConfig
+                  name: default
+                description: |-
+                  ProviderConfigReference specifies how the provider that will be used to
+                  create, observe, update, and delete this managed resource should be
+                  configured.
+                properties:
+                  kind:
+                    description: Kind of the referenced object.
+                    type: string
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                required:
+                - kind
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: |-
+                  WriteConnectionSecretToReference specifies the namespace and name of a
+                  Secret to which any connection details for this managed resource should
+                  be written. Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - forProvider
+            type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.connectTimeout is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.connectTimeout)
+                || (has(self.initProvider) && has(self.initProvider.connectTimeout))'
+            - message: spec.forProvider.readTimeout is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.readTimeout)
+                || (has(self.initProvider) && has(self.initProvider.readTimeout))'
+            - message: spec.forProvider.url is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.url)
+                || (has(self.initProvider) && has(self.initProvider.url))'
+          status:
+            description: WebhookStatus defines the observed state of Webhook.
+            properties:
+              atProvider:
+                properties:
+                  connectTimeout:
+                    description: |-
+                      The connection timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  data:
+                    description: |-
+                      A JSON string that can hold any information about the Webhook that should be persisted.
+                      An object that can hold any information about the Webhook that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema. Must be a JSON string.
+                    type: string
+                  description:
+                    description: |-
+                      A description of the Webhook. This is used for display purposes only.
+                    type: string
+                  eventsEnabled:
+                    description: A mapping for the events that are enabled for this
+                      Webhook.
+                    items:
+                      properties:
+                        auditLogCreate:
+                          description: |-
+                            An audit log was created
+                          type: boolean
+                        eventLogCreate:
+                          description: |-
+                            An event log was created
+                          type: boolean
+                        groupCreate:
+                          description: |-
+                            A group is being created
+                          type: boolean
+                        groupCreateComplete:
+                          description: |-
+                            A create group request completed
+                          type: boolean
+                        groupDelete:
+                          description: |-
+                            A group is being deleted
+                          type: boolean
+                        groupDeleteComplete:
+                          description: |-
+                            A group delete request completed
+                          type: boolean
+                        groupMemberAdd:
+                          description: |-
+                            A user is being added to a group
+                          type: boolean
+                        groupMemberAddComplete:
+                          description: |-
+                            A user add request has completed
+                          type: boolean
+                        groupMemberRemove:
+                          description: |-
+                            A user is being removed from a group
+                          type: boolean
+                        groupMemberRemoveComplete:
+                          description: |-
+                            A user remove request has completed
+                          type: boolean
+                        groupMemberUpdate:
+                          description: |-
+                            A groups membership is being updated
+                          type: boolean
+                        groupMemberUpdateComplete:
+                          description: |-
+                            A group member update request has completed
+                          type: boolean
+                        groupUpdate:
+                          description: |-
+                            A group is being updated
+                          type: boolean
+                        groupUpdateComplete:
+                          description: |-
+                            A request to update a group has completed
+                          type: boolean
+                        jwtPublicKeyUpdate:
+                          description: |-
+                            A configuration occurred that may affect public keys used to verify a JWT signed by FusionAuth
+                          type: boolean
+                        jwtRefresh:
+                          description: |-
+                            A JWT was refreshed using a refresh token
+                          type: boolean
+                        jwtRefreshTokenRevoke:
+                          description: |-
+                            One or more refresh tokens were revoked
+                          type: boolean
+                        kickstartSuccess:
+                          description: |-
+                            Kickstart completed successfully the system is ready for use
+                          type: boolean
+                        userAction:
+                          description: |-
+                            An action was taken on a user, or an existing event may be changing states if the action is time based
+                          type: boolean
+                        userBulkCreate:
+                          description: |-
+                            One or more users were created using the Bulk create API
+                          type: boolean
+                        userCreate:
+                          description: |-
+                            A user is being created
+                          type: boolean
+                        userCreateComplete:
+                          description: |-
+                            A create user request completed
+                          type: boolean
+                        userDeactivate:
+                          description: |-
+                            A user is being de-activated, this is synonymous with a soft-delete when using the API
+                          type: boolean
+                        userDelete:
+                          description: |-
+                            A user is being deleted
+                          type: boolean
+                        userDeleteComplete:
+                          description: |-
+                            A user delete request has completed
+                          type: boolean
+                        userEmailUpdate:
+                          description: |-
+                            A user updated their email address
+                          type: boolean
+                        userEmailVerified:
+                          description: |-
+                            A user has verified their email address
+                          type: boolean
+                        userIdentityProviderLink:
+                          description: |-
+                            A link has been established between a user and an identity provider
+                          type: boolean
+                        userIdentityProviderUnlink:
+                          description: |-
+                            An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityVerified:
+                          description: |-
+                            When a user's identity is verified
+                          type: boolean
+                        userLoginFailed:
+                          description: |-
+                            A login request has failed
+                          type: boolean
+                        userLoginIdDuplicateCreate:
+                          description: |-
+                            A user attempted to register using an email address or username of an existing user
+                          type: boolean
+                        userLoginIdDuplicateUpdate:
+                          description: |-
+                            A user attempted to modify their email address or username to that of an existing user
+                          type: boolean
+                        userLoginNewDevice:
+                          description: |-
+                            A user has logged in from a new device
+                          type: boolean
+                        userLoginSuccess:
+                          description: |-
+                            A login request has succeeded
+                          type: boolean
+                        userLoginSuspicious:
+                          description: |-
+                            A suspicious login request has succeeded. This may be due to an impossible travel calculation, or other indicators
+                          type: boolean
+                        userPasswordBreach:
+                          description: |-
+                            A user's password has been identified as vulnerable due to being found in one or more breached data sets
+                          type: boolean
+                        userPasswordResetSend:
+                          description: |-
+                            A user has been sent an email as part of a password reset workflow
+                          type: boolean
+                        userPasswordResetStart:
+                          description: |-
+                            A user has started a password reset workflow
+                          type: boolean
+                        userPasswordResetSuccess:
+                          description: |-
+                            A user has completed a password reset workflow
+                          type: boolean
+                        userPasswordUpdate:
+                          description: |-
+                            A user has updated their password
+                          type: boolean
+                        userReactivate:
+                          description: |-
+                            A user has been re-activated
+                          type: boolean
+                        userRegistrationCreate:
+                          description: |-
+                            A user registration is being created
+                          type: boolean
+                        userRegistrationCreateComplete:
+                          description: |-
+                            A user registration has been created
+                          type: boolean
+                        userRegistrationDelete:
+                          description: |-
+                            A user registration has been deleted
+                          type: boolean
+                        userRegistrationDeleteComplete:
+                          description: |-
+                            A user registration delete request has completed
+                          type: boolean
+                        userRegistrationUpdate:
+                          description: |-
+                            A user registration is being updated
+                          type: boolean
+                        userRegistrationUpdateComplete:
+                          description: |-
+                            A user registration update request has completed
+                          type: boolean
+                        userRegistrationVerified:
+                          description: |-
+                            A user registration has been verified
+                          type: boolean
+                        userTwoFactorChallenge:
+                          description: |-
+                            A user has been issued a two-factor challenge
+                          type: boolean
+                        userTwoFactorFailedAttempt:
+                          description: |-
+                            A user has failed a two-factor challenge attempt
+                          type: boolean
+                        userTwoFactorMethodAdd:
+                          description: |-
+                            A user has added a two-factor method
+                          type: boolean
+                        userTwoFactorMethodRemove:
+                          description: |-
+                            A user has removed a two-factor method
+                          type: boolean
+                        userTwoFactorSuccess:
+                          description: |-
+                            A user has successfully completed a two-factor challenge
+                          type: boolean
+                        userUpdate:
+                          description: |-
+                            A user is being updated
+                          type: boolean
+                        userUpdateComplete:
+                          description: |-
+                            A user update request has completed
+                          type: boolean
+                      type: object
+                    type: array
+                  global:
+                    description: |-
+                      Whether or not this Webhook is used for all events or just for specific Applications.
+                    type: boolean
+                  headers:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      An object that contains headers that are sent as part of the HTTP request for the events.
+                    type: object
+                  id:
+                    type: string
+                  readTimeout:
+                    description: |-
+                      The read timeout in milliseconds used when FusionAuth sends events to the Webhook.
+                    format: int64
+                    type: integer
+                  signatureConfiguration:
+                    description: Configuration for webhook signing.
+                    items:
+                      properties:
+                        enabled:
+                          description: |-
+                            Whether or not webhook events are signed.
+                            Indicates if the Webhook request should be signed.
+                          type: boolean
+                        signingKeyId:
+                          description: |-
+                            The Id of the key used to sign webhook events. Required when signature_configuration is set to true.
+                            The Id of the key used to sign the Webhook request.
+                          type: string
+                      type: object
+                    type: array
+                  sslCertificate:
+                    description: |-
+                      An SSL certificate in PEM format that is used to establish the a SSL (TLS specifically) connection to the Webhook.
+                    type: string
+                  sslCertificateKeyId:
+                    description: |-
+                      The Id of an existing Key. The X.509 certificate is used for client certificate authentication in requests to the Webhook.
+                    type: string
+                  tenantIds:
+                    description: |-
+                      The list of tenant ids that this Webhook is associated with.
+                      The Ids of the Tenants that this Webhook should be associated with. If no Ids are specified and the global field is false, this Webhook will not be used.
+                    items:
+                      type: string
+                    type: array
+                    x-kubernetes-list-type: set
+                  url:
+                    description: |-
+                      The fully qualified URL of the Webhook’s endpoint that will accept the event requests from FusionAuth.
+                    type: string
+                  webhookId:
+                    description: |-
+                      The Id to use for the new Webhook. If not specified a secure random UUID will be generated.
+                      The Id of the Webhook.
+                    type: string
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        ObservedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              lastHandledReconcileAt:
+                description: |-
+                  LastHandledReconcileAt holds the value of the most recent
+                  reconcile-requested-at annotation token that the controller has
+                  processed. Users can compare this to the annotation to determine
+                  whether a reconcile request has been handled.
+                type: string
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the latest metadata.generation
+                  which resulted in either a ready state, or stalled due to error
+                  it can not recover from without human intervention.
+                format: int64
+                type: integer
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

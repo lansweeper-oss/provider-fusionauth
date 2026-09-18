@@ -1,0 +1,325 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Tenant
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/tenant
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    baseUrl: https://auth.example.com
+    captchaConfiguration:
+    - captchaMethod: GoogleRecaptchaV3
+      enabled: true
+      secretKeySecretRef:
+        key: example-key
+        name: example-secret
+        namespace: upbound-system
+      siteKey: captcha_site_key
+      threshold: 0.5
+    connectorPolicy:
+    - connectorId: b57b3d0f-f7a4-4831-a838-549717362ea8
+      domains:
+      - '*'
+      migrate: false
+    emailConfiguration:
+    - additionalHeaders:
+        HeaderName1: HeaderValue1
+        HeaderName2: HeaderValue2
+      forgotPasswordEmailTemplateIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: ForgotPassword_Example
+      host: smtp.sendgrid.net
+      passwordSecretRef:
+        key: example-key
+        name: example-secret
+        namespace: upbound-system
+      passwordlessEmailTemplateIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: PasswordlessLogin_Example
+      port: 587
+      security: TLS
+      setPasswordEmailTemplateIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: SetupPassword_Example
+      username: username
+      verifyEmail: true
+      verifyEmailWhenChanged: true
+    eventConfiguration:
+    - enabled: false
+      event: jwt.public-key.update
+      transactionType: None
+    - enabled: false
+      event: jwt.refresh-token.revoke
+      transactionType: None
+    - enabled: false
+      event: jwt.refresh
+      transactionType: None
+    - enabled: false
+      event: group.create
+      transactionType: None
+    - enabled: false
+      event: group.create.complete
+      transactionType: None
+    - enabled: false
+      event: group.delete
+      transactionType: None
+    - enabled: false
+      event: group.delete.complete
+      transactionType: None
+    - enabled: false
+      event: group.member.add
+      transactionType: None
+    - enabled: false
+      event: group.member.add.complete
+      transactionType: None
+    - enabled: false
+      event: group.member.remove
+      transactionType: None
+    - enabled: false
+      event: group.member.remove.complete
+      transactionType: None
+    - enabled: false
+      event: group.member.update
+      transactionType: None
+    - enabled: false
+      event: group.member.update.complete
+      transactionType: None
+    - enabled: false
+      event: group.update
+      transactionType: None
+    - enabled: false
+      event: group.update.complete
+      transactionType: None
+    - enabled: false
+      event: user.action
+      transactionType: None
+    - enabled: false
+      event: user.bulk.create
+      transactionType: None
+    - enabled: false
+      event: user.create
+      transactionType: None
+    - enabled: false
+      event: user.create.complete
+      transactionType: None
+    - enabled: false
+      event: user.deactivate
+      transactionType: None
+    - enabled: false
+      event: user.delete
+      transactionType: None
+    - enabled: false
+      event: user.delete.complete
+      transactionType: None
+    - enabled: false
+      event: user.email.update
+      transactionType: None
+    - enabled: false
+      event: user.email.verified
+      transactionType: None
+    - enabled: false
+      event: user.identity-provider.link
+      transactionType: None
+    - enabled: false
+      event: user.identity-provider.unlink
+      transactionType: None
+    - enabled: false
+      event: user.loginId.duplicate.create
+      transactionType: None
+    - enabled: false
+      event: user.loginId.duplicate.update
+      transactionType: None
+    - enabled: false
+      event: user.login.failed
+      transactionType: None
+    - enabled: false
+      event: user.login.new-device
+      transactionType: None
+    - enabled: false
+      event: user.login.success
+      transactionType: None
+    - enabled: false
+      event: user.login.suspicious
+      transactionType: None
+    - enabled: false
+      event: user.password.breach
+      transactionType: None
+    - enabled: false
+      event: user.password.reset.send
+      transactionType: None
+    - enabled: false
+      event: user.password.reset.start
+      transactionType: None
+    - enabled: false
+      event: user.password.reset.success
+      transactionType: None
+    - enabled: false
+      event: user.password.update
+      transactionType: None
+    - enabled: false
+      event: user.reactivate
+      transactionType: None
+    - enabled: false
+      event: user.registration.create
+      transactionType: None
+    - enabled: false
+      event: user.registration.create.complete
+      transactionType: None
+    - enabled: false
+      event: user.registration.delete
+      transactionType: None
+    - enabled: false
+      event: user.registration.delete.complete
+      transactionType: None
+    - enabled: false
+      event: user.registration.update
+      transactionType: None
+    - enabled: false
+      event: user.registration.update.complete
+      transactionType: None
+    - enabled: false
+      event: user.registration.verified
+      transactionType: None
+    - enabled: false
+      event: user.two-factor.method.add
+      transactionType: None
+    - enabled: false
+      event: user.two-factor.method.remove
+      transactionType: None
+    - enabled: false
+      event: user.update
+      transactionType: None
+    - enabled: false
+      event: user.update.complete
+      transactionType: None
+    externalIdentifierConfiguration:
+    - authorizationGrantIdTimeToLiveInSeconds: 30
+      changePasswordIdGenerator:
+      - length: 32
+        type: randomBytes
+      changePasswordIdTimeToLiveInSeconds: 600
+      deviceCodeTimeToLiveInSeconds: 1800
+      deviceUserCodeIdGenerator:
+      - length: 6
+        type: randomAlphaNumeric
+      emailVerificationIdGenerator:
+      - length: 32
+        type: randomBytes
+      emailVerificationIdTimeToLiveInSeconds: 86400
+      emailVerificationOneTimeCodeGenerator:
+      - length: 6
+        type: randomAlphaNumeric
+      externalAuthenticationIdTimeToLiveInSeconds: 300
+      loginIntentTimeToLiveInSeconds: 1800
+      oneTimePasswordTimeToLiveInSeconds: 60
+      passwordlessLoginGenerator:
+      - length: 32
+        type: randomBytes
+      passwordlessLoginTimeToLiveInSeconds: 600
+      registrationVerificationIdGenerator:
+      - length: 32
+        type: randomBytes
+      registrationVerificationIdTimeToLiveInSeconds: 86400
+      registrationVerificationOneTimeCodeGenerator:
+      - length: 6
+        type: randomAlphaNumeric
+      samlV2AuthnRequestIdTtlSeconds: 300
+      setupPasswordIdGenerator:
+      - length: 32
+        type: randomBytes
+      setupPasswordIdTimeToLiveInSeconds: 86400
+      twoFactorIdTimeToLiveInSeconds: 300
+      twoFactorOneTimeCodeIdGenerator:
+      - length: 6
+        type: randomDigits
+      twoFactorOneTimeCodeIdTimeToLiveInSeconds: 60
+      twoFactorTrustIdTimeToLiveInSeconds: 2592000
+    failedAuthenticationConfiguration:
+    - actionDuration: 3
+      actionDurationUnit: MINUTES
+      resetCountInSeconds: 60
+      tooManyAttempts: 5
+    familyConfiguration:
+    - allowChildRegistrations: true
+      deleteOrphanedAccounts: false
+      deleteOrphanedAccountsDays: 30
+      enabled: true
+      maximumChildAge: 12
+      minimumOwnerAge: 21
+      parentEmailRequired: false
+    formConfiguration:
+    - adminUserFormId: e92751a5-25f4-4bca-ad91-66cdf67725d2
+    httpSessionMaxInactiveInterval: 3600
+    issuer: https://example.com
+    jwtConfiguration:
+    - accessTokenKeyIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: accesstoken
+      idTokenKeyIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: idtoken
+      refreshTokenTimeToLiveInMinutes: 43200
+      timeToLiveInSeconds: 3600
+    loginConfiguration:
+    - requireAuthentication: true
+    maximumPasswordAge:
+    - days: 180
+      enabled: false
+    minimumPasswordAge:
+    - enabled: false
+      seconds: 30
+    name: Playtronics Co.
+    oauthConfiguration:
+    - clientCredentialsAccessTokenPopulateLambdaIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: client_jwt_populate
+    passwordEncryptionConfiguration:
+    - encryptionScheme: salted-pbkdf2-hmac-sha256
+      encryptionSchemeFactor: 24000
+      modifyEncryptionSchemeOnLogin: false
+    passwordValidationRules:
+    - maxLength: 256
+      minLength: 7
+      rememberPreviousPasswords:
+      - count: 1
+        enabled: false
+      requireNonAlpha: false
+      requireNumber: false
+      requiredMixedCase: false
+      validateOnLogin: false
+    rateLimitConfiguration:
+    - failedLogin:
+      - enabled: true
+        limit: 5
+        timePeriodInSeconds: 60
+      forgotPassword:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+      sendEmailVerification:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+      sendPasswordless:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+      sendRegistrationVerification:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+      sendTwoFactor:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+    registrationConfiguration:
+    - blockedDomains:
+      - example.com
+    themeIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example_theme
+    userDeletePolicy:
+    - unverifiedEnabled: false
+      unverifiedNumberOfDaysToRetain: 30

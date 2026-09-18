@@ -1,0 +1,44 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: application-create-namespaced
+# Validates basic Application CRUD lifecycle for namespaced resources
+# (fusionauth.m.crossplane.io). Creates an Application using
+# ClusterProviderConfig, asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-namespaced-app
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: e2e-namespaced-app
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-namespaced-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-namespaced-app

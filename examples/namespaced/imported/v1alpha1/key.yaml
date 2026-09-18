@@ -1,0 +1,16 @@
+apiVersion: imported.fusionauth.m.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  annotations:
+    meta.upbound.io/example-id: imported/v1alpha1/key
+  labels:
+    testing.upbound.io/example-name: name
+  name: name
+  namespace: crossplane-system
+spec:
+  forProvider:
+    kid: "8675309"
+    name: apple
+    privateKeySecretRef:
+      key: attribute.AuthKey_8675309.p8
+      name: example-secret

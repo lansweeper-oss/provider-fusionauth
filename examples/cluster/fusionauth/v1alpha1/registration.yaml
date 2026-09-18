@@ -1,0 +1,19 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Registration
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/registration
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    applicationIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: fusionauth_application
+    roles:
+    - admin
+    userIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    username: theadmin

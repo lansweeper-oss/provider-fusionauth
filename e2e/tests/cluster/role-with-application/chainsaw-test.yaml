@@ -1,0 +1,81 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: role-with-application-cluster
+# Validates Role creation with an Application dependency for cluster-scoped
+# resources. Role (application.fusionauth.crossplane.io) requires applicationId,
+# so we create an Application first, extract its ID, then create the Role.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: role-test-app
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: role-test-app
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: role-test-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+
+    - name: create-role
+      try:
+        - script:
+            timeout: 30s
+            content: |
+              APP_ID=$(${KUBECTL} get application.fusionauth.crossplane.io role-test-app \
+                -o jsonpath='{.status.atProvider.id}')
+              cat <<EOF | ${KUBECTL} apply -f -
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: e2e-test-role
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  applicationId: "${APP_ID}"
+                  name: e2e-test-role
+                  description: "E2E test role"
+                providerConfigRef:
+                  name: default
+              EOF
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: e2e-test-role
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              name: e2e-test-role
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              name: role-test-app

@@ -1,0 +1,23 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Steam
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/steam
+  labels:
+    testing.upbound.io/example-name: steam
+  name: steam
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: GPS_Insight
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Steam
+    clientId: 0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc
+    scope: Xboxlive.signin Xboxlive.offline_access
+    webApiKeySecretRef:
+      key: example-key
+      name: example-secret
+      namespace: upbound-system

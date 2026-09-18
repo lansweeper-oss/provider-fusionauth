@@ -1,0 +1,23 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: ManagerConfiguration
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/managerconfiguration
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfigurations:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: example
+    attributeFormIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    brandName: Acme Corp
+    identityProviderTypeConfigurations:
+    - enabled: true
+      linkingStrategy: LinkByEmail
+      type: SAMLv2

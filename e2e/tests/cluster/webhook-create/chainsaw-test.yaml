@@ -1,0 +1,46 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: webhook-create-cluster
+# Validates basic Webhook CRUD lifecycle for cluster-scoped resources
+# (fusionauth.crossplane.io). Creates a Webhook, asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-webhook
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Webhook
+              metadata:
+                name: e2e-test-webhook
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  connectTimeout: 1000
+                  readTimeout: 2000
+                  url: "https://example.com/webhook"
+                  eventsEnabled:
+                    - userCreate: true
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Webhook
+              metadata:
+                name: e2e-test-webhook
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Webhook
+              name: e2e-test-webhook

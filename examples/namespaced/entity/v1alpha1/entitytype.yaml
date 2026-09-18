@@ -1,0 +1,22 @@
+apiVersion: entity.fusionauth.m.crossplane.io/v1alpha1
+kind: EntityType
+metadata:
+  annotations:
+    meta.upbound.io/example-id: entity/v1alpha1/entitytype
+  labels:
+    testing.upbound.io/example-name: company
+  name: company
+  namespace: crossplane-system
+spec:
+  forProvider:
+    data: |-
+      ${jsonencode({
+          createdBy = "jared@fusionauth.io"
+        })}
+    jwtConfiguration:
+    - accessTokenKeyIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: example
+      enabled: true
+      timeToLiveInSeconds: 3600
+    name: Company

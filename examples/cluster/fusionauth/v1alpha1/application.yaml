@@ -1,0 +1,100 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/application
+  labels:
+    testing.upbound.io/example-name: Forum
+  name: forum
+spec:
+  forProvider:
+    authenticationTokenConfigurationEnabled: false
+    formConfiguration:
+    - adminRegistrationFormId: ${fusionauth_form.admin_registration.id}
+      selfServiceFormId: ${fusionauth_form.self_service.id}
+    jwtConfiguration:
+    - accessTokenIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: access_token
+      enabled: true
+      idTokenKeyIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: id_token
+      refreshTokenTtlMinutes: 43200
+      ttlSeconds: 3600
+    lambdaConfiguration:
+    - accessTokenPopulateIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: token_populate
+      idTokenPopulateIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: id_token_populate
+    loginConfiguration:
+    - allowTokenRefresh: false
+      generateRefreshTokens: false
+      requireAuthentication: true
+    multiFactorConfiguration:
+    - emailTemplateId: 859f394b-22a6-4fa6-ba55-de700df9e950
+      loginPolicy: Required
+      smsTemplateId: 17760f96-dca7-448b-9a8f-c49016aa7210
+      trustPolicy: Any
+    name: Forum
+    oauthConfiguration:
+    - authorizedOriginUrls:
+      - http://www.example.com/oauth-callback
+      authorizedUrlValidationPolicy: ExactMatch
+      enabledGrants:
+      - authorization_code
+      - implicit
+      generateRefreshTokens: false
+      logoutBehavior: AllApplications
+      logoutUrl: http://www.example.com/logout
+      providedScopePolicy:
+      - address:
+        - enabled: false
+          required: false
+        email:
+        - enabled: false
+          required: false
+        phone:
+        - enabled: false
+          required: false
+        profile:
+        - enabled: false
+          required: false
+      requireClientAuthentication: false
+    passwordlessConfigurationEnabled: false
+    registrationConfiguration:
+    - birthDate:
+      - enabled: false
+        required: false
+      confirmPassword: false
+      enabled: false
+      firstName:
+      - enabled: false
+        required: false
+      fullName:
+      - enabled: false
+        required: false
+      lastName:
+      - enabled: false
+        required: false
+      loginIdType: ""
+      middleName:
+      - enabled: false
+        required: false
+      mobilePhone:
+      - enabled: false
+        required: false
+      preferredLanguages:
+      - enabled: false
+        required: false
+      type: ""
+    registrationDeletePolicy:
+    - unverifiedEnabled: true
+      unverifiedNumberOfDaysToRetain: 30
+    tenantIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: portal
+    universalConfiguration:
+    - universal: false

@@ -1,0 +1,23 @@
+apiVersion: twilio.fusionauth.m.crossplane.io/v1alpha1
+kind: Messenger
+metadata:
+  annotations:
+    meta.upbound.io/example-id: twilio/v1alpha1/messenger
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    accountSid: 983C6FACEBBE4D858570FADD967A9DD7
+    authTokenSecretRef:
+      key: example-key
+      name: example-secret
+    data: |-
+      ${jsonencode({
+          foo = "bar"
+        })}
+    debug: false
+    fromPhoneNumber: 555-555-6666
+    name: Twilio Messenger
+    url: https://api.twilio.com

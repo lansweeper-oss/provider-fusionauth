@@ -1,0 +1,19 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: Lambda
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/lambda
+  labels:
+    testing.upbound.io/example-name: preferred_username
+  name: preferred-username
+  namespace: crossplane-system
+spec:
+  forProvider:
+    body: |
+      // Using the user and registration parameters add additional values to the jwt object.
+      function populate(jwt, user, registration) {
+        jwt.preferred_username = registration.username;
+      }
+    enabled: true
+    name: Preferred Username
+    type: JWTPopulate

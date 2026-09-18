@@ -1,0 +1,16 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/group
+  labels:
+    testing.upbound.io/example-name: my_group
+  name: my-group
+spec:
+  forProvider:
+    name: My Group
+    roleIds:
+    - ${fusionauth_application_role.admins.id}
+    tenantIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: my_tenant

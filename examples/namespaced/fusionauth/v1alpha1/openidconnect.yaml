@@ -1,0 +1,36 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: OpenIDConnect
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/openidconnect
+  labels:
+    testing.upbound.io/example-name: OpenID
+  name: openid
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: myapp
+      createRegistration: true
+      enabled: true
+    buttonText: Login with OpenID Connect
+    debug: false
+    enabled: true
+    name: Super Awesome OpenID Connect Provider
+    oauth2AuthorizationEndpoint: https://acme.com/oauth2/authorization
+    oauth2ClientAuthenticationMethod: client_secret_basic
+    oauth2ClientId: 191c23dc-b772-4558-bd21-dc1cbf74ae21
+    oauth2ClientSecretSecretRef:
+      key: example-key
+      name: example-secret
+    oauth2Scope: openid offline_access
+    oauth2TokenEndpoint: https://acme.com/oauth2/token
+    oauth2UserInfoEndpoint: https://acme.com/oauth2/userinfo
+    tenantConfiguration:
+    - limitUserLinkCountEnabled: false
+      limitUserLinkCountMaximumLinks: 42
+      tenantIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: example

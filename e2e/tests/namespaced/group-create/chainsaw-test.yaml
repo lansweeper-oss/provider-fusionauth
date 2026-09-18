@@ -1,0 +1,44 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: group-create-namespaced
+# Validates basic Group CRUD lifecycle for namespaced resources
+# (fusionauth.m.crossplane.io). Creates a Group using ClusterProviderConfig,
+# asserts Ready, then cleans up.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-group
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: e2e-ns-test-group
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: e2e-ns-test-group
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: e2e-ns-test-group
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              name: e2e-ns-test-group

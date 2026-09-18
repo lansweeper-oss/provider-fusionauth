@@ -1,0 +1,19 @@
+apiVersion: fusionauth.m.crossplane.io/v1alpha1
+kind: Configuration
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/configuration
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    auditLogConfiguration:
+    - delete:
+      - enabled: true
+        numberOfDaysToRetain: 367
+    corsConfiguration:
+    - allowedMethods:
+      - POST
+      - PUT

@@ -1,0 +1,1301 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.22.0
+  name: linkedins.idp.fusionauth.crossplane.io
+spec:
+  group: idp.fusionauth.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - fusionauth
+    kind: Linkedin
+    listKind: LinkedinList
+    plural: linkedins
+    singular: linkedin
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Linkedin is the Schema for the Linkedins API. LinkedIn Identity
+          Provider Resource
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: LinkedinSpec defines the desired state of Linkedin
+            properties:
+              deletionPolicy:
+                default: Delete
+                description: |-
+                  DeletionPolicy specifies what will happen to the underlying external
+                  when this managed resource is deleted - either "Delete" or "Orphan" the
+                  external resource.
+                  This field is planned to be deprecated in favor of the ManagementPolicies
+                  field in a future release. Currently, both could be set independently and
+                  non-default values would be honored if the feature flag is enabled.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                enum:
+                - Orphan
+                - Delete
+                type: string
+              forProvider:
+                properties:
+                  applicationConfiguration:
+                    description: |-
+                      The configuration for each Application that the identity provider is enabled for.
+                    items:
+                      properties:
+                        applicationId:
+                          description: |-
+                            ID of the FusionAuth Application to apply this configuration to.
+                          type: string
+                        applicationIdRef:
+                          description: Reference to a Application in fusionauth to
+                            populate applicationId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        applicationIdSelector:
+                          description: Selector for a Application in fusionauth to
+                            populate applicationId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                        buttonText:
+                          description: |-
+                            This is an optional Application specific override for the top level button_text.
+                            This is an optional Application specific override for the top level button text.
+                          type: string
+                        clientIdSecretRef:
+                          description: |-
+                            This is an optional Application specific override for the top level client_id.
+                            This is an optional Application specific override for the top level client ID.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        clientSecretSecretRef:
+                          description: |-
+                            This is an optional Application specific override for the top level client_secret.
+                            This is an optional Application specific override for the top level client secret.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        createRegistration:
+                          description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+                          type: boolean
+                        enabled:
+                          description: |-
+                            Determines if this identity provider is enabled for the Application specified by the application_id property.
+                            Determines if this identity provider is enabled for the Application specified by the application id key.
+                          type: boolean
+                        scope:
+                          description: |-
+                            This is an optional Application specific override for the top level scope.
+                          type: string
+                      type: object
+                    type: array
+                  attributeMappings:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.
+                      A map of Identity Provider claim or response values to FusionAuth user attributes or registration fields.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  buttonText:
+                    description: |-
+                      This is an optional Application specific override for the top level button_text.
+                      The top-level button text to use on the FusionAuth login page for this Identity Provider.
+                    type: string
+                  clientId:
+                    description: |-
+                      This is an optional Application specific override for the top level client_id.
+                      The top-level LinkedIn client id for your Application. This value is retrieved from the LinkedIn developer website when you set up your LinkedIn app.
+                    type: string
+                  clientSecretSecretRef:
+                    description: |-
+                      This is an optional Application specific override for the top level client_secret.
+                      The top-level client secret to use with the LinkedIn Identity Provider when retrieving the long-lived token. This value is retrieved from the LinkedIn developer website when you set up your LinkedIn app.
+                    properties:
+                      key:
+                        description: The key to select.
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                      namespace:
+                        description: Namespace of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    - namespace
+                    type: object
+                  debug:
+                    description: |-
+                      Determines if debug is enabled for this provider. When enabled, an Event Log is created each time this provider is invoked to reconcile a login.
+                    type: boolean
+                  enabled:
+                    description: |-
+                      Determines if this identity provider is enabled for the Application specified by the application_id property.
+                      Determines if this provider is enabled. If it is false then it will be disabled globally.
+                    type: boolean
+                  lambdaReconcileId:
+                    description: |-
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user. The specified Lambda Id must be of type LinkedInReconcile.
+                    type: string
+                  lambdaReconcileIdRef:
+                    description: Reference to a Lambda in fusionauth to populate lambdaReconcileId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  lambdaReconcileIdSelector:
+                    description: Selector for a Lambda in fusionauth to populate lambdaReconcileId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  linkingStrategy:
+                    description: |-
+                      The linking strategy to use when creating the link between the Facebook Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The valid values are:
+                      The linking strategy to use when creating the link between the LinkedIn Identity Provider and the user.
+                    type: string
+                  name:
+                    description: |-
+                      The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.
+                      The name of the provider. This is only used for display purposes.
+                    type: string
+                  scope:
+                    description: |-
+                      This is an optional Application specific override for the top level scope.
+                      The top-level scope that you are requesting from LinkedIn.
+                    type: string
+                  source:
+                    description: |-
+                      The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.
+                    type: string
+                  tenantConfiguration:
+                    description: |-
+                      The configuration for each Tenant that limits the number of links a user may have for a particular identity provider.
+                    items:
+                      properties:
+                        limitUserLinkCountEnabled:
+                          description: |-
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks.
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks
+                          type: boolean
+                        limitUserLinkCountMaximumLinks:
+                          description: |-
+                            Determines if this provider is enabled. If it is false then it will be disabled globally.
+                          format: int64
+                          type: integer
+                        tenantId:
+                          description: The unique Id of the tenant that this configuration
+                            applies to.
+                          type: string
+                        tenantIdRef:
+                          description: Reference to a Tenant in fusionauth to populate
+                            tenantId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        tenantIdSelector:
+                          description: Selector for a Tenant in fusionauth to populate
+                            tenantId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                  tenantId:
+                    description: |-
+                      The unique Id of the tenant that this configuration applies to.
+                      The unique Id of the Tenant. Providing a value creates an identity provider scoped to the specified tenant, otherwise a global identity provider is created. Tenant-scoped identity providers can only be used to authenticate in the context of the specified tenant. Global identity providers can be used with any tenant. This value cannot be updated after creation and requires recreating the resource to change.
+                    type: string
+                  tenantIdRef:
+                    description: Reference to a Tenant in fusionauth to populate tenantId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  tenantIdSelector:
+                    description: Selector for a Tenant in fusionauth to populate tenantId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                type: object
+              initProvider:
+                description: |-
+                  THIS IS A BETA FIELD. It will be honored
+                  unless the Management Policies feature flag is disabled.
+                  InitProvider holds the same fields as ForProvider, with the exception
+                  of Identifier and other resource reference fields. The fields that are
+                  in InitProvider are merged into ForProvider when the resource is created.
+                  The same fields are also added to the terraform ignore_changes hook, to
+                  avoid updating them after creation. This is useful for fields that are
+                  required on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them, like an
+                  autoscaler.
+                properties:
+                  applicationConfiguration:
+                    description: |-
+                      The configuration for each Application that the identity provider is enabled for.
+                    items:
+                      properties:
+                        applicationId:
+                          description: |-
+                            ID of the FusionAuth Application to apply this configuration to.
+                          type: string
+                        applicationIdRef:
+                          description: Reference to a Application in fusionauth to
+                            populate applicationId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        applicationIdSelector:
+                          description: Selector for a Application in fusionauth to
+                            populate applicationId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                        buttonText:
+                          description: |-
+                            This is an optional Application specific override for the top level button_text.
+                            This is an optional Application specific override for the top level button text.
+                          type: string
+                        clientIdSecretRef:
+                          description: |-
+                            This is an optional Application specific override for the top level client_id.
+                            This is an optional Application specific override for the top level client ID.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        clientSecretSecretRef:
+                          description: |-
+                            This is an optional Application specific override for the top level client_secret.
+                            This is an optional Application specific override for the top level client secret.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        createRegistration:
+                          description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+                          type: boolean
+                        enabled:
+                          description: |-
+                            Determines if this identity provider is enabled for the Application specified by the application_id property.
+                            Determines if this identity provider is enabled for the Application specified by the application id key.
+                          type: boolean
+                        scope:
+                          description: |-
+                            This is an optional Application specific override for the top level scope.
+                          type: string
+                      type: object
+                    type: array
+                  attributeMappings:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.
+                      A map of Identity Provider claim or response values to FusionAuth user attributes or registration fields.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  buttonText:
+                    description: |-
+                      This is an optional Application specific override for the top level button_text.
+                      The top-level button text to use on the FusionAuth login page for this Identity Provider.
+                    type: string
+                  clientId:
+                    description: |-
+                      This is an optional Application specific override for the top level client_id.
+                      The top-level LinkedIn client id for your Application. This value is retrieved from the LinkedIn developer website when you set up your LinkedIn app.
+                    type: string
+                  clientSecretSecretRef:
+                    description: |-
+                      This is an optional Application specific override for the top level client_secret.
+                      The top-level client secret to use with the LinkedIn Identity Provider when retrieving the long-lived token. This value is retrieved from the LinkedIn developer website when you set up your LinkedIn app.
+                    properties:
+                      key:
+                        description: The key to select.
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                      namespace:
+                        description: Namespace of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    - namespace
+                    type: object
+                  debug:
+                    description: |-
+                      Determines if debug is enabled for this provider. When enabled, an Event Log is created each time this provider is invoked to reconcile a login.
+                    type: boolean
+                  enabled:
+                    description: |-
+                      Determines if this identity provider is enabled for the Application specified by the application_id property.
+                      Determines if this provider is enabled. If it is false then it will be disabled globally.
+                    type: boolean
+                  lambdaReconcileId:
+                    description: |-
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user. The specified Lambda Id must be of type LinkedInReconcile.
+                    type: string
+                  lambdaReconcileIdRef:
+                    description: Reference to a Lambda in fusionauth to populate lambdaReconcileId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  lambdaReconcileIdSelector:
+                    description: Selector for a Lambda in fusionauth to populate lambdaReconcileId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  linkingStrategy:
+                    description: |-
+                      The linking strategy to use when creating the link between the Facebook Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The valid values are:
+                      The linking strategy to use when creating the link between the LinkedIn Identity Provider and the user.
+                    type: string
+                  name:
+                    description: |-
+                      The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.
+                      The name of the provider. This is only used for display purposes.
+                    type: string
+                  scope:
+                    description: |-
+                      This is an optional Application specific override for the top level scope.
+                      The top-level scope that you are requesting from LinkedIn.
+                    type: string
+                  source:
+                    description: |-
+                      The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.
+                    type: string
+                  tenantConfiguration:
+                    description: |-
+                      The configuration for each Tenant that limits the number of links a user may have for a particular identity provider.
+                    items:
+                      properties:
+                        limitUserLinkCountEnabled:
+                          description: |-
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks.
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks
+                          type: boolean
+                        limitUserLinkCountMaximumLinks:
+                          description: |-
+                            Determines if this provider is enabled. If it is false then it will be disabled globally.
+                          format: int64
+                          type: integer
+                        tenantId:
+                          description: The unique Id of the tenant that this configuration
+                            applies to.
+                          type: string
+                        tenantIdRef:
+                          description: Reference to a Tenant in fusionauth to populate
+                            tenantId.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        tenantIdSelector:
+                          description: Selector for a Tenant in fusionauth to populate
+                            tenantId.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
+                      type: object
+                    type: array
+                  tenantId:
+                    description: |-
+                      The unique Id of the tenant that this configuration applies to.
+                      The unique Id of the Tenant. Providing a value creates an identity provider scoped to the specified tenant, otherwise a global identity provider is created. Tenant-scoped identity providers can only be used to authenticate in the context of the specified tenant. Global identity providers can be used with any tenant. This value cannot be updated after creation and requires recreating the resource to change.
+                    type: string
+                  tenantIdRef:
+                    description: Reference to a Tenant in fusionauth to populate tenantId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  tenantIdSelector:
+                    description: Selector for a Tenant in fusionauth to populate tenantId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                required:
+                - clientSecretSecretRef
+                type: object
+              managementPolicies:
+                default:
+                - '*'
+                description: |-
+                  THIS IS A BETA FIELD. It is on by default but can be opted out
+                  through a Crossplane feature flag.
+                  ManagementPolicies specify the array of actions Crossplane is allowed to
+                  take on the managed and external resources.
+                  This field is planned to replace the DeletionPolicy field in a future
+                  release. Currently, both could be set independently and non-default
+                  values would be honored if the feature flag is enabled. If both are
+                  custom, the DeletionPolicy field will be ignored.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
+                items:
+                  description: |-
+                    A ManagementAction represents an action that the Crossplane controllers
+                    can take on an external resource.
+                  enum:
+                  - Observe
+                  - Create
+                  - Update
+                  - Delete
+                  - LateInitialize
+                  - '*'
+                  type: string
+                type: array
+              providerConfigRef:
+                default:
+                  name: default
+                description: |-
+                  ProviderConfigReference specifies how the provider that will be used to
+                  create, observe, update, and delete this managed resource should be
+                  configured.
+                properties:
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                  policy:
+                    description: Policies for referencing.
+                    properties:
+                      resolution:
+                        default: Required
+                        description: |-
+                          Resolution specifies whether resolution of this reference is required.
+                          The default is 'Required', which means the reconcile will fail if the
+                          reference cannot be resolved. 'Optional' means this reference will be
+                          a no-op if it cannot be resolved.
+                        enum:
+                        - Required
+                        - Optional
+                        type: string
+                      resolve:
+                        description: |-
+                          Resolve specifies when this reference should be resolved. The default
+                          is 'IfNotPresent', which will attempt to resolve the reference only when
+                          the corresponding field is not present. Use 'Always' to resolve the
+                          reference on every reconcile.
+                        enum:
+                        - Always
+                        - IfNotPresent
+                        type: string
+                    type: object
+                required:
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: |-
+                  WriteConnectionSecretToReference specifies the namespace and name of a
+                  Secret to which any connection details for this managed resource should
+                  be written. Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                  namespace:
+                    description: Namespace of the secret.
+                    type: string
+                required:
+                - name
+                - namespace
+                type: object
+            required:
+            - forProvider
+            type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.buttonText is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.buttonText)
+                || (has(self.initProvider) && has(self.initProvider.buttonText))'
+            - message: spec.forProvider.clientId is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.clientId)
+                || (has(self.initProvider) && has(self.initProvider.clientId))'
+            - message: spec.forProvider.clientSecretSecretRef is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.clientSecretSecretRef)'
+          status:
+            description: LinkedinStatus defines the observed state of Linkedin.
+            properties:
+              atProvider:
+                properties:
+                  applicationConfiguration:
+                    description: |-
+                      The configuration for each Application that the identity provider is enabled for.
+                    items:
+                      properties:
+                        applicationId:
+                          description: |-
+                            ID of the FusionAuth Application to apply this configuration to.
+                          type: string
+                        buttonText:
+                          description: |-
+                            This is an optional Application specific override for the top level button_text.
+                            This is an optional Application specific override for the top level button text.
+                          type: string
+                        createRegistration:
+                          description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+                          type: boolean
+                        enabled:
+                          description: |-
+                            Determines if this identity provider is enabled for the Application specified by the application_id property.
+                            Determines if this identity provider is enabled for the Application specified by the application id key.
+                          type: boolean
+                        scope:
+                          description: |-
+                            This is an optional Application specific override for the top level scope.
+                          type: string
+                      type: object
+                    type: array
+                  attributeMappings:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.
+                      A map of Identity Provider claim or response values to FusionAuth user attributes or registration fields.
+                    type: object
+                    x-kubernetes-map-type: granular
+                  buttonText:
+                    description: |-
+                      This is an optional Application specific override for the top level button_text.
+                      The top-level button text to use on the FusionAuth login page for this Identity Provider.
+                    type: string
+                  clientId:
+                    description: |-
+                      This is an optional Application specific override for the top level client_id.
+                      The top-level LinkedIn client id for your Application. This value is retrieved from the LinkedIn developer website when you set up your LinkedIn app.
+                    type: string
+                  debug:
+                    description: |-
+                      Determines if debug is enabled for this provider. When enabled, an Event Log is created each time this provider is invoked to reconcile a login.
+                    type: boolean
+                  enabled:
+                    description: |-
+                      Determines if this identity provider is enabled for the Application specified by the application_id property.
+                      Determines if this provider is enabled. If it is false then it will be disabled globally.
+                    type: boolean
+                  id:
+                    type: string
+                  lambdaReconcileId:
+                    description: |-
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.
+                      The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user. The specified Lambda Id must be of type LinkedInReconcile.
+                    type: string
+                  linkingStrategy:
+                    description: |-
+                      The linking strategy to use when creating the link between the Facebook Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                      The valid values are:
+                      The linking strategy to use when creating the link between the LinkedIn Identity Provider and the user.
+                    type: string
+                  name:
+                    description: |-
+                      The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.
+                      The name of the provider. This is only used for display purposes.
+                    type: string
+                  scope:
+                    description: |-
+                      This is an optional Application specific override for the top level scope.
+                      The top-level scope that you are requesting from LinkedIn.
+                    type: string
+                  source:
+                    description: |-
+                      The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.
+                    type: string
+                  tenantConfiguration:
+                    description: |-
+                      The configuration for each Tenant that limits the number of links a user may have for a particular identity provider.
+                    items:
+                      properties:
+                        limitUserLinkCountEnabled:
+                          description: |-
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks.
+                            When enabled, the number of identity provider links a user may create is enforced by maximumLinks
+                          type: boolean
+                        limitUserLinkCountMaximumLinks:
+                          description: |-
+                            Determines if this provider is enabled. If it is false then it will be disabled globally.
+                          format: int64
+                          type: integer
+                        tenantId:
+                          description: The unique Id of the tenant that this configuration
+                            applies to.
+                          type: string
+                      type: object
+                    type: array
+                  tenantId:
+                    description: |-
+                      The unique Id of the tenant that this configuration applies to.
+                      The unique Id of the Tenant. Providing a value creates an identity provider scoped to the specified tenant, otherwise a global identity provider is created. Tenant-scoped identity providers can only be used to authenticate in the context of the specified tenant. Global identity providers can be used with any tenant. This value cannot be updated after creation and requires recreating the resource to change.
+                    type: string
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        ObservedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              lastHandledReconcileAt:
+                description: |-
+                  LastHandledReconcileAt holds the value of the most recent
+                  reconcile-requested-at annotation token that the controller has
+                  processed. Users can compare this to the annotation to determine
+                  whether a reconcile request has been handled.
+                type: string
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the latest metadata.generation
+                  which resulted in either a ready state, or stalled due to error
+                  it can not recover from without human intervention.
+                format: int64
+                type: integer
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

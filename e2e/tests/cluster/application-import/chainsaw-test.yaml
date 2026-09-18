@@ -1,0 +1,82 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: application-import-cluster
+# Validates import by creating an Application normally, then creating a
+# second observe-only MR pointing to the same external resource.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-source-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: e2e-import-source
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+
+    - name: import-via-observe
+      try:
+        - script:
+            timeout: 30s
+            content: |
+              APP_ID=$(${KUBECTL} get application.fusionauth.crossplane.io e2e-import-source \
+                -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}')
+              echo "Importing application with external-name: $APP_ID"
+              cat <<EOF | ${KUBECTL} apply -f -
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-app
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: "${APP_ID}"
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider:
+                  name: e2e-import-source
+                providerConfigRef:
+                  name: default
+              EOF
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-import-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      finally:
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-import-app
+        - delete:
+            ref:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-import-source

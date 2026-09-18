@@ -1,0 +1,16 @@
+apiVersion: fusionauth.crossplane.io/v1alpha1
+kind: Email
+metadata:
+  annotations:
+    meta.upbound.io/example-id: fusionauth/v1alpha1/email
+  labels:
+    testing.upbound.io/example-name: HelloWorld
+  name: helloworld
+spec:
+  forProvider:
+    defaultFromName: Welcome Team
+    defaultHtmlTemplate: ${file("${path.module}/email_templates/HelloWorld.html.ftl")}
+    defaultSubject: Hello
+    defaultTextTemplate: ${file("${path.module}/email_templates/HelloWorld.txt.ftl")}
+    fromEmail: welcome@example.com.com
+    name: Hello World

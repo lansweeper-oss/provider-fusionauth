@@ -1,0 +1,16 @@
+apiVersion: meta.pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  annotations:
+    meta.crossplane.io/maintainer: Lansweeper <PlatformTeam@lansweeper.com>
+    meta.crossplane.io/source: github.com/lansweeper-oss/provider-fusionauth
+    meta.crossplane.io/license: Apache-2.0
+    meta.crossplane.io/description: >-
+      An Upjet-based Crossplane provider for managing FusionAuth resources.
+    meta.crossplane.io/readme: >-
+      `provider-fusionauth` is an Upjet-based Crossplane provider built on the
+      FusionAuth Terraform provider.
+  name: provider-fusionauth
+spec:
+  capabilities:
+    - SafeStart

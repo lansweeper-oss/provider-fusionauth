@@ -1,0 +1,23 @@
+apiVersion: idp.fusionauth.m.crossplane.io/v1alpha1
+kind: Twitch
+metadata:
+  annotations:
+    meta.upbound.io/example-id: idp/v1alpha1/twitch
+  labels:
+    testing.upbound.io/example-name: twitch
+  name: twitch
+  namespace: crossplane-system
+spec:
+  forProvider:
+    applicationConfiguration:
+    - applicationIdSelector:
+        matchLabels:
+          testing.upbound.io/example-name: my_app
+      createRegistration: true
+      enabled: true
+    buttonText: Login with Twitch
+    clientId: 0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc
+    clientSecretSecretRef:
+      key: example-key
+      name: example-secret
+    scope: Xboxlive.signin Xboxlive.offline_access
