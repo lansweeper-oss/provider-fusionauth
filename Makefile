@@ -149,6 +149,7 @@ pull-docs:
 		git clone -c advice.detachedHead=false --depth 1 --filter=blob:none --branch "v$(TERRAFORM_PROVIDER_VERSION)" --sparse "$(TERRAFORM_PROVIDER_REPO)" "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)"; \
 	fi
 	@git -C "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)" sparse-checkout set "$(TERRAFORM_DOCS_PATH)"
+	@bash scripts/inject_frontmatter.sh "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)/$(TERRAFORM_DOCS_PATH)"
 
 $(TERRAFORM_PROVIDER_SCHEMA:.json=.generated.lst): $(TERRAFORM_PROVIDER_SCHEMA)
 	@$(INFO) generating resource list from provider schema
