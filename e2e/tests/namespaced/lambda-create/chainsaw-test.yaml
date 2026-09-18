@@ -18,6 +18,8 @@ spec:
               kind: Lambda
               metadata:
                 name: e2e-ns-test-lambda
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: e2e-ns-test-lambda

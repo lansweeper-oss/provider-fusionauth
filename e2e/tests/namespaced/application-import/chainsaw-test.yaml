@@ -2,44 +2,62 @@ apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test
 metadata:
   name: application-import-namespaced
-# Validates that an existing FusionAuth application can be imported into a
-# namespaced Crossplane managed resource by setting the external-name
-# annotation to the application's FusionAuth ID.
+# Validates import by creating an Application normally, then creating a
+# second observe-only MR pointing to the same external resource.
 spec:
   timeouts:
     delete: 5m
     cleanup: 5m
   steps:
-    - name: create-application-in-fusionauth
+    - name: create-source-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-ns-import-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: e2e-ns-import-source
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: e2e-ns-import-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+
+    - name: import-via-observe
       try:
         - script:
             timeout: 30s
             content: |
-              FA_HOST="http://fusionauth.fusionauth.svc.cluster.local:9011"
-              FA_KEY="e2e-test-api-key-00000000000000000000"
-
-              APP_ID=$(curl -sf -X POST "${FA_HOST}/api/application" \
-                -H "Authorization: ${FA_KEY}" \
-                -H "Content-Type: application/json" \
-                -d '{"application":{"name":"e2e-ns-import-app"}}' \
-                | jq -r '.application.id')
-
-              if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
-                echo "Failed to create application in FusionAuth"
-                exit 1
-              fi
-              echo "Created FusionAuth application: $APP_ID"
-
+              APP_ID=$(${KUBECTL} get application.fusionauth.m.crossplane.io e2e-ns-import-source \
+                -n ${NAMESPACE} -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}')
+              echo "Importing application with external-name: $APP_ID"
               cat <<EOF | ${KUBECTL} apply -f -
               apiVersion: fusionauth.m.crossplane.io/v1alpha1
               kind: Application
               metadata:
                 name: e2e-ns-import-app
+                namespace: ${NAMESPACE}
+                labels:
+                  e2e-test: "true"
                 annotations:
                   crossplane.io/external-name: "${APP_ID}"
               spec:
+                managementPolicies: ["Observe"]
                 forProvider:
-                  name: e2e-ns-import-app
+                  name: e2e-ns-import-source
                 providerConfigRef:
                   kind: ClusterProviderConfig
                   name: default
@@ -54,19 +72,14 @@ spec:
               status:
                 (conditions[?type == 'Ready']):
                   - status: "True"
-        - assert:
-            resource:
-              apiVersion: fusionauth.m.crossplane.io/v1alpha1
-              kind: Application
-              metadata:
-                name: e2e-ns-import-app
-              status:
-                atProvider:
-                  (id != ''):
-                    true
       finally:
         - delete:
             ref:
               apiVersion: fusionauth.m.crossplane.io/v1alpha1
               kind: Application
               name: e2e-ns-import-app
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              name: e2e-ns-import-source

@@ -33,3 +33,4 @@ ${KUBECTL} apply -f ${SCRIPT_DIR}/providerconfigs.yaml
 
 ${KUBECTL} wait provider.pkg --all --for condition=Healthy --timeout 5m
 ${KUBECTL} -n crossplane-system wait --for=condition=Available deployment --all --timeout=5m
+

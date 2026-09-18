@@ -18,6 +18,8 @@ spec:
               kind: Application
               metadata:
                 name: e2e-cluster-app
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: e2e-cluster-app

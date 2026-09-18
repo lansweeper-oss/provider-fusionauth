@@ -18,6 +18,8 @@ spec:
               kind: Key
               metadata:
                 name: e2e-ns-test-key
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   algorithm: RS256

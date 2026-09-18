@@ -18,6 +18,8 @@ spec:
               kind: Group
               metadata:
                 name: e2e-ns-test-group
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: e2e-ns-test-group

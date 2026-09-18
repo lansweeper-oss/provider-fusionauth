@@ -19,6 +19,8 @@ spec:
               kind: Application
               metadata:
                 name: role-test-ns-app
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: role-test-ns-app
@@ -42,15 +44,19 @@ spec:
             timeout: 30s
             content: |
               APP_ID=$(${KUBECTL} get application.fusionauth.m.crossplane.io role-test-ns-app \
-                -o jsonpath='{.status.atProvider.id}')
+                -n ${NAMESPACE} -o jsonpath='{.status.atProvider.id}')
               cat <<EOF | ${KUBECTL} apply -f -
               apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
               kind: Role
               metadata:
                 name: e2e-test-ns-role
+                namespace: ${NAMESPACE}
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   applicationId: "${APP_ID}"
+                  name: e2e-test-ns-role
                   description: "E2E test role namespaced"
                 providerConfigRef:
                   kind: ClusterProviderConfig

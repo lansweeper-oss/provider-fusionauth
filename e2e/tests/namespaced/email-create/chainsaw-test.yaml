@@ -18,6 +18,8 @@ spec:
               kind: Email
               metadata:
                 name: e2e-ns-test-email
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: e2e-ns-test-email

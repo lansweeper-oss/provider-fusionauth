@@ -18,6 +18,8 @@ spec:
               kind: Webhook
               metadata:
                 name: e2e-ns-test-webhook
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   connectTimeout: 1000

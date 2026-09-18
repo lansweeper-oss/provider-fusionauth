@@ -18,6 +18,8 @@ spec:
               kind: Application
               metadata:
                 name: role-test-app
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: role-test-app
@@ -46,9 +48,12 @@ spec:
               kind: Role
               metadata:
                 name: e2e-test-role
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   applicationId: "${APP_ID}"
+                  name: e2e-test-role
                   description: "E2E test role"
                 providerConfigRef:
                   name: default

@@ -222,6 +222,7 @@ UPTEST_SETUP_SCRIPT = e2e/setup/setup.sh
 -include build/makelib/controlplane.mk
 -include build/makelib/uptest.mk
 
+chainsaw-e2e: e2e-cleanup
 chainsaw-e2e: $(CHAINSAW)
 	@if [ -d e2e/tests ] && [ -n "$$(find e2e/tests -name 'chainsaw-test.yaml' 2>/dev/null)" ]; then \
 	  $(INFO) running chainsaw tests; \
@@ -229,6 +230,11 @@ chainsaw-e2e: $(CHAINSAW)
 	; fi
 
 e2e: chainsaw-e2e
+
+e2e-cleanup: $(KUBECTL)
+	@$(INFO) cleaning up e2e managed resources
+	@$(KUBECTL) delete managed --all-namespaces -l e2e-test=true 2>/dev/null || true
+	@$(OK) e2e cleanup complete
 
 local-deploy: build.all controlplane.up local.xpkg.deploy.provider.$(PROJECT_NAME)
 	@$(INFO) running locally built provider

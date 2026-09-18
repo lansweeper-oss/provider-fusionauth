@@ -18,6 +18,8 @@ spec:
               kind: Theme
               metadata:
                 name: e2e-ns-test-theme
+                labels:
+                  e2e-test: "true"
               spec:
                 forProvider:
                   name: e2e-ns-test-theme
