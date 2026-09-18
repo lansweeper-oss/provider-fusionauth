@@ -138,7 +138,7 @@ type ExternalJwtInitParameters struct {
 	// +kubebuilder:validation:Optional
 	LambdaReconcileIDSelector *v2.NamespacedSelector `json:"lambdaReconcileIdSelector,omitempty" tf:"-"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user.
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`
 
@@ -246,7 +246,7 @@ type ExternalJwtObservation struct {
 	// The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.
 	LambdaReconcileID *string `json:"lambdaReconcileId,omitempty" tf:"lambda_reconcile_id,omitempty"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user.
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`
 
@@ -371,7 +371,7 @@ type ExternalJwtParameters struct {
 	// +kubebuilder:validation:Optional
 	LambdaReconcileIDSelector *v2.NamespacedSelector `json:"lambdaReconcileIdSelector,omitempty" tf:"-"`
 
-	// The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
 	// The linking strategy to use when creating the link between the External JWT Identity Provider and the user.
 	// +kubebuilder:validation:Optional
 	LinkingStrategy *string `json:"linkingStrategy,omitempty" tf:"linking_strategy,omitempty"`

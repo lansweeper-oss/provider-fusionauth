@@ -864,7 +864,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Apple Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional) This is an optional Application specific override for for the top level scope.'
             services_id: '- (Required) The unique Id of the private key downloaded from Apple and imported into Key Master that will be used to sign the client secret.'
@@ -910,7 +910,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the External JWT Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Required) The name of the Identity Provider.'
             oauth2_authorization_endpoint: '- (Optional) The authorization endpoint for this Identity Provider. This value is not utilized by FusionAuth is only provided to be returned by the Lookup Identity Provider API response. During integration you may then utilize this value to perform the browser redirect to the OAuth2 authorize endpoint.'
             oauth2_email_claim: '- (Optional) The name of the claim that contains the user''s email address. This will only be used when the linking_strategyis equal to LinkByEmail or LinkByEmailForExistingUser.'
@@ -952,6 +952,7 @@ resources:
                 application_configuration.application_id: fusionauth_application.myapp.id
         argumentDocs:
             CreatePendingLink: '- Do not automatically link, instead return a pending link identifier that can be used to link to an existing user.'
+            Disabled: '- Do not automatically link.'
             LinkAnonymously: '- Always create a link based upon the unique Id returned by the identity provider. A username or email is not required and will not be used to link the user. A reconcile lambda will not be used in this configuration.'
             LinkByEmail: '- Link to an existing user based upon email. A user will be created with the email returned by the identity provider if one does not already exist.'
             LinkByEmailForExistingUser: '- Only link to an existing user based upon email. A user will not be created if one does not already exist with email returned by the identity provider.'
@@ -1024,7 +1025,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Google Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             login_method: '- (Optional) The login method to use for this Identity Provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             properties: '- (Optional) This is an optional Application specific override for the top level properties.'
@@ -1060,6 +1061,7 @@ resources:
                 application_configuration.application_id: fusionauth_application.myapp.id
         argumentDocs:
             CreatePendingLink: '- Do not automatically link, instead return a pending link identifier that can be used to link to an existing user.'
+            Disabled: '- Do not automatically link.'
             LinkAnonymously: '- Always create a link based upon the unique Id returned by the identity provider. A username or email is not required and will not be used to link the user. A reconcile lambda will not be used in this configuration.'
             LinkByEmail: '- Link to an existing user based upon email. A user will be created with the email returned by the identity provider if one does not already exist.'
             LinkByEmailForExistingUser: '- Only link to an existing user based upon email. A user will not be created if one does not already exist with email returned by the identity provider.'
@@ -1078,7 +1080,7 @@ resources:
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
             linking_strategy: |-
-                - (Optional) The linking strategy to use when creating the link between the Facebook Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
+                - (Optional) The linking strategy to use when creating the link between the LinkedIn Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.
                 The valid values are:
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional) This is an optional Application specific override for the top level scope.'
@@ -1138,7 +1140,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the OpenID Connect Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Required) The name of this OpenID Connect identity provider. This is only used for display purposes.'
             oauth2_authorization_endpoint: '- (Optional) The top-level authorization endpoint for the OpenID Connect identity provider. You can leave this blank if you provide the issuer field, which will be used to make a request to the OpenID Connect .well-known endpoint in order to dynamically resolve the authorization endpoint. If you provide an issuer then this field will be ignored.'
             oauth2_client_authentication_method: '- (Optional) The client authentication method to use with the OpenID Connect identity provider.'
@@ -1210,7 +1212,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the SAML v2 Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             login_hint_configuration: '- (Optional) The configuration for the login hint.'
             name: '- (Required) The name of this OpenID Connect identity provider. This is only used for display purposes.'
             name_id_format: '- (Optional) The Name Id is used to facilitate communication about a user between a Service Provider (SP) and Identity Provider (IdP). The SP can specify the preferred format in the AuthN request regarding a user. The identity Provider will attempt to honor this format in the AuthN response. When this parameter is omitted a default value of urn:oasis:names:tc:SAML:2.0:nameid-format:persistent will be used.'
@@ -1250,7 +1252,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the SAML v2 IdP Initiated Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Required) The name of this OpenID Connect identity provider. This is only used for display purposes.'
             source: '- (Optional) The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.'
             tenant_configuration: '- (Optional) The configuration for each Tenant that limits the number of links a user may have for a particular identity provider.'
@@ -1262,7 +1264,7 @@ resources:
         importStatements: []
     fusionauth_idp_sony_psn:
         subCategory: ""
-        description: Sony Playstation Network Identity Provider Resource
+        description: Sony PlayStation Network Identity Provider Resource
         name: fusionauth_idp_sony_psn
         title: fusionauth_idp_sony_psn Resource - fusionauth
         examples:
@@ -1276,7 +1278,7 @@ resources:
                       "enabled": true
                     }
                   ],
-                  "button_text": "Login with Playstation",
+                  "button_text": "Login with PlayStation",
                   "client_id": "0eb1ce3c-2fb1-4ae9-b361-d49fc6e764cc",
                   "client_secret": "693s000cbn66k0mxtqzr_c_NfLy3~6_SEA"
                 }
@@ -1296,7 +1298,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Sony PlayStation Network Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional)This is an optional Application specific override for the top level scope.'
             source: '- (Optional) The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.'
@@ -1340,7 +1342,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Steam Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional)This is an optional Application specific override for the top level scope.'
             source: '- (Optional) The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.'
@@ -1385,7 +1387,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Twitch Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional)This is an optional Application specific override for the top level scope.'
             source: '- (Optional) The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.'
@@ -1429,7 +1431,7 @@ resources:
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
             limit_user_link_count_enabled: '- (Optional) When enabled, the number of identity provider links a user may create is enforced by maximumLinks.'
             limit_user_link_count_maximum_links: '- (Optional) Determines if this provider is enabled. If it is false then it will be disabled globally.'
-            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the {idp_display_name} Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
+            linking_strategy: '- (Optional) The linking strategy to use when creating the link between the Xbox Identity Provider and the user. To change the linking strategy for an enabled identity provider, disable the provider, make your change, then re-enable the provider.'
             name: '- (Optional) The name of the provider. This is only used for display purposes. The display name of this provider instance. Required when using a provided tenant_id or identity_provider.tenant_id.'
             scope: '- (Optional)This is an optional Application specific override for the top level scope.'
             source: '- (Optional) The source of this Identity Provider. The maximum length is 191 characters. This value is only used on create. If updated, a new Identity Provider will be created.'

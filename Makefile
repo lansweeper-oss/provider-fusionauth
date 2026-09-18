@@ -156,13 +156,18 @@ $(TERRAFORM_PROVIDER_SCHEMA:.json=.generated.lst): $(TERRAFORM_PROVIDER_SCHEMA)
 	@python3 -c "import json,sys; d=json.load(open(sys.argv[1])); p=next(iter(d['provider_schemas'])); print(json.dumps(list(d['provider_schemas'][p]['resource_schemas'].keys())))" $(TERRAFORM_PROVIDER_SCHEMA) > config/generated.lst
 	@$(OK) generating resource list from provider schema
 
-generate.init: $(TERRAFORM_PROVIDER_SCHEMA) pull-docs
+generate.init: clean-work $(TERRAFORM_PROVIDER_SCHEMA) pull-docs
 generate.done: copy-examples clean-descriptions
 
 clean-descriptions:
 	@$(INFO) cleaning generated field descriptions
 	@python3 scripts/clean_descriptions.py package/crds/
-	@$(OK) cleaning generated field descriptions
+	@$(OK) field descriptions clean
+
+clean-work:
+	@$(INFO) cleaning work directory
+	@rm -rf .work/$(TERRAFORM_PROVIDER_ORG)
+	@$(OK) work directory clean
 
 .PHONY: $(TERRAFORM_PROVIDER_SCHEMA) pull-docs check-terraform-version clean-descriptions
 # ====================================================================================
