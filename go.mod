@@ -12,7 +12,7 @@ require (
 	github.com/crossplane/crossplane-runtime/v2 v2.4.0
 	github.com/crossplane/crossplane-tools v0.0.0-20260719180100-659f1dc036c5
 	github.com/crossplane/crossplane/apis/v2 v2.4.1
-	github.com/crossplane/upjet/v2 v2.4.1-0.20260831175352-0ef654e80dff
+	github.com/crossplane/upjet/v2 v2.5.0
 	github.com/go-logr/logr v1.4.4
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.83.2
