@@ -15,6 +15,19 @@ import (
 
 type OauthScopeInitParameters struct {
 
+	// ID of the application that this role is for.
+	// The Id of the application to which this scope belongs.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
+	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
+
+	// Reference to a Application in fusionauth to populate applicationId.
+	// +kubebuilder:validation:Optional
+	ApplicationIDRef *v2.NamespacedReference `json:"applicationIdRef,omitempty" tf:"-"`
+
+	// Selector for a Application in fusionauth to populate applicationId.
+	// +kubebuilder:validation:Optional
+	ApplicationIDSelector *v2.NamespacedSelector `json:"applicationIdSelector,omitempty" tf:"-"`
+
 	// A JSON string that can hold any information about the OAuth Scope that should be persisted.
 	// An object that can hold any information about the Application OAuth Scope that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema. Must be a JSON string.
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`

@@ -47,6 +47,19 @@ type EntityInitParameters struct {
 	// A descriptive name for the Entity (i.e. "Raviga" or "Email Service").
 	// A descriptive name for the Entity (i.e. 'Raviga' or 'Email Service').
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The unique ID of the tenant used to scope this API request.
+	// The unique Id of the tenant used to scope this API request.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Tenant
+	TenantID *string `json:"tenantId,omitempty" tf:"tenant_id,omitempty"`
+
+	// Reference to a Tenant in fusionauth to populate tenantId.
+	// +kubebuilder:validation:Optional
+	TenantIDRef *v2.NamespacedReference `json:"tenantIdRef,omitempty" tf:"-"`
+
+	// Selector for a Tenant in fusionauth to populate tenantId.
+	// +kubebuilder:validation:Optional
+	TenantIDSelector *v2.NamespacedSelector `json:"tenantIdSelector,omitempty" tf:"-"`
 }
 
 type EntityObservation struct {
