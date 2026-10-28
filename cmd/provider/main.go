@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"maps"
 	"os"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -22,6 +25,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	authv1 "k8s.io/api/authorization/v1"
+	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -70,6 +74,7 @@ var cli struct {
 	PollStateMetricInterval time.Duration `name:"poll-state-metric" help:"State metric recording interval" default:"5s"`
 
 	MaxReconcileRate         int    `help:"The global maximum rate per second at which resources may be checked for drift from the desired state." default:"10"`
+	EnableSecretCache        bool   `help:"Cache Secrets in memory. Disabling it reads Secrets directly from the API server, which saves memory on clusters with many Secrets at the cost of more API requests." default:"true" env:"ENABLE_SECRET_CACHE"`
 	EnableManagementPolicies bool   `help:"Enable support for Management Policies" default:"true" env:"ENABLE_MANAGEMENT_POLICIES"`
 	EnableChangeLogs         bool   `name:"enable-changelogs" help:"Enable support for capturing change logs during reconciliation" default:"false" env:"ENABLE_CHANGE_LOGS"`
 	ChangelogsSocketPath     string `help:"Path for changelogs socket (if enabled)" default:"/var/run/changelogs/changelogs.sock" env:"CHANGELOGS_SOCKET_PATH"`
@@ -139,12 +144,21 @@ func main() {
 	ctx.FatalIfErrorf(apisNamespaced.AddToScheme(scheme), "Cannot add namespaced provider-fusionauth APIs to scheme")
 	ctx.FatalIfErrorf(apiextensionsv1.AddToScheme(scheme), "Cannot add api-extensions APIs to scheme")
 
+	var clientOpts client.Options
+	if !cli.EnableSecretCache {
+		clientOpts.Cache = &client.CacheOptions{DisableFor: []client.Object{&corev1.Secret{}}}
+	}
+
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:           scheme,
+		Client:           clientOpts,
 		LeaderElection:   cli.LeaderElection,
 		LeaderElectionID: "crossplane-leader-election-provider-fusionauth",
 		Cache: cache.Options{
-			SyncPeriod: &cli.SyncPeriod,
+			SyncPeriod:       &cli.SyncPeriod,
+			DefaultTransform: cache.TransformStripManagedFields(),
+			// A ByObject transform replaces DefaultTransform for that type;
+			// TransformStripCRDSchema strips managed fields as well.
 			ByObject: map[client.Object]cache.ByObject{
 				&apiextensionsv1.CustomResourceDefinition{}: {
 					Transform: customresourcesgate.TransformStripCRDSchema,
@@ -176,17 +190,15 @@ func main() {
 	o := tjcontroller.NewOperationStore(log)
 
 	clusterOpts := tjcontroller.Options{
-		Options: xpcontroller.Options{
-			Logger:                  log,
-			GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
-			PollInterval:            cli.PollInterval,
-			MaxConcurrentReconciles: cli.MaxReconcileRate,
-			Features:                &feature.Flags{},
-			MetricOptions: &xpcontroller.MetricOptions{
-				PollStateMetricInterval: cli.PollStateMetricInterval,
-				MRMetrics:               metricRecorder,
-				MRStateMetrics:          stateMetrics,
-			},
+		Logger:                  log,
+		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
+		PollInterval:            cli.PollInterval,
+		MaxConcurrentReconciles: cli.MaxReconcileRate,
+		Features:                &feature.Flags{},
+		MetricOptions: &xpcontroller.MetricOptions{
+			PollStateMetricInterval: cli.PollStateMetricInterval,
+			MRMetrics:               metricRecorder,
+			MRStateMetrics:          stateMetrics,
 		},
 		Provider:              clusterProvider,
 		SetupFn:               clients.TerraformSetupBuilder(),
@@ -196,17 +208,15 @@ func main() {
 	}
 
 	namespacedOpts := tjcontroller.Options{
-		Options: xpcontroller.Options{
-			Logger:                  log,
-			GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
-			PollInterval:            cli.PollInterval,
-			MaxConcurrentReconciles: cli.MaxReconcileRate,
-			Features:                &feature.Flags{},
-			MetricOptions: &xpcontroller.MetricOptions{
-				PollStateMetricInterval: cli.PollStateMetricInterval,
-				MRMetrics:               metricRecorder,
-				MRStateMetrics:          stateMetrics,
-			},
+		Logger:                  log,
+		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
+		PollInterval:            cli.PollInterval,
+		MaxConcurrentReconciles: cli.MaxReconcileRate,
+		Features:                &feature.Flags{},
+		MetricOptions: &xpcontroller.MetricOptions{
+			PollStateMetricInterval: cli.PollStateMetricInterval,
+			MRMetrics:               metricRecorder,
+			MRStateMetrics:          stateMetrics,
 		},
 		Provider:              namespacedProvider,
 		SetupFn:               clients.TerraformSetupBuilder(),
@@ -248,6 +258,7 @@ func main() {
 			Logger:                  log,
 			Gate:                    crdGate,
 			MaxConcurrentReconciles: 1,
+			Groups:                  providerGroups(scheme, clusterProvider.RootGroup, namespacedProvider.RootGroup),
 		}), "Cannot setup CRD gate")
 		log.Info("Registering gated controllers (controllers start when their CRDs become established)")
 		ctx.FatalIfErrorf(controllerCluster.SetupGated(mgr, clusterOpts), "Cannot setup cluster-scoped provider-fusionauth controllers")
@@ -260,6 +271,20 @@ func main() {
 	}
 
 	ctx.FatalIfErrorf(mgr.Start(ctrl.SetupSignalHandler()), "Cannot start controller manager")
+}
+
+// providerGroups returns every API group in the scheme that is one of the given
+// root groups or a sub-group of one, so the CRD gate ignores unrelated CRDs.
+func providerGroups(s *runtime.Scheme, roots ...string) []string {
+	set := map[string]struct{}{}
+	for gvk := range s.AllKnownTypes() {
+		for _, root := range roots {
+			if gvk.Group == root || strings.HasSuffix(gvk.Group, "."+root) {
+				set[gvk.Group] = struct{}{}
+			}
+		}
+	}
+	return slices.Sorted(maps.Keys(set))
 }
 
 func canWatchCRD(ctx context.Context, mgr manager.Manager) (bool, error) {
