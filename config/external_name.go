@@ -7,10 +7,12 @@ import (
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 //
-// The Terraform ID is the bare object ID. The "<parent_id>:<id>" form is only
-// accepted by the Terraform importers, which upjet does not call. The read
-// functions compare the ID with the bare object ID, so a composite ID makes
-// an imported resource, or any resource after a provider restart, not found.
+// Do not use a "<parent_id>:<id>" template for application_oauth_scope,
+// application_role, entity or entity_type_permission. Their Terraform read
+// functions look up the bare object ID, and only the Terraform importers,
+// which upjet does not call, split the composite form. With a template, the
+// resource is not found after an import or a provider restart.
+// fusionauth_registration can use one because its read ignores the ID.
 var ExternalNameConfigs = map[string]config.ExternalName{
 	"fusionauth_api_key":                      config.IdentifierFromProvider,
 	"fusionauth_application_oauth_scope":      config.IdentifierFromProvider,
