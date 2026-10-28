@@ -3,6 +3,9 @@ package config
 import (
 	"context"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // The Terraform read functions of these resources look up the object by the
@@ -23,13 +26,11 @@ func TestExternalNameIsBareTerraformID(t *testing.T) {
 		t.Run(r, func(t *testing.T) {
 			e := ExternalNameConfigs[r]
 			id, err := e.GetIDFn(context.Background(), "object-id", params, nil)
-			if err != nil || id != "object-id" {
-				t.Errorf("GetIDFn() = %q, %v, want %q", id, err, "object-id")
-			}
+			require.NoError(t, err)
+			assert.Equal(t, "object-id", id)
 			name, err := e.GetExternalNameFn(map[string]any{"id": "object-id"})
-			if err != nil || name != "object-id" {
-				t.Errorf("GetExternalNameFn() = %q, %v, want %q", name, err, "object-id")
-			}
+			require.NoError(t, err)
+			assert.Equal(t, "object-id", name)
 		})
 	}
 }

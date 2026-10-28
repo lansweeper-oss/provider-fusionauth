@@ -86,6 +86,11 @@ spec:
                       the limits on data field types as you plan for and build your custom data schema. Must be a JSON serialised string.
                       An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
                     type: string
+                  entityId:
+                    description: |-
+                      The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+                      The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+                    type: string
                   entityTypeId:
                     description: |-
                       The ID of the Entity Type. Types are consulted for permission checks.
@@ -304,6 +309,11 @@ spec:
                       A JSON string that can hold any information about the Entity that should be persisted. Please review
                       the limits on data field types as you plan for and build your custom data schema. Must be a JSON serialised string.
                       An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
+                    type: string
+                  entityId:
+                    description: |-
+                      The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+                      The Id to use for the new Entity. If not specified a secure random UUID will be generated.
                     type: string
                   entityTypeId:
                     description: |-
@@ -562,6 +572,11 @@ spec:
                       A JSON string that can hold any information about the Entity that should be persisted. Please review
                       the limits on data field types as you plan for and build your custom data schema. Must be a JSON serialised string.
                       An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
+                    type: string
+                  entityId:
+                    description: |-
+                      The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+                      The Id to use for the new Entity. If not specified a secure random UUID will be generated.
                     type: string
                   entityTypeId:
                     description: |-

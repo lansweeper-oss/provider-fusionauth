@@ -31,6 +31,10 @@ type EntityInitParameters struct {
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
 
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
+
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.EntityType
@@ -74,6 +78,10 @@ type EntityObservation struct {
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
 
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
+
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.
 	EntityTypeID *string `json:"entityTypeId,omitempty" tf:"entity_type_id,omitempty"`
@@ -109,6 +117,11 @@ type EntityParameters struct {
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	// +kubebuilder:validation:Optional
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
+
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	// +kubebuilder:validation:Optional
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
 
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.

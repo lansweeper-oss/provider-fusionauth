@@ -167,6 +167,10 @@ spec:
                   name:
                     description: The name of the Permission.
                     type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -274,6 +278,10 @@ spec:
                     type: boolean
                   name:
                     description: The name of the Permission.
+                    type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
                     type: string
                 type: object
               managementPolicies:
@@ -392,6 +400,10 @@ spec:
                     type: boolean
                   name:
                     description: The name of the Permission.
+                    type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
                     type: string
                 type: object
               conditions:

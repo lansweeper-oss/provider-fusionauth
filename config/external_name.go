@@ -13,15 +13,15 @@ import (
 // an imported resource, or any resource after a provider restart, not found.
 var ExternalNameConfigs = map[string]config.ExternalName{
 	"fusionauth_api_key":                      config.IdentifierFromProvider,
-	"fusionauth_application_oauth_scope":      config.TemplatedStringAsIdentifier("scope_id", "{{ .external_name }}"),
+	"fusionauth_application_oauth_scope":      config.IdentifierFromProvider,
 	"fusionauth_application_role":             config.IdentifierFromProvider,
 	"fusionauth_application":                  config.IdentifierFromProvider,
 	"fusionauth_consent":                      config.IdentifierFromProvider,
 	"fusionauth_email":                        config.IdentifierFromProvider,
 	"fusionauth_entity_grant":                 config.IdentifierFromProvider,
-	"fusionauth_entity_type_permission":       config.TemplatedStringAsIdentifier("permission_id", "{{ .external_name }}"),
+	"fusionauth_entity_type_permission":       config.IdentifierFromProvider,
 	"fusionauth_entity_type":                  config.IdentifierFromProvider,
-	"fusionauth_entity":                       config.TemplatedStringAsIdentifier("entity_id", "{{ .external_name }}"),
+	"fusionauth_entity":                       config.IdentifierFromProvider,
 	"fusionauth_form_field":                   config.IdentifierFromProvider,
 	"fusionauth_form":                         config.IdentifierFromProvider,
 	"fusionauth_generic_connector":            config.IdentifierFromProvider,

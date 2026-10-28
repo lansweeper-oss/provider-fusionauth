@@ -38,6 +38,9 @@ type EntityTypePermissionInitParameters struct {
 
 	// The name of the Permission.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 type EntityTypePermissionObservation struct {
@@ -58,6 +61,9 @@ type EntityTypePermissionObservation struct {
 
 	// The name of the Permission.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 type EntityTypePermissionParameters struct {
@@ -90,6 +96,10 @@ type EntityTypePermissionParameters struct {
 	// The name of the Permission.
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	// +kubebuilder:validation:Optional
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 // EntityTypePermissionSpec defines the desired state of EntityTypePermission

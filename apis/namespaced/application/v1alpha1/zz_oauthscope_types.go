@@ -51,6 +51,10 @@ type OauthScopeInitParameters struct {
 	// Determines if the OAuth Scope is required when requested in an OAuth workflow.
 	// Determines if the OAuth Scope is required when requested in an OAuth workflow.
 	Required *bool `json:"required,omitempty" tf:"required,omitempty"`
+
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	ScopeID *string `json:"scopeId,omitempty" tf:"scope_id,omitempty"`
 }
 
 type OauthScopeObservation struct {
@@ -84,6 +88,10 @@ type OauthScopeObservation struct {
 	// Determines if the OAuth Scope is required when requested in an OAuth workflow.
 	// Determines if the OAuth Scope is required when requested in an OAuth workflow.
 	Required *bool `json:"required,omitempty" tf:"required,omitempty"`
+
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	ScopeID *string `json:"scopeId,omitempty" tf:"scope_id,omitempty"`
 }
 
 type OauthScopeParameters struct {
@@ -131,6 +139,11 @@ type OauthScopeParameters struct {
 	// Determines if the OAuth Scope is required when requested in an OAuth workflow.
 	// +kubebuilder:validation:Optional
 	Required *bool `json:"required,omitempty" tf:"required,omitempty"`
+
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	// The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.
+	// +kubebuilder:validation:Optional
+	ScopeID *string `json:"scopeId,omitempty" tf:"scope_id,omitempty"`
 }
 
 // OauthScopeSpec defines the desired state of OauthScope

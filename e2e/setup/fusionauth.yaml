@@ -133,6 +133,16 @@ spec:
       labels:
         app: fusionauth
     spec:
+      # FusionAuth started before PostgreSQL accepts connections stays in
+      # maintenance mode. /api/status then answers 302, which the readiness
+      # probe accepts, and the API answers HTML.
+      initContainers:
+        - name: wait-for-postgresql
+          image: postgres:18-bookworm
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgresql.fusionauth.svc.cluster.local -U postgres; do sleep 2; done
       containers:
         - name: fusionauth
           image: fusionauth/fusionauth-app:1.69.2
