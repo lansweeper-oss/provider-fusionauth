@@ -1,0 +1,124 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: role-import-cluster
+# Validates that the Role external name is the bare role ID, and that an
+# observe-only Role with that external name finds the role. The observe-only
+# MR starts without cached Terraform state, the same as after a provider
+# restart.
+# OauthScope, Entity and EntityTypePermission use the same external name
+# format but are not tested: they need a licensed edition of FusionAuth.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-application
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: role-import-app
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: role-import-app
+                providerConfigRef:
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: role-import-app
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+
+    - name: create-role
+      try:
+        - script:
+            timeout: 30s
+            content: |
+              set -e
+              APP_ID=$(${KUBECTL} get application.fusionauth.crossplane.io role-import-app \
+                -o jsonpath='{.status.atProvider.id}')
+              cat <<EOF | ${KUBECTL} apply -f -
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: role-import-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  applicationId: "${APP_ID}"
+                  name: role-import-source
+                providerConfigRef:
+                  name: default
+              EOF
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: role-import-source
+              (metadata.annotations."crossplane.io/external-name" == status.atProvider.id): true
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              name: role-import-source
+
+    - name: import-via-observe
+      try:
+        - script:
+            timeout: 30s
+            content: |
+              set -e
+              APP_ID=$(${KUBECTL} get application.fusionauth.crossplane.io role-import-app \
+                -o jsonpath='{.status.atProvider.id}')
+              ROLE_ID=$(${KUBECTL} get role.application.fusionauth.crossplane.io role-import-source \
+                -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}')
+              cat <<EOF | ${KUBECTL} apply -f -
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: role-import-observed
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: "${ROLE_ID}"
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider:
+                  applicationId: "${APP_ID}"
+                  name: role-import-source
+                providerConfigRef:
+                  name: default
+              EOF
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: role-import-observed
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: application.fusionauth.crossplane.io/v1alpha1
+              kind: Role
+              name: role-import-observed

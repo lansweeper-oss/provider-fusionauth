@@ -46,7 +46,7 @@ NPROCS ?= 1
 GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
 GO_REQUIRED_VERSION ?= $(shell grep '^go ' go.mod | awk '{print $$2}')
-GOLANGCILINT_VERSION ?= 2.13.2
+GOLANGCILINT_VERSION ?= 2.15.0
 GO_STATIC_PACKAGES = $(GO_PROJECT)/cmd/provider $(GO_PROJECT)/cmd/generator
 GO_LDFLAGS += -X $(GO_PROJECT)/internal/version.Version=$(VERSION)
 GO_SUBDIRS += cmd internal apis
@@ -62,7 +62,7 @@ CRDDIFF_VERSION = v0.12.1
 CROSSPLANE_CLI_VERSION = v2.5.0
 CHAINSAW_VERSION = 0.2.15
 # for e2e testing
-CROSSPLANE_VERSION = 2.4.1
+CROSSPLANE_VERSION = 2.4.3
 -include build/makelib/k8s_tools.mk
 
 # ====================================================================================
@@ -331,6 +331,14 @@ xpkg.extensions: sbom readme
 	@cp $(ROOT_DIR)/icon.svg $(EXTENSIONS_DIR)/icons/icon.svg
 	@mkdir -p $(EXTENSIONS_DIR)/readme
 	@cp $(ROOT_DIR)/README.md $(EXTENSIONS_DIR)/readme/readme.md
+	@rm -rf $(EXTENSIONS_DIR)/release-notes
+	@notes=$$(gh release view "$(VERSION)" --repo "$${GITHUB_REPOSITORY:-lansweeper-oss/$(PROJECT_NAME)}" --json body -q .body 2>/dev/null || true); \
+	if [ -z "$$notes" ]; then \
+		echo "No GitHub release notes found for $(VERSION), skipping"; \
+	else \
+		mkdir -p $(EXTENSIONS_DIR)/release-notes; \
+		printf '%s\n' "$$notes" > $(EXTENSIONS_DIR)/release-notes/release_notes.md; \
+	fi
 	@$(OK) Package extensions prepared at $(EXTENSIONS_DIR)
 
 xpkg.append: xpkg.extensions $(UP)
