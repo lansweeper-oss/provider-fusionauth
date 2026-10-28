@@ -6,17 +6,24 @@ import (
 
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
+//
+// Do not use a "<parent_id>:<id>" template for application_oauth_scope,
+// application_role, entity or entity_type_permission. Their Terraform read
+// functions look up the bare object ID, and only the Terraform importers,
+// which upjet does not call, split the composite form. With a template, the
+// resource is not found after an import or a provider restart.
+// fusionauth_registration can use one because its read ignores the ID.
 var ExternalNameConfigs = map[string]config.ExternalName{
 	"fusionauth_api_key":                      config.IdentifierFromProvider,
-	"fusionauth_application_oauth_scope":      config.TemplatedStringAsIdentifier("scope_id", "{{ .parameters.application_id }}:{{ .external_name }}"),
-	"fusionauth_application_role":             config.TemplatedStringAsIdentifier("", "{{ .parameters.application_id }}:{{ .external_name }}"),
+	"fusionauth_application_oauth_scope":      config.IdentifierFromProvider,
+	"fusionauth_application_role":             config.IdentifierFromProvider,
 	"fusionauth_application":                  config.IdentifierFromProvider,
 	"fusionauth_consent":                      config.IdentifierFromProvider,
 	"fusionauth_email":                        config.IdentifierFromProvider,
 	"fusionauth_entity_grant":                 config.IdentifierFromProvider,
-	"fusionauth_entity_type_permission":       config.TemplatedStringAsIdentifier("permission_id", "{{ .parameters.entity_type_id }}:{{ .external_name }}"),
+	"fusionauth_entity_type_permission":       config.IdentifierFromProvider,
 	"fusionauth_entity_type":                  config.IdentifierFromProvider,
-	"fusionauth_entity":                       config.TemplatedStringAsIdentifier("entity_id", "{{ .parameters.tenant_id }}:{{ .external_name }}"),
+	"fusionauth_entity":                       config.IdentifierFromProvider,
 	"fusionauth_form_field":                   config.IdentifierFromProvider,
 	"fusionauth_form":                         config.IdentifierFromProvider,
 	"fusionauth_generic_connector":            config.IdentifierFromProvider,

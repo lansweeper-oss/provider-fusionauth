@@ -21,11 +21,26 @@ type EntityTypePermissionInitParameters struct {
 	// The description of the Permission.
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`
 
+	// The Id of the Entity Type.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.EntityType
+	EntityTypeID *string `json:"entityTypeId,omitempty" tf:"entity_type_id,omitempty"`
+
+	// Reference to a EntityType in fusionauth to populate entityTypeId.
+	// +kubebuilder:validation:Optional
+	EntityTypeIDRef *v2.Reference `json:"entityTypeIdRef,omitempty" tf:"-"`
+
+	// Selector for a EntityType in fusionauth to populate entityTypeId.
+	// +kubebuilder:validation:Optional
+	EntityTypeIDSelector *v2.Selector `json:"entityTypeIdSelector,omitempty" tf:"-"`
+
 	// Whether or not the Permission is a default permission. A default permission is automatically granted to an entity of this type if no permissions are provided in a grant request.
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
 	// The name of the Permission.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 type EntityTypePermissionObservation struct {
@@ -46,6 +61,9 @@ type EntityTypePermissionObservation struct {
 
 	// The name of the Permission.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 type EntityTypePermissionParameters struct {
@@ -78,6 +96,10 @@ type EntityTypePermissionParameters struct {
 	// The name of the Permission.
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The Id to use for the new permission. If not specified a secure random UUID will be generated.
+	// +kubebuilder:validation:Optional
+	PermissionID *string `json:"permissionId,omitempty" tf:"permission_id,omitempty"`
 }
 
 // EntityTypePermissionSpec defines the desired state of EntityTypePermission

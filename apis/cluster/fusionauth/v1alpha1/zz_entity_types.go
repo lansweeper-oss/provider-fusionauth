@@ -31,6 +31,10 @@ type EntityInitParameters struct {
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
 
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
+
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.EntityType
@@ -47,6 +51,19 @@ type EntityInitParameters struct {
 	// A descriptive name for the Entity (i.e. "Raviga" or "Email Service").
 	// A descriptive name for the Entity (i.e. 'Raviga' or 'Email Service').
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The unique ID of the tenant used to scope this API request.
+	// The unique Id of the tenant used to scope this API request.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.Tenant
+	TenantID *string `json:"tenantId,omitempty" tf:"tenant_id,omitempty"`
+
+	// Reference to a Tenant in fusionauth to populate tenantId.
+	// +kubebuilder:validation:Optional
+	TenantIDRef *v2.Reference `json:"tenantIdRef,omitempty" tf:"-"`
+
+	// Selector for a Tenant in fusionauth to populate tenantId.
+	// +kubebuilder:validation:Optional
+	TenantIDSelector *v2.Selector `json:"tenantIdSelector,omitempty" tf:"-"`
 }
 
 type EntityObservation struct {
@@ -60,6 +77,10 @@ type EntityObservation struct {
 	// the limits on data field types as you plan for and build your custom data schema. Must be a JSON serialised string.
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
+
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
 
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.
@@ -96,6 +117,11 @@ type EntityParameters struct {
 	// An object that can hold any information about the Entity that should be persisted. Please review the limits on data field types as you plan for and build your custom data schema.  Must be a JSON string.
 	// +kubebuilder:validation:Optional
 	Data *string `json:"data,omitempty" tf:"data,omitempty"`
+
+	// The ID to use for the new Entity. If not specified a secure random UUID will be generated.
+	// The Id to use for the new Entity. If not specified a secure random UUID will be generated.
+	// +kubebuilder:validation:Optional
+	EntityID *string `json:"entityId,omitempty" tf:"entity_id,omitempty"`
 
 	// The ID of the Entity Type. Types are consulted for permission checks.
 	// The Id of the Entity Type. Types are consulted for permission checks.

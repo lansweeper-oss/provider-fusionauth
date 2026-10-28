@@ -15,6 +15,19 @@ import (
 
 type RoleInitParameters struct {
 
+	// ID of the application that this role is for.
+	// ID of the application that this role is for.
+	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
+	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
+
+	// Reference to a Application in fusionauth to populate applicationId.
+	// +kubebuilder:validation:Optional
+	ApplicationIDRef *v2.NamespacedReference `json:"applicationIdRef,omitempty" tf:"-"`
+
+	// Selector for a Application in fusionauth to populate applicationId.
+	// +kubebuilder:validation:Optional
+	ApplicationIDSelector *v2.NamespacedSelector `json:"applicationIdSelector,omitempty" tf:"-"`
+
 	// A description for the role.
 	// A description for the role.
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`

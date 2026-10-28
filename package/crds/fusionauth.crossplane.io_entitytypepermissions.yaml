@@ -167,6 +167,10 @@ spec:
                   name:
                     description: The name of the Permission.
                     type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -188,6 +192,85 @@ spec:
                   description:
                     description: The description of the Permission.
                     type: string
+                  entityTypeId:
+                    description: The Id of the Entity Type.
+                    type: string
+                  entityTypeIdRef:
+                    description: Reference to a EntityType in fusionauth to populate
+                      entityTypeId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  entityTypeIdSelector:
+                    description: Selector for a EntityType in fusionauth to populate
+                      entityTypeId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                   isDefault:
                     description: Whether or not the Permission is a default permission.
                       A default permission is automatically granted to an entity of
@@ -195,6 +278,10 @@ spec:
                     type: boolean
                   name:
                     description: The name of the Permission.
+                    type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
                     type: string
                 type: object
               managementPolicies:
@@ -313,6 +400,10 @@ spec:
                     type: boolean
                   name:
                     description: The name of the Permission.
+                    type: string
+                  permissionId:
+                    description: The Id to use for the new permission. If not specified
+                      a secure random UUID will be generated.
                     type: string
                 type: object
               conditions:

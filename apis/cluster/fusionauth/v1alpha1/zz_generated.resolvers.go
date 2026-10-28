@@ -1146,6 +1146,23 @@ func (mg *Entity) ResolveReferences(ctx context.Context, c client.Reader) error 
 	mg.Spec.InitProvider.EntityTypeID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.InitProvider.EntityTypeIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.TenantID),
+		Extract:      reference.ExternalName(),
+		Namespace:    mg.GetNamespace(),
+		Reference:    mg.Spec.InitProvider.TenantIDRef,
+		Selector:     mg.Spec.InitProvider.TenantIDSelector,
+		To: reference.To{
+			List:    &TenantList{},
+			Managed: &Tenant{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.TenantID")
+	}
+	mg.Spec.InitProvider.TenantID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.TenantIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -1221,6 +1238,23 @@ func (mg *EntityTypePermission) ResolveReferences(ctx context.Context, c client.
 	}
 	mg.Spec.ForProvider.EntityTypeID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.EntityTypeIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.EntityTypeID),
+		Extract:      reference.ExternalName(),
+		Namespace:    mg.GetNamespace(),
+		Reference:    mg.Spec.InitProvider.EntityTypeIDRef,
+		Selector:     mg.Spec.InitProvider.EntityTypeIDSelector,
+		To: reference.To{
+			List:    &EntityTypeList{},
+			Managed: &EntityType{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.EntityTypeID")
+	}
+	mg.Spec.InitProvider.EntityTypeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.EntityTypeIDRef = rsp.ResolvedReference
 
 	return nil
 }

@@ -140,3 +140,10 @@ jobs:
           echo "::group::All managed resources"
           kubectl get managed -o wide || true
           echo "::endgroup::"
+          echo "::group::FusionAuth pod logs"
+          kubectl -n fusionauth logs deploy/fusionauth --tail=300 || true
+          echo "::endgroup::"
+          echo "::group::FusionAuth response from the provider namespace"
+          kubectl -n crossplane-system run fa-probe --rm -i --restart=Never --image=curlimages/curl --command -- \
+          sh -c 'cat /etc/resolv.conf; nslookup fusionauth.fusionauth.svc.cluster.local; curl -s -i -m 10 -H "Authorization: e2e-test-api-key-00000000000000000000" http://fusionauth.fusionauth:9011/api/application' || true
+          echo "::endgroup::"
