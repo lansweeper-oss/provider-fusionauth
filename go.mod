@@ -7,7 +7,7 @@ tool golang.org/x/tools/cmd/goimports
 require (
 	dario.cat/mergo v1.0.2
 	github.com/FusionAuth/go-client v1.70.0
-	github.com/FusionAuth/terraform-provider-fusionauth v1.3.8
+	github.com/FusionAuth/terraform-provider-fusionauth v1.3.9
 	github.com/alecthomas/kong v1.16.1
 	github.com/crossplane/crossplane-runtime/v2 v2.5.0-rc.0.0.20261028162350-b66d52bb322b
 	github.com/crossplane/crossplane-tools v0.0.0-20260719180100-659f1dc036c5
