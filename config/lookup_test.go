@@ -21,6 +21,8 @@ const (
 )
 
 func TestReadUserByLoginID(t *testing.T) {
+	t.Parallel()
+	res := GetProvider().Resources["fusionauth_user"].TerraformResource
 	cases := map[string]struct {
 		externalName string
 		loginIDFound bool
@@ -33,6 +35,7 @@ func TestReadUserByLoginID(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			var lookedUp bool
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
@@ -57,8 +60,6 @@ func TestReadUserByLoginID(t *testing.T) {
 			require.NoError(t, err)
 			meta := upstreamfusionauth.Client{FAClient: *gofusionauth.NewClient(srv.Client(), u, "key")}
 
-			cfg := GetProvider().Resources["fusionauth_user"]
-			res := cfg.TerraformResource
 			d := res.Data(&terraform.InstanceState{ID: tc.externalName, Attributes: map[string]string{"tenant_id": testTenantID}})
 
 			diags := res.ReadContext(context.Background(), d, meta)
@@ -78,6 +79,8 @@ func writeUser(t *testing.T, w http.ResponseWriter) {
 }
 
 func TestLookupByName(t *testing.T) {
+	t.Parallel()
+	p := GetProvider()
 	const (
 		otherTenantID = "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
 		idA           = "11111111-1111-4111-8111-111111111111"
@@ -106,7 +109,7 @@ func TestLookupByName(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		assert.NoError(t, json.NewEncoder(w).Encode(body))
 	}))
-	defer srv.Close()
+	t.Cleanup(srv.Close)
 	u, err := url.Parse(srv.URL)
 	require.NoError(t, err)
 	meta := upstreamfusionauth.Client{FAClient: *gofusionauth.NewClient(srv.Client(), u, "key")}
@@ -129,11 +132,12 @@ func TestLookupByName(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			attrs := map[string]string{}
 			if tc.tenantID != "" {
 				attrs["tenant_id"] = tc.tenantID
 			}
-			res := GetProvider().Resources[tc.resource].TerraformResource
+			res := p.Resources[tc.resource].TerraformResource
 			d := res.Data(&terraform.InstanceState{ID: tc.name, Attributes: attrs})
 
 			id, err := tc.lookup(context.Background(), d, meta, tc.name)
