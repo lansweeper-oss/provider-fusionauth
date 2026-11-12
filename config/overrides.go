@@ -34,6 +34,7 @@ func Configure(p *config.Provider) {
 
 	p.AddResourceConfigurator("fusionauth_application", func(r *config.Resource) {
 		r.ShortGroup = ""
+		r.TerraformResource.ReadContext = readWithLookup(r.TerraformResource.ReadContext, lookupApplicationByName)
 		r.LateInitializer = config.LateInitializer{
 			IgnoredFields: []string{"multi_factor_configuration"},
 		}
@@ -85,6 +86,7 @@ func Configure(p *config.Provider) {
 		r.ShortGroup = ""
 		r.Kind = "Group"
 		r.References["tenant_id"] = tenantRef
+		r.TerraformResource.ReadContext = readWithLookup(r.TerraformResource.ReadContext, lookupGroupByName)
 	})
 
 	p.AddResourceConfigurator("fusionauth_key", func(r *config.Resource) {
@@ -119,6 +121,7 @@ func Configure(p *config.Provider) {
 		r.ShortGroup = ""
 		r.Kind = "User"
 		r.References["tenant_id"] = tenantRef
+		r.TerraformResource.ReadContext = readWithLookup(r.TerraformResource.ReadContext, lookupUserByLoginID)
 	})
 
 	p.AddResourceConfigurator("fusionauth_webhook", func(r *config.Resource) {
@@ -326,6 +329,7 @@ func configureTenant(p *config.Provider) {
 	p.AddResourceConfigurator("fusionauth_tenant", func(r *config.Resource) {
 		r.ShortGroup = ""
 		r.Kind = "Tenant"
+		r.TerraformResource.ReadContext = readWithLookup(r.TerraformResource.ReadContext, lookupTenantByName)
 		r.References["theme_id"] = themeRef
 		// Skipped: failed_authentication_configuration.user_action_id ref to user_action
 		// would create import cycle between fusionauth/ and user/ packages.

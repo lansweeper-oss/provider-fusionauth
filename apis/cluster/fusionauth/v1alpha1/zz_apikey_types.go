@@ -31,9 +31,17 @@ type APIKeyInitParameters struct {
 	// The Id to use for the new Form. If not specified a secure random UUID will be generated.
 	KeyID *string `json:"keyId,omitempty" tf:"key_id,omitempty"`
 
-	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
+	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess. Conflicts with key_wo.
 	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
 	KeySecretRef *v2.SecretKeySelector `json:"keySecretRef,omitempty" tf:"-"`
+
+	// API key string, as a write-only argument that is not stored in state. Conflicts with key.11 or later.
+	// API key string, as a write-only argument that is not stored in state.11 or later.
+	KeyWoSecretRef *v2.SecretKeySelector `json:"keyWoSecretRef,omitempty" tf:"-"`
+
+	// The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+	// The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+	KeyWoVersion *int64 `json:"keyWoVersion,omitempty" tf:"key_wo_version,omitempty"`
 
 	// The name of the API key. Must be unique. If retrievable is false then this field is required.
 	// The name of the API key.
@@ -81,6 +89,10 @@ type APIKeyObservation struct {
 	// The Id to use for the new Form. If not specified a secure random UUID will be generated.
 	KeyID *string `json:"keyId,omitempty" tf:"key_id,omitempty"`
 
+	// The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+	// The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+	KeyWoVersion *int64 `json:"keyWoVersion,omitempty" tf:"key_wo_version,omitempty"`
+
 	// The name of the API key. Must be unique. If retrievable is false then this field is required.
 	// The name of the API key.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
@@ -120,10 +132,20 @@ type APIKeyParameters struct {
 	// +kubebuilder:validation:Optional
 	KeyID *string `json:"keyId,omitempty" tf:"key_id,omitempty"`
 
-	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
+	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess. Conflicts with key_wo.
 	// API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
 	// +kubebuilder:validation:Optional
 	KeySecretRef *v2.SecretKeySelector `json:"keySecretRef,omitempty" tf:"-"`
+
+	// API key string, as a write-only argument that is not stored in state. Conflicts with key.11 or later.
+	// API key string, as a write-only argument that is not stored in state.11 or later.
+	// +kubebuilder:validation:Optional
+	KeyWoSecretRef *v2.SecretKeySelector `json:"keyWoSecretRef,omitempty" tf:"-"`
+
+	// The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+	// The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+	// +kubebuilder:validation:Optional
+	KeyWoVersion *int64 `json:"keyWoVersion,omitempty" tf:"key_wo_version,omitempty"`
 
 	// The name of the API key. Must be unique. If retrievable is false then this field is required.
 	// The name of the API key.

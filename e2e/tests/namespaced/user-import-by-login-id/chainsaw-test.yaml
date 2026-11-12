@@ -1,0 +1,179 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: user-import-by-login-id-namespaced
+# Validates that an observe-only User can be imported with an email or a
+# username as the external name. The provider resolves the login ID to the
+# user ID and writes the user ID back to the external-name annotation.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-source-user
+      try:
+        - apply:
+            resource:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: user-import-password
+              stringData:
+                password: e2e-Passw0rd-not-secret
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  email: user-import@example.com
+                  username: user-import
+                  skipVerification: true
+                  passwordSecretRef:
+                    name: user-import-password
+                    key: password
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              name: user-import-source
+
+    - name: import-by-email-and-username
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-by-email
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: user-import@example.com
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-by-username
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: user-import
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-by-email
+              status:
+                atProvider:
+                  email: user-import@example.com
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-by-username
+              status:
+                atProvider:
+                  username: user-import
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - script:
+            timeout: 30s
+            content: |
+              set -e
+              get() {
+                ${KUBECTL} get user.fusionauth.m.crossplane.io "$1" -n ${NAMESPACE} \
+                  -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}'
+              }
+              SRC=$(get user-import-source)
+              BY_EMAIL=$(get user-import-by-email)
+              BY_USERNAME=$(get user-import-by-username)
+              echo "source=$SRC email=$BY_EMAIL username=$BY_USERNAME"
+              test -n "$SRC"
+              test "$BY_EMAIL" = "$SRC"
+              test "$BY_USERNAME" = "$SRC"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              name: user-import-by-email
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              name: user-import-by-username
+
+    - name: unknown-login-id-is-not-created
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-unknown
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: nobody@example.com
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 2m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              metadata:
+                name: user-import-unknown
+                annotations:
+                  crossplane.io/external-name: nobody@example.com
+              status:
+                (conditions[?type == 'Synced']):
+                  - status: "False"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: User
+              name: user-import-unknown

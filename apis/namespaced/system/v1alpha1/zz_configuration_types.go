@@ -44,6 +44,9 @@ type ConfigurationInitParameters struct {
 	// The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
 	ReportTimezone *string `json:"reportTimezone,omitempty" tf:"report_timezone,omitempty"`
 
+	// Available since FusionAuth 1.70.0.
+	TokenExchangeAuditLogConfiguration []TokenExchangeAuditLogConfigurationInitParameters `json:"tokenExchangeAuditLogConfiguration,omitempty" tf:"token_exchange_audit_log_configuration,omitempty"`
+
 	// The trusted proxy configuration.
 	TrustedProxyConfiguration []TrustedProxyConfigurationInitParameters `json:"trustedProxyConfiguration,omitempty" tf:"trusted_proxy_configuration,omitempty"`
 
@@ -75,6 +78,9 @@ type ConfigurationObservation struct {
 	// The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
 	// The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
 	ReportTimezone *string `json:"reportTimezone,omitempty" tf:"report_timezone,omitempty"`
+
+	// Available since FusionAuth 1.70.0.
+	TokenExchangeAuditLogConfiguration []TokenExchangeAuditLogConfigurationObservation `json:"tokenExchangeAuditLogConfiguration,omitempty" tf:"token_exchange_audit_log_configuration,omitempty"`
 
 	// The trusted proxy configuration.
 	TrustedProxyConfiguration []TrustedProxyConfigurationObservation `json:"trustedProxyConfiguration,omitempty" tf:"trusted_proxy_configuration,omitempty"`
@@ -112,6 +118,10 @@ type ConfigurationParameters struct {
 	// The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
 	// +kubebuilder:validation:Optional
 	ReportTimezone *string `json:"reportTimezone,omitempty" tf:"report_timezone,omitempty"`
+
+	// Available since FusionAuth 1.70.0.
+	// +kubebuilder:validation:Optional
+	TokenExchangeAuditLogConfiguration []TokenExchangeAuditLogConfigurationParameters `json:"tokenExchangeAuditLogConfiguration,omitempty" tf:"token_exchange_audit_log_configuration,omitempty"`
 
 	// The trusted proxy configuration.
 	// +kubebuilder:validation:Optional
@@ -359,6 +369,28 @@ type LoginRecordConfigurationParameters struct {
 
 	// +kubebuilder:validation:Optional
 	Delete []LoginRecordConfigurationDeleteParameters `json:"delete,omitempty" tf:"delete"`
+}
+
+type TokenExchangeAuditLogConfigurationInitParameters struct {
+
+	// The number of days to retain the Audit Log.
+	// The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+	NumberOfDaysToRetain *int64 `json:"numberOfDaysToRetain,omitempty" tf:"number_of_days_to_retain"`
+}
+
+type TokenExchangeAuditLogConfigurationObservation struct {
+
+	// The number of days to retain the Audit Log.
+	// The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+	NumberOfDaysToRetain *int64 `json:"numberOfDaysToRetain,omitempty" tf:"number_of_days_to_retain,omitempty"`
+}
+
+type TokenExchangeAuditLogConfigurationParameters struct {
+
+	// The number of days to retain the Audit Log.
+	// The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+	// +kubebuilder:validation:Optional
+	NumberOfDaysToRetain *int64 `json:"numberOfDaysToRetain,omitempty" tf:"number_of_days_to_retain"`
 }
 
 type TrustedProxyConfigurationInitParameters struct {

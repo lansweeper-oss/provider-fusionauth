@@ -15,7 +15,7 @@ import (
 
 type OpenIDConnectApplicationConfigurationInitParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.Application
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
@@ -35,7 +35,7 @@ type OpenIDConnectApplicationConfigurationInitParameters struct {
 	// This is an optional Application specific override for the top level button text.
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -58,7 +58,7 @@ type OpenIDConnectApplicationConfigurationInitParameters struct {
 
 type OpenIDConnectApplicationConfigurationObservation struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
 	// This is an optional Application specific override for the top level button image URL.
@@ -69,7 +69,7 @@ type OpenIDConnectApplicationConfigurationObservation struct {
 	// This is an optional Application specific override for the top level button text.
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -88,7 +88,7 @@ type OpenIDConnectApplicationConfigurationObservation struct {
 
 type OpenIDConnectApplicationConfigurationParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/cluster/fusionauth/v1alpha1.Application
 	// +kubebuilder:validation:Optional
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
@@ -111,7 +111,7 @@ type OpenIDConnectApplicationConfigurationParameters struct {
 	// +kubebuilder:validation:Optional
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	// +kubebuilder:validation:Optional
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
@@ -209,6 +209,14 @@ type OpenIDConnectInitParameters struct {
 	// This is an optional Application specific override for the top level client secret.
 	// The top-level client secret to use with the OpenID Connect identity provider.
 	Oauth2ClientSecretSecretRef *v2.SecretKeySelector `json:"oauth2ClientSecretSecretRef,omitempty" tf:"-"`
+
+	// The top-level client secret to use with the OpenID Connect identity provider, as a write-only argument that is not stored in state. Conflicts with oauth2_client_secret.11 or later.
+	// The top-level client secret to use with the OpenID Connect identity provider, as a write-only argument that is not stored in state.11 or later.
+	Oauth2ClientSecretWoSecretRef *v2.SecretKeySelector `json:"oauth2ClientSecretWoSecretRef,omitempty" tf:"-"`
+
+	// The version of oauth2_client_secret_wo. Required with oauth2_client_secret_wo.
+	// The version of `oauth2_client_secret_wo`. Change this value to update the client secret when nothing else about the identity provider has changed.
+	Oauth2ClientSecretWoVersion *int64 `json:"oauth2ClientSecretWoVersion,omitempty" tf:"oauth2_client_secret_wo_version,omitempty"`
 
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.
@@ -329,6 +337,10 @@ type OpenIDConnectObservation struct {
 	// The top-level client id for your Application.
 	// The top-level client id for your Application.
 	Oauth2ClientID *string `json:"oauth2ClientId,omitempty" tf:"oauth2_client_id,omitempty"`
+
+	// The version of oauth2_client_secret_wo. Required with oauth2_client_secret_wo.
+	// The version of `oauth2_client_secret_wo`. Change this value to update the client secret when nothing else about the identity provider has changed.
+	Oauth2ClientSecretWoVersion *int64 `json:"oauth2ClientSecretWoVersion,omitempty" tf:"oauth2_client_secret_wo_version,omitempty"`
 
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.
@@ -466,6 +478,16 @@ type OpenIDConnectParameters struct {
 	// The top-level client secret to use with the OpenID Connect identity provider.
 	// +kubebuilder:validation:Optional
 	Oauth2ClientSecretSecretRef *v2.SecretKeySelector `json:"oauth2ClientSecretSecretRef,omitempty" tf:"-"`
+
+	// The top-level client secret to use with the OpenID Connect identity provider, as a write-only argument that is not stored in state. Conflicts with oauth2_client_secret.11 or later.
+	// The top-level client secret to use with the OpenID Connect identity provider, as a write-only argument that is not stored in state.11 or later.
+	// +kubebuilder:validation:Optional
+	Oauth2ClientSecretWoSecretRef *v2.SecretKeySelector `json:"oauth2ClientSecretWoSecretRef,omitempty" tf:"-"`
+
+	// The version of oauth2_client_secret_wo. Required with oauth2_client_secret_wo.
+	// The version of `oauth2_client_secret_wo`. Change this value to update the client secret when nothing else about the identity provider has changed.
+	// +kubebuilder:validation:Optional
+	Oauth2ClientSecretWoVersion *int64 `json:"oauth2ClientSecretWoVersion,omitempty" tf:"oauth2_client_secret_wo_version,omitempty"`
 
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.
 	// An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.

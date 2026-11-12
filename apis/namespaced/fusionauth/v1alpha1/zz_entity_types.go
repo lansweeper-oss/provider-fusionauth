@@ -15,6 +15,13 @@ import (
 
 type EntityInitParameters struct {
 
+	// Whether this Entity can act as the exchanger in a token exchange request.
+	// FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+	// this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// Defaults to false.
+	// Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	ActAsTokenExchangeClient *bool `json:"actAsTokenExchangeClient,omitempty" tf:"act_as_token_exchange_client,omitempty"`
+
 	// The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
 	// be used. Must be a UUID.
 	// The OAuth 2.0 client Id. If you leave this blank during a POST, the value of the Entity Id will be used.
@@ -68,6 +75,13 @@ type EntityInitParameters struct {
 
 type EntityObservation struct {
 
+	// Whether this Entity can act as the exchanger in a token exchange request.
+	// FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+	// this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// Defaults to false.
+	// Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	ActAsTokenExchangeClient *bool `json:"actAsTokenExchangeClient,omitempty" tf:"act_as_token_exchange_client,omitempty"`
+
 	// The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
 	// be used. Must be a UUID.
 	// The OAuth 2.0 client Id. If you leave this blank during a POST, the value of the Entity Id will be used.
@@ -98,6 +112,14 @@ type EntityObservation struct {
 }
 
 type EntityParameters struct {
+
+	// Whether this Entity can act as the exchanger in a token exchange request.
+	// FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+	// this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// Defaults to false.
+	// Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// +kubebuilder:validation:Optional
+	ActAsTokenExchangeClient *bool `json:"actAsTokenExchangeClient,omitempty" tf:"act_as_token_exchange_client,omitempty"`
 
 	// The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
 	// be used. Must be a UUID.

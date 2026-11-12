@@ -95,6 +95,46 @@ spec:
                           description: |-
                             An audit log was created
                           type: boolean
+                        cimdRegistrationFailed:
+                          description: |-
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        cimdRegistrationSuccess:
+                          description: |-
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        entityCreate:
+                          description: |-
+                            An entity is being created. Available since FusionAuth 1.69.0.
+                            An entity is being created. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityCreateComplete:
+                          description: |-
+                            A create entity request completed. Available since FusionAuth 1.69.0.
+                            A create entity request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDelete:
+                          description: |-
+                            An entity is being deleted. Available since FusionAuth 1.69.0.
+                            An entity is being deleted. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDeleteComplete:
+                          description: |-
+                            An entity delete request completed. Available since FusionAuth 1.69.0.
+                            An entity delete request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdate:
+                          description: |-
+                            An entity is being updated. Available since FusionAuth 1.69.0.
+                            An entity is being updated. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdateComplete:
+                          description: |-
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0.
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0
+                          type: boolean
                         eventLogCreate:
                           description: |-
                             An event log was created
@@ -163,6 +203,16 @@ spec:
                           description: |-
                             Kickstart completed successfully the system is ready for use
                           type: boolean
+                        tokenExchange:
+                          description: |-
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        tokenExchangeComplete:
+                          description: |-
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
                         userAction:
                           description: |-
                             An action was taken on a user, or an existing event may be changing states if the action is time based
@@ -206,6 +256,10 @@ spec:
                         userIdentityProviderUnlink:
                           description: |-
                             An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityUpdate:
+                          description: |-
+                            When a user's identity is updated
                           type: boolean
                         userIdentityVerified:
                           description: |-
@@ -289,11 +343,13 @@ spec:
                           type: boolean
                         userTwoFactorChallenge:
                           description: |-
-                            A user has been issued a two-factor challenge
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorFailedAttempt:
                           description: |-
-                            A user has failed a two-factor challenge attempt
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorMethodAdd:
                           description: |-
@@ -305,7 +361,8 @@ spec:
                           type: boolean
                         userTwoFactorSuccess:
                           description: |-
-                            A user has successfully completed a two-factor challenge
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userUpdate:
                           description: |-
@@ -588,6 +645,46 @@ spec:
                           description: |-
                             An audit log was created
                           type: boolean
+                        cimdRegistrationFailed:
+                          description: |-
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        cimdRegistrationSuccess:
+                          description: |-
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        entityCreate:
+                          description: |-
+                            An entity is being created. Available since FusionAuth 1.69.0.
+                            An entity is being created. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityCreateComplete:
+                          description: |-
+                            A create entity request completed. Available since FusionAuth 1.69.0.
+                            A create entity request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDelete:
+                          description: |-
+                            An entity is being deleted. Available since FusionAuth 1.69.0.
+                            An entity is being deleted. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDeleteComplete:
+                          description: |-
+                            An entity delete request completed. Available since FusionAuth 1.69.0.
+                            An entity delete request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdate:
+                          description: |-
+                            An entity is being updated. Available since FusionAuth 1.69.0.
+                            An entity is being updated. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdateComplete:
+                          description: |-
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0.
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0
+                          type: boolean
                         eventLogCreate:
                           description: |-
                             An event log was created
@@ -656,6 +753,16 @@ spec:
                           description: |-
                             Kickstart completed successfully the system is ready for use
                           type: boolean
+                        tokenExchange:
+                          description: |-
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        tokenExchangeComplete:
+                          description: |-
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
                         userAction:
                           description: |-
                             An action was taken on a user, or an existing event may be changing states if the action is time based
@@ -699,6 +806,10 @@ spec:
                         userIdentityProviderUnlink:
                           description: |-
                             An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityUpdate:
+                          description: |-
+                            When a user's identity is updated
                           type: boolean
                         userIdentityVerified:
                           description: |-
@@ -782,11 +893,13 @@ spec:
                           type: boolean
                         userTwoFactorChallenge:
                           description: |-
-                            A user has been issued a two-factor challenge
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorFailedAttempt:
                           description: |-
-                            A user has failed a two-factor challenge attempt
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorMethodAdd:
                           description: |-
@@ -798,7 +911,8 @@ spec:
                           type: boolean
                         userTwoFactorSuccess:
                           description: |-
-                            A user has successfully completed a two-factor challenge
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userUpdate:
                           description: |-
@@ -1172,6 +1286,46 @@ spec:
                           description: |-
                             An audit log was created
                           type: boolean
+                        cimdRegistrationFailed:
+                          description: |-
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        cimdRegistrationSuccess:
+                          description: |-
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+                            A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        entityCreate:
+                          description: |-
+                            An entity is being created. Available since FusionAuth 1.69.0.
+                            An entity is being created. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityCreateComplete:
+                          description: |-
+                            A create entity request completed. Available since FusionAuth 1.69.0.
+                            A create entity request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDelete:
+                          description: |-
+                            An entity is being deleted. Available since FusionAuth 1.69.0.
+                            An entity is being deleted. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityDeleteComplete:
+                          description: |-
+                            An entity delete request completed. Available since FusionAuth 1.69.0.
+                            An entity delete request completed. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdate:
+                          description: |-
+                            An entity is being updated. Available since FusionAuth 1.69.0.
+                            An entity is being updated. Available since FusionAuth 1.69.0
+                          type: boolean
+                        entityUpdateComplete:
+                          description: |-
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0.
+                            A request to update an entity has completed. Available since FusionAuth 1.69.0
+                          type: boolean
                         eventLogCreate:
                           description: |-
                             An event log was created
@@ -1240,6 +1394,16 @@ spec:
                           description: |-
                             Kickstart completed successfully the system is ready for use
                           type: boolean
+                        tokenExchange:
+                          description: |-
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+                            A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+                          type: boolean
+                        tokenExchangeComplete:
+                          description: |-
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+                            A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+                          type: boolean
                         userAction:
                           description: |-
                             An action was taken on a user, or an existing event may be changing states if the action is time based
@@ -1283,6 +1447,10 @@ spec:
                         userIdentityProviderUnlink:
                           description: |-
                             An existing link has been removed between a user and an identify provider
+                          type: boolean
+                        userIdentityUpdate:
+                          description: |-
+                            When a user's identity is updated
                           type: boolean
                         userIdentityVerified:
                           description: |-
@@ -1366,11 +1534,13 @@ spec:
                           type: boolean
                         userTwoFactorChallenge:
                           description: |-
-                            A user has been issued a two-factor challenge
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorFailedAttempt:
                           description: |-
-                            A user has failed a two-factor challenge attempt
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+                            A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
                           type: boolean
                         userTwoFactorMethodAdd:
                           description: |-
@@ -1382,7 +1552,8 @@ spec:
                           type: boolean
                         userTwoFactorSuccess:
                           description: |-
-                            A user has successfully completed a two-factor challenge
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+                            A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
                           type: boolean
                         userUpdate:
                           description: |-

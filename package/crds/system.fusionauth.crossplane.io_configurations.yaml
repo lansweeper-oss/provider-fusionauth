@@ -183,6 +183,18 @@ spec:
                     description: |-
                       The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
                     type: string
+                  tokenExchangeAuditLogConfiguration:
+                    description: Available since FusionAuth 1.70.0.
+                    items:
+                      properties:
+                        numberOfDaysToRetain:
+                          description: |-
+                            The number of days to retain the Audit Log.
+                            The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
                   trustedProxyConfiguration:
                     description: The trusted proxy configuration.
                     items:
@@ -382,6 +394,18 @@ spec:
                     description: |-
                       The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
                     type: string
+                  tokenExchangeAuditLogConfiguration:
+                    description: Available since FusionAuth 1.70.0.
+                    items:
+                      properties:
+                        numberOfDaysToRetain:
+                          description: |-
+                            The number of days to retain the Audit Log.
+                            The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
                   trustedProxyConfiguration:
                     description: The trusted proxy configuration.
                     items:
@@ -661,6 +685,18 @@ spec:
                     description: |-
                       The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.
                     type: string
+                  tokenExchangeAuditLogConfiguration:
+                    description: Available since FusionAuth 1.70.0.
+                    items:
+                      properties:
+                        numberOfDaysToRetain:
+                          description: |-
+                            The number of days to retain the Audit Log.
+                            The number of days to retain Token Exchange audit log entries. The value must be between `1` and `31`. Available since FusionAuth 1.70.0.
+                          format: int64
+                          type: integer
+                      type: object
+                    type: array
                   trustedProxyConfiguration:
                     description: The trusted proxy configuration.
                     items:

@@ -1004,6 +1004,26 @@ spec:
                     description: |-
                       The name of the Application.
                     type: string
+                  oauthClientSecretWoSecretRef:
+                    description: |-
+                      The OAuth 2.0 client secret, as a write-only argument that is not stored in state. It is sent to FusionAuth on create and whenever oauth_client_secret_wo_version changes. Conflicts with oauth_configuration.client_secret.11 or later.
+                      The OAuth 2.0 client secret, as a write-only argument that is not stored in state.11 or later.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  oauthClientSecretWoVersion:
+                    description: |-
+                      The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+                      The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+                    format: int64
+                    type: integer
                   oauthConfiguration:
                     items:
                       properties:
@@ -1045,6 +1065,7 @@ spec:
                           type: string
                         clientSecretSecretRef:
                           description: |-
+                            The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored. Conflicts with oauth_client_secret_wo.
                             The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
                           properties:
                             key:
@@ -4069,6 +4090,26 @@ spec:
                     description: |-
                       The name of the Application.
                     type: string
+                  oauthClientSecretWoSecretRef:
+                    description: |-
+                      The OAuth 2.0 client secret, as a write-only argument that is not stored in state. It is sent to FusionAuth on create and whenever oauth_client_secret_wo_version changes. Conflicts with oauth_configuration.client_secret.11 or later.
+                      The OAuth 2.0 client secret, as a write-only argument that is not stored in state.11 or later.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  oauthClientSecretWoVersion:
+                    description: |-
+                      The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+                      The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+                    format: int64
+                    type: integer
                   oauthConfiguration:
                     items:
                       properties:
@@ -4110,6 +4151,7 @@ spec:
                           type: string
                         clientSecretSecretRef:
                           description: |-
+                            The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored. Conflicts with oauth_client_secret_wo.
                             The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
                           properties:
                             key:
@@ -6545,6 +6587,12 @@ spec:
                     description: |-
                       The name of the Application.
                     type: string
+                  oauthClientSecretWoVersion:
+                    description: |-
+                      The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+                      The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+                    format: int64
+                    type: integer
                   oauthConfiguration:
                     items:
                       properties:

@@ -21,7 +21,7 @@ func (mg *Application) GetTerraformResourceType() string {
 
 // GetConnectionDetailsMapping for this Application
 func (tr *Application) GetConnectionDetailsMapping() map[string]string {
-	return map[string]string{"oauth_configuration[*].client_secret": "oauthConfiguration[*].clientSecretSecretRef"}
+	return map[string]string{"oauth_client_secret_wo": "oauthClientSecretWoSecretRef", "oauth_configuration[*].client_secret": "oauthConfiguration[*].clientSecretSecretRef"}
 }
 
 // GetObservation of this Application
