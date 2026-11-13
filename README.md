@@ -7,7 +7,7 @@ wraps the upstream Terraform provider and exposes XRM-conformant managed
 resources for applications, tenants, identity providers, keys, lambdas, themes,
 and more.
 
-[![Upstream Terraform Provider](https://img.shields.io/badge/upstream_terraform_provider-v1.3.8-blue?logo=terraform)](https://github.com/FusionAuth/terraform-provider-fusionauth/tree/v1.3.8)
+[![Upstream Terraform Provider](https://img.shields.io/badge/upstream_terraform_provider-v1.3.9-blue?logo=terraform)](https://github.com/FusionAuth/terraform-provider-fusionauth/tree/v1.3.9)
 
 ## Getting Started
 
