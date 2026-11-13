@@ -23,6 +23,15 @@ resources:
                   ],
                   "tenant_id": "94f751c5-4883-4684-a817-6b106778edec"
                 }
+            - name: example
+              manifest: |-
+                {
+                  "description": "my super secret key",
+                  "key_wo": "${var.api_key}",
+                  "key_wo_version": 1
+                }
+              references:
+                key_wo: var.api_key
         argumentDocs:
             delete: '- (Optional) HTTP DELETE Verb.'
             description: '- (Optional) Description of the key.'
@@ -30,8 +39,10 @@ resources:
             expiration_instant: '- (Optional) The expiration instant of this API key. Using an expired API key for API Authentication will result in a 401 response code.'
             get: '- (Optional) HTTP GET Verb.'
             ip_access_control_list_id: '- (Optional) The Id of the IP Access Control List limiting access to this API key.'
-            key: '- (Optional) API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.'
+            key: '- (Optional) API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess. Conflicts with key_wo.'
             key_id: '- (Optional) The Id to use for the new Form. If not specified a secure random UUID will be generated.'
+            key_wo: '- (Optional) API key string, as a write-only argument that is not stored in state. Conflicts with key. Requires Terraform 1.11 or later.'
+            key_wo_version: '- (Optional) The version of key_wo. Required with key_wo. Changing this value replaces the API key.'
             name: '- (Optional) The name of the API key. Must be unique. If retrievable is false then this field is required.'
             patch: '- (Optional) HTTP PATCH Verb'
             permissions_endpoints: '- (Optional) Endpoint permissions for this key. Each key of the object is an endpoint, with the value being an array of the HTTP methods which can be used against the endpoint. An Empty permissions_endpoints object mean that this is a super key that authorizes this key for all the endpoints.'
@@ -203,6 +214,17 @@ resources:
                 lambda_configuration.access_token_populate_id: fusionauth_lambda.token_populate.id
                 lambda_configuration.id_token_populate_id: fusionauth_lambda.id_token_populate.id
                 tenant_id: fusionauth_tenant.portal.id
+            - name: example
+              manifest: |-
+                {
+                  "name": "Example",
+                  "oauth_client_secret_wo": "${var.client_secret}",
+                  "oauth_client_secret_wo_version": 1,
+                  "tenant_id": "${fusionauth_tenant.portal.id}"
+                }
+              references:
+                oauth_client_secret_wo: var.client_secret
+                tenant_id: fusionauth_tenant.portal.id
         argumentDocs:
             Allow: '- Unknown scopes will be allowed on the request, passed through the OAuth workflow, and written to the resulting tokens without consent.'
             AlwaysPrompt: '- Always prompt the user for consent.'
@@ -238,7 +260,7 @@ resources:
             callback_url: '- (Required) The URL of the callback (sometimes called the Assertion Consumer Service or ACS). This is where FusionAuth sends the browser after the user logs in via SAML.'
             clean_speak_configuration: '- (Optional)'
             client_authentication_policy: '- (Optional) Determines the client authentication requirements for the OAuth 2.0 Token endpoint.'
-            client_secret: '- (Optional) The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.'
+            client_secret: '- (Optional) The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored. Conflicts with oauth_client_secret_wo.'
             complete_registration: '- (Optional) Users cannot self-register, but can complete missing information from an existing registration. Defaults to false. When true, any registered user logging in to this application using hosted login pages is prompted to complete missing registration information based on the application''s configured registration form. If application.registrationConfiguration.enabled is true, completeRegistration is ignored. In that case, users can create a registration or complete profile information.'
             confirm_password: '- (Optional)'
             consent_mode: '(Optional) Controls the policy for prompting a user to consent to requested OAuth scopes. This configuration only takes effect when application.oauthConfiguration.relationship is ThirdParty. The possible values are:'
@@ -295,6 +317,8 @@ resources:
             multi_factor_requirement_id: '- (Optional) The Id of the lambda that will be invoked during the login process to determine the multi-factor authentication requirements for a given user at the time of login.'
             name: '- (Required) The name of the Application.'
             name_id_format: '- (Optional) The value sent in the AuthN response to the SAML v2 Service Provider in the NameID assertion.'
+            oauth_client_secret_wo: '- (Optional) The OAuth 2.0 client secret, as a write-only argument that is not stored in state. It is sent to FusionAuth on create and whenever oauth_client_secret_wo_version changes. Conflicts with oauth_configuration.client_secret. Requires Terraform 1.11 or later.'
+            oauth_client_secret_wo_version: '- (Optional) The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.'
             oauth_configuration: '- (Optional)'
             password_reset_success_template_id: '- (Optional) The Id of the Email Template used to send emails to users when they have completed a ''forgot password'' workflow and their password has been reset. When configured, this value will take precedence over the same configuration from the Tenant when an application context is known.'
             password_update_template_id: '- (Optional) The Id of the Email Template used to send emails to users when their password has been updated. When configured, this value will take precedence over the same configuration from the Tenant when an application context is known.'
@@ -418,6 +442,102 @@ resources:
             name: '- (Required) The name of the Role.'
         importStatements:
             - terraform import fusionauth_application_role.name application_id:role_id
+    fusionauth_cimd_domain:
+        subCategory: ""
+        description: CIMD Domain Resource
+        name: fusionauth_cimd_domain
+        title: fusionauth_cimd_domain Resource - fusionauth
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "authorized_resource_uris": [
+                    "https://api.example.com/mcp"
+                  ],
+                  "consent_mode": "RememberDecision",
+                  "data": "${jsonencode({\n    owner = \"platform\"\n  })}",
+                  "domain": "https://mcp.example.com",
+                  "grace_period_in_seconds": 3600,
+                  "max_cache_ttl_in_seconds": 86400,
+                  "name": "Example MCP clients",
+                  "provided_scope_policy": [
+                    {
+                      "address": [
+                        {
+                          "enabled": false
+                        }
+                      ],
+                      "email": [
+                        {
+                          "enabled": true,
+                          "required": true
+                        }
+                      ]
+                    }
+                  ],
+                  "registration_lambda_id": "${fusionauth_lambda.cimd_registration.id}",
+                  "tenant_id": "${fusionauth_tenant.example.id}"
+                }
+              references:
+                registration_lambda_id: fusionauth_lambda.cimd_registration.id
+                tenant_id: fusionauth_tenant.example.id
+        argumentDocs:
+            AlwaysPrompt: '- Always prompt the user for consent.'
+            NeverPrompt: will be rejected. A CIMD client is always treated as a third-party client, and once a consent decision is skipped entirely there is no way to re-prompt the client's user. Defaults to AlwaysPrompt.
+            RememberDecision: '- Remember previous consents; only prompt if the choice expires or if the requested or required scopes have changed. The duration of this persisted choice is controlled by the Tenant''s external_identifier_configuration.remember_oauth_scope_consent_choice_time_to_live_in_seconds value.'
+            address: '- (Optional)'
+            allow_localhost_redirect_uris: '- (Optional) Whether CIMD clients on this domain may use a localhost redirect URI, such as http://localhost:3334/callback. The URI must also appear in the client''s metadata document redirect_uris. When false, FusionAuth rejects any localhost redirect URI, but still accepts loopback IP addresses such as http://127.0.0.1/callback. RFC 8252 Section 7.3 recommends loopback IP addresses over localhost, because the name can resolve to an interface other than loopback. Enable this only for CIMD clients that require it. Defaults to false.'
+            authorized_resource_uris: '- (Optional) The resource URIs that clients registered on this CIMD domain may request using the RFC 8707 resource parameter. Every CIMD client must send exactly one resource parameter, and FusionAuth rejects the request with invalid_target unless it appears in this list. Clients on a domain with an empty list cannot log in.'
+            cimd_domain_id: '- (Optional) The Id to use for the new CIMD domain. If not specified a secure random UUID will be generated.'
+            consent_mode: '- (Optional) Controls whether a user is prompted to consent to the OAuth scopes requested by this domain''s clients. The possible values are:'
+            data: '- (Optional) A JSON string that can hold any information about the CIMD domain that should be persisted.'
+            debug: '- (Optional) Whether FusionAuth writes the standard OAuth debug Event Log entries, such as the authorization code exchange, for this domain''s clients. FusionAuth also writes a Debug entry when it creates a client registration, refreshes one after its cache expires, or adds a new resource to an existing one. The authorization code exchange entry lists the requested resources. FusionAuth always writes an Error entry for a failed client registration, whether or not this is enabled. It always writes an Information entry when it rate limits a registration. Defaults to false.'
+            domain: '- (Required) The origin that CIMD clients register from, given as scheme://host[:port]. FusionAuth normalizes this value before storing it and uses it to validate the client_id URL presented on an OAuth request. Use the literal value * to accept registrations from any origin. A Tenant may contain either a single * domain or any number of exact-match domains, but never both. The origin must use https, and its host must contain at least one .. A path, query string, fragment, or user info component is not permitted, and neither are IP addresses or single-label hosts such as localhost. Subdomain wildcards such as https://*.example.com are not supported. Changing this value forces a new resource to be created.'
+            email: '- (Optional)'
+            enabled: '- (Optional) Whether the address OAuth scope provided by FusionAuth is enabled for this CIMD domain. A disabled scope is treated as an unknown scope when a client requests it. Defaults to true.'
+            grace_period_in_seconds: '- (Optional) How long, in seconds, FusionAuth will continue to honor an expired cached metadata document when a re-fetch of that document fails. Must be greater than or equal to 0. Defaults to 0.'
+            jwt_populate_lambda_id: '- (Optional) The unique Id of the lambda used to populate the claims of the access token and Id token issued to this domain''s clients. A single lambda is applied to both tokens. The lambda must be a JWT populate lambda.'
+            max_cache_ttl_in_seconds: '- (Optional) The ceiling, in seconds, applied to the Cache-Control: max-age value returned when fetching a client''s metadata document. When the document specifies a smaller value, that smaller value is used instead. The Expires header is not honored. Must be at least 900, the non-configurable 15 minute minimum cache duration. Defaults to 86400.'
+            name: '- (Optional) The name of the CIMD domain, used to identify it in the FusionAuth admin UI. Leave this blank to default to the value of domain.'
+            phone: '- (Optional)'
+            profile: '- (Optional)'
+            provided_scope_policy: '- (Optional) Configures the OAuth scopes provided by FusionAuth for this CIMD domain. An omitted scope keeps the FusionAuth default of enabled and not required.'
+            registration_lambda_id: '- (Optional) The unique Id of the CIMD Client Registration lambda used to accept, reject, or modify a client registration for this domain. The lambda must be a CIMD Client Registration lambda (CimdClientRegistration). When this is not set, no registration lambda runs and every client from this origin is allowed to register. When domain is *, a registration lambda is the only way to filter which clients may register.'
+            required: '- (Optional) Whether consent to the address OAuth scope provided by FusionAuth is required for this CIMD domain when present on the OAuth request. Defaults to false.'
+            resource: . Changing the consent mode to AlwaysPrompt deletes every remembered decision for the domain's clients.
+            tenant_id: '- (Required) The Id of the Tenant this CIMD domain belongs to. Changing this value forces a new resource to be created.'
+        importStatements:
+            - terraform import fusionauth_cimd_domain.name cimd_domain_id
+    fusionauth_cimd_domain_oauth_scope:
+        subCategory: ""
+        description: CIMD Domain OAuth Scope Resource
+        name: fusionauth_cimd_domain_oauth_scope
+        title: fusionauth_cimd_domain_oauth_scope Resource - fusionauth
+        examples:
+            - name: this
+              manifest: |-
+                {
+                  "cimd_domain_id": "${fusionauth_cimd_domain.example.id}",
+                  "data": "${jsonencode({\n    createdBy = \"jared@fusionauth.io\"\n  })}",
+                  "default_consent_detail": "This will provide the requesting client read-only access to your data",
+                  "default_consent_message": "View your data",
+                  "description": "Provides a CIMD client read-only access to a user's data",
+                  "name": "data:read",
+                  "required": true
+                }
+              references:
+                cimd_domain_id: fusionauth_cimd_domain.example.id
+        argumentDocs:
+            cimd_domain_id: '- (Required) The Id of the CIMD domain to which this scope belongs. Changing this value forces a new resource to be created.'
+            data: '- (Optional) A JSON string that can hold any information about the OAuth Scope that should be persisted.'
+            default_consent_detail: '- (Optional) The default detail to display on the OAuth consent screen if one cannot be found in the theme. Learn more about setting this value using themes.'
+            default_consent_message: '- (Optional) The default message to display on the OAuth consent screen if one cannot be found in the theme. Learn more about setting this value using themes.'
+            description: '- (Optional) A description of the OAuth Scope for internal use.'
+            name: '- (Required) The name of the OAuth Scope. This is the value that will be used to request the scope in OAuth workflows. The name cannot be changed after creation, so changing this value forces a new resource to be created.'
+            required: '- (Optional) Determines if the OAuth Scope is required when requested in an OAuth workflow. Defaults to false.'
+            scope_id: '- (Optional) The Id to use for the new OAuth Scope. If not specified a secure random UUID will be generated.'
+        importStatements:
+            - terraform import fusionauth_cimd_domain_oauth_scope.name cimd_domain_id:scope_id
     fusionauth_consent:
         subCategory: ""
         description: Consent Resource
@@ -538,6 +658,11 @@ resources:
                     }
         argumentDocs:
             Device: ', API or Company.'
+            act_as_token_exchange_client: |-
+                - (Optional) Whether this Entity can act as the exchanger in a token exchange request.
+                FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+                this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                Defaults to false.
             client_id: |-
                 - (Optional) The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
                 be used. Must be a UUID.
@@ -853,11 +978,11 @@ resources:
                 }
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             bundle_id: '- (Optional) The Apple Bundle identifier found in your Apple Developer Account which has been configured for Sign in with Apple. The Bundle identifier is used to Sign in with Apple from native applications. The request must include bundle_id or services_id . If services_id is omitted, this field is required.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
             key_id: '- (Required) The unique Id of the private key downloaded from Apple and imported into Key Master that will be used to sign the client secret.'
@@ -897,10 +1022,10 @@ resources:
                 }
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             claim_map: '- (Optional) A map of incoming claims to User fields, User data or Registration data. The key of the map is the incoming claim name from the configured identity provider. The following are allowed values: birthDate, firstName, lastName, fullName, middleName, mobilePhone, imageUrl, timezone, UserData and RegistrationData.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             default_key_id: '- (Optional, Deprecated) When configured this key will be used to verify the signature of the JWT when the header key defined by the headerKeyParameter property is not found in the JWT header. In most cases, the JWT header will contain the key identifier and this value will be used to resolve the correct public key or X.509 certificate to verify the signature. This assumes the public key or X.509 certificate has already been imported using the Key API or Key Master in the FusionAuth admin UI. In version 1.69.0 and above, use verification_key_ids instead. This field will continue to be populated with the first entry in verification_key_ids for backward compatibility, so removing it from your configuration no longer clears it. Set verification_key_ids instead. Conflicts with verification_key_ids. FusionAuth 1.69.0 and above require at least one of default_key_id or verification_key_ids; earlier versions accept neither being set. See the 1.69.0 Key Configuration Migration Guide.'
             domains: '- (Optional) An array of domains that are managed by this Identity Provider.'
@@ -962,11 +1087,11 @@ resources:
             UseRedirect: '- When logging in use the Facebook OAuth redirect login flow.'
             app_id: '- (Required) The top-level Facebook appId for your Application. This value is retrieved from the Facebook developer website when you setup your Facebook developer account.'
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the FusionAuth Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the FusionAuth Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_secret: '- (Required) The top-level client secret, also known as ''App Secret'', to use with the Facebook Identity Provider when retrieving the long-lived token. This value is retrieved from the Facebook developer website when you setup your Facebook developer account.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, an Event Log is created each time this provider is invoked to reconcile a login.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the application_id property.'
             fields: '- (Optional) This is an optional Application specific override for the top level fields.'
@@ -1012,13 +1137,13 @@ resources:
         argumentDocs:
             api: '- (Optional) This is an optional Application specific override for the top level properties.api . If this login_method is set to UsePopup, or the Application configuration is unset and the top level loginMethod is set to UsePopup, and this value contains the conflicting ux_mode=redirect property, that single property will be replaced with ux_mode=popup.'
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button: '- (Optional) This is an optional Application specific override for the top level button.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_id: '- (Optional) This is an optional Application specific override for the top level client id.'
             client_secret: '- (Optional) This is an optional Application specific override for the top level client secret.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             domains: '- (Optional) This is an optional list of domains that this OpenID Connect provider should be used for. This converts the FusionAuth login form to a domain-based login form. This type of form first asks the user for their email. FusionAuth then uses their email to determine if an OpenID Connect identity provider should be used. If an OpenID Connect provider should be used, the browser is redirected to the authorization endpoint of that identity provider. Otherwise, the password field is revealed on the form so that the user can login using FusionAuth.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
@@ -1068,12 +1193,12 @@ resources:
             LinkByUsername: '- Link to an existing user based upon username. A user will be created with the username returned by the identity provider if one does not already exist.'
             LinkByUsernameForExistingUser: '- Only link to an existing user based upon username. A user will not be created if one does not already exist with username returned by the identity provider.'
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the FusionAuth Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the FusionAuth Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Optional) This is an optional Application specific override for the top level button_text.'
             client_id: '- (Optional) This is an optional Application specific override for the top level client_id.'
             client_secret: '- (Optional) This is an optional Application specific override for the top level client_secret.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, an Event Log is created each time this provider is invoked to reconcile a login.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the application_id property.'
             lambda_reconcile_id: '- (Optional) The unique Id of the lambda to used during the user reconcile process to map custom claims from the external identity provider to the FusionAuth user.'
@@ -1126,13 +1251,25 @@ resources:
               references:
                 application_configuration.application_id: fusionauth_application.myapp.id
                 tenant_configuration.tenant_id: fusionauth_tenant.example.id
+            - name: example
+              manifest: |-
+                {
+                  "button_text": "Login with OpenID Connect",
+                  "name": "Example OpenID Connect Provider",
+                  "oauth2_client_id": "191c23dc-b772-4558-bd21-dc1cbf74ae21",
+                  "oauth2_client_secret_wo": "${var.client_secret}",
+                  "oauth2_client_secret_wo_version": 1,
+                  "oauth2_issuer": "https://acme.com"
+                }
+              references:
+                oauth2_client_secret_wo: var.client_secret
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_image_url: '- (Optional) This is an optional Application specific override for the top level button image URL.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             domains: '- (Optional) This is an optional list of domains that this OpenID Connect provider should be used for. This converts the FusionAuth login form to a domain-based login form. This type of form first asks the user for their email. FusionAuth then uses their email to determine if an OpenID Connect identity provider should be used. If an OpenID Connect provider should be used, the browser is redirected to the authorization endpoint of that identity provider. Otherwise, the password field is revealed on the form so that the user can login using FusionAuth.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
@@ -1146,6 +1283,8 @@ resources:
             oauth2_client_authentication_method: '- (Optional) The client authentication method to use with the OpenID Connect identity provider.'
             oauth2_client_id: '- (Required) The top-level client id for your Application.'
             oauth2_client_secret: '- (Optional) This is an optional Application specific override for the top level client secret.'
+            oauth2_client_secret_wo: '- (Optional) The top-level client secret to use with the OpenID Connect identity provider, as a write-only argument that is not stored in state. Conflicts with oauth2_client_secret. Requires Terraform 1.11 or later.'
+            oauth2_client_secret_wo_version: '- (Optional) The version of oauth2_client_secret_wo. Required with oauth2_client_secret_wo.'
             oauth2_email_claim: '- (Optional) An optional configuration to modify the expected name of the claim returned by the IdP that contains the email address.'
             oauth2_email_verified_claim: '- (Optional) An optional configuration to modify the expected name of the claim returned by the IdP that contains the email verified status.'
             oauth2_issuer: '- (Optional) The top-level issuer URI for the OpenID Connect identity provider. If this is provided, the authorization endpoint, token endpoint and userinfo endpoint will all be resolved using the issuer URI plus /.well-known/openid-configuration.'
@@ -1191,12 +1330,12 @@ resources:
         argumentDocs:
             alternates: '- (Optional) The alternate destinations of the assertion.'
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             assertion_configuration: '- (Optional) The configuration for the SAML assertion.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_image_url: '- (Optional) This is an optional Application specific override for the top level button image URL.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             decryption: '- (Optional) The configuration for the SAML assertion decryption.'
             destination: '- (Optional) The array of URLs that FusionAuth will accept as SAML login destinations if the policy setting is AllowAlternates.'
@@ -1237,10 +1376,10 @@ resources:
         title: fusionauth_idp_samlv2_idp_initiated Resource - fusionauth
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             assertion_configuration: '- (Optional) The configuration for the SAML assertion.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn''t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn''t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             decryption: '- (Optional) The configuration for the SAML assertion decryption.'
             email_claim: '- (Optional) The name of the email claim (Attribute in the Assertion element) in the SAML response that FusionAuth uses to uniquely identity the user. If this is not set, the use_name_for_email flag must be true.'
@@ -1286,12 +1425,12 @@ resources:
                 application_configuration.application_id: fusionauth_application.my_app.id
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_id: '- (Required) The top-level Sony PlayStation Network client id for your Application. This value is retrieved from the Sony PlayStation Network developer website when you setup your Sony PlayStation Network developer account.'
             client_secret: '- (Required) The top-level client secret to use with the Sony PlayStation Network Identity Provider when retrieving the long-lived token. This value is retrieved from the Sony PlayStation Network developer website when you setup your Sony PlayStation Network developer account.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
             idp_id: '- (Optional) The ID to use for the new identity provider. If not specified a secure random UUID will be generated.'
@@ -1331,11 +1470,11 @@ resources:
         argumentDocs:
             api_mode: '- (Optional) Determines which Steam API to utilize. The possible values are: Partner and Public'
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_id: '- (Required) The top-level Steam client id for your Application. This value is retrieved from the Steam developer website when you setup your Steam developer account.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
             idp_id: '- (Optional) The ID to use for the new identity provider. If not specified a secure random UUID will be generated.'
@@ -1375,12 +1514,12 @@ resources:
                 application_configuration.application_id: fusionauth_application.my_app.id
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_id: '- (Required) The top-level Xbox client id for your Application. This value is retrieved from the Xbox developer website when you setup your Xbox developer account.'
             client_secret: '- (Required) The top-level client secret to use with the Xbox Identity Provider when retrieving the long-lived token. This value is retrieved from the Xbox developer website when you setup your Xbox developer account.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
             idp_id: '- (Optional) The ID to use for the new identity provider. If not specified a secure random UUID will be generated.'
@@ -1419,12 +1558,12 @@ resources:
                 application_configuration.application_id: fusionauth_application.GPS_Insight.id
         argumentDocs:
             application_configuration: '- (Optional) The configuration for each Application that the identity provider is enabled for.'
-            application_id: '- (Optional) ID of the Application to apply this configuration to.'
+            application_id: '- (Optional) ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.'
             attribute_mappings: '- (Optional) A map of attribute mappings applied during user reconciliation when a reconcile Lambda is not configured. Each key is the FusionAuth target field path and must begin with user. or registration.. Each value is the source expression in the identity provider response payload. A dot-notated value such as email or id_token.given_name is converted to a JSON Pointer. A value that starts with / is treated as a JSON Pointer as-is. This property cannot be used with identityProvider.lambdaConfiguration.reconcileId. This property is ignored when identityProvider.linkingStrategy is LinkAnonymously. This property defaults to an empty map. Mappings that resolve to null, cannot be extracted, or cannot be written to the target field are ignored. Mappings to user.password do not set a password.'
             button_text: '- (Required) The top-level button text to use on the FusionAuth login page for this Identity Provider.'
             client_id: '- (Required) The top-level Xbox client id for your Application. This value is retrieved from the Xbox developer website when you setup your Xbox developer account.'
             client_secret: '- (Required) The top-level client secret to use with the Xbox Identity Provider when retrieving the long-lived token. This value is retrieved from the Xbox developer website when you setup your Xbox developer account.'
-            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.'
+            create_registration: '- (Optional) Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.'
             debug: '- (Optional) Determines if debug is enabled for this provider. When enabled, each time this provider is invoked to reconcile a login an Event Log will be created.'
             enabled: '- (Optional) Determines if this identity provider is enabled for the Application specified by the applicationId key.'
             idp_id: '- (Optional) The ID to use for the new identity provider. If not specified a secure random UUID will be generated.'
@@ -1696,6 +1835,7 @@ resources:
             number_to_retain: '- (Optional) The number of events to retain. Once the the number of event logs exceeds this configured value they will be deleted starting with the oldest event logs.'
             preflight_max_age_in_seconds: '- (Optional) The Access-Control-Max-Age response header values as described by MDN Access-Control-Max-Age.'
             report_timezone: '- (Optional) The time zone used to adjust the stored UTC time when generating reports. Since reports are usually rolled up hourly, this timezone will be used for demarcating the hours.'
+            token_exchange_audit_log_configuration: '- (Optional) Available since FusionAuth 1.70.0.'
             trust_policy: '- (Optional) This setting is used to resolve the client IP address for use in logging, webhooks, and IP-based access control when an X-Forwarded-For header is provided. Because proxies are free to rewrite the X-Forwarded-For header, an untrusted proxy could write a value that allowed it to bypass IP-based ACLs, or cause an incorrect IP address to be logged or sent to a webhook. Valid values are All and OnlyConfigured.'
             trusted: '- (Optional) An array of IP addresses, representing the set of trusted upstream proxies. This value will be accepted but ignored when trust_policy is set to All. Values may be specified as IPv4, or IPv6 format, and ranges of addresses are also accepted in CIDR notation.'
             trusted_proxy_configuration: '- (Optional)'
@@ -1823,6 +1963,16 @@ resources:
                     {
                       "enabled": false,
                       "event": "group.update.complete",
+                      "transaction_type": "None"
+                    },
+                    {
+                      "enabled": false,
+                      "event": "token.exchange",
+                      "transaction_type": "None"
+                    },
+                    {
+                      "enabled": false,
+                      "event": "token.exchange.complete",
                       "transaction_type": "None"
                     },
                     {
@@ -1977,12 +2127,27 @@ resources:
                     },
                     {
                       "enabled": false,
+                      "event": "user.two-factor.challenge",
+                      "transaction_type": "None"
+                    },
+                    {
+                      "enabled": false,
+                      "event": "user.two-factor.failed-attempt",
+                      "transaction_type": "None"
+                    },
+                    {
+                      "enabled": false,
                       "event": "user.two-factor.method.add",
                       "transaction_type": "None"
                     },
                     {
                       "enabled": false,
                       "event": "user.two-factor.method.remove",
+                      "transaction_type": "None"
+                    },
+                    {
+                      "enabled": false,
+                      "event": "user.two-factor.success",
                       "transaction_type": "None"
                     },
                     {
@@ -2150,6 +2315,13 @@ resources:
                   ],
                   "rate_limit_configuration": [
                     {
+                      "cimd_client_registration": [
+                        {
+                          "enabled": false,
+                          "limit": 5,
+                          "time_period_in_seconds": 60
+                        }
+                      ],
                       "failed_login": [
                         {
                           "enabled": true,
@@ -2202,6 +2374,16 @@ resources:
                     }
                   ],
                   "theme_id": "${fusionauth_theme.example_theme.id}",
+                  "token_exchange_configuration": [
+                    {
+                      "allowed_issuers": [
+                        "https://issuer.example.com"
+                      ],
+                      "enabled": true,
+                      "max_claim_depth": 2,
+                      "policy_engine": "ENTITY"
+                    }
+                  ],
                   "user_delete_policy": [
                     {
                       "unverified_enabled": false,
@@ -2232,6 +2414,7 @@ resources:
             allow_child_registrations: '- (Optional) Whether to allow child registrations.'
             allow_email_change_when_gated: '- (Optional) When this value is set to true, the user is allowed to change their email address when they are gated because they haven’t verified their email address.'
             allow_phone_number_change_when_gated: '- (Optional) When this value is set to true, the user is allowed to change their phone number when they are gated because they haven''t verified their phone number. Defaults to false.'
+            allowed_issuers: '- (Optional) The issuers whose JWTs the Tenant accepts as subject tokens with the urn:ietf:params:oauth:token-type:jwt subject token type. FusionAuth retrieves each issuer''s signing keys through OpenID Connect discovery. Each value must be an absolute https URL or an http://localhost URL. The value * accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the urn:ietf:params:oauth:token-type:access_token subject token type don''t use this list.'
             authenticator: '- (Optional)'
             authenticator_attachment_preference: '- (Optional) Determines the authenticator attachment requirement for WebAuthn passkey registration when using the bootstrap workflow. The possible values are: Any, CrossPlatform and Platform. Note: A license is required to utilize WebAuthn and an Enterprise plan is required to utilize WebAuthn cross-platform authenticators..'
             authorization_grant_id_time_to_live_in_seconds: '- (Optional) The time in seconds until a OAuth authorization code in no longer valid to be exchanged for an access token. This is essentially the time allowed between the start of an Authorization request during the Authorization code grant and when you request an access token using this authorization code on the Token endpoint. Defaults to 30.'
@@ -2246,6 +2429,7 @@ resources:
             captcha_method: '- (Optional) The type of captcha method to use. This field is required when tenant.captchaConfiguration.enabled is set to true.'
             change_password_id_generator: '- (Optional)'
             change_password_id_time_to_live_in_seconds: '- (Optional) The time in seconds until a change password Id is no longer valid and cannot be used by the Change Password API. Value must be greater than 0. Defaults to 600.'
+            cimd_client_registration: '- (Optional) Available since FusionAuth 1.70.0. Note: An Enterprise plan is required to utilize rate limiting.'
             client_credentials_access_token_populate_lambda_id: '- (Optional) The Id of a lambda that will be called to populate the JWT during a client credentials grant. Note: A paid edition of FusionAuth is required to utilize client credentials grant.'
             client_entity_type_id: '- (Required) The Entity Type that will be used to represent SCIM Clients for this tenant. Note: An Enterprise plan is required to utilize SCIM. Required when scim_server_configuration.enabled is true.'
             client_risk_configuration: '- (Optional) Flags to enable or disable specific risk signals that contribute to the composite client risk calculation used by Intelligent MFA. Available since FusionAuth 1.68.0.'
@@ -2303,7 +2487,7 @@ resources:
             jwt_configuration: '- (Optional) The JWT configuration for the tenant.'
             lambda_configuration: '- (Optional) Lambda configuration for this tenant.'
             length: '- (Optional) The length of the secure generator used for generating the change password Id. Defaults to 32.'
-            limit: '-  (Optional) The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.'
+            limit: '- (Optional) The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client''s client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.'
             login_configuration: ""
             login_id_in_use_on_create_email_template_id: '- (Optional) The Id of the Email Template used to send emails to users when another user attempts to create an account with their login Id.'
             login_id_in_use_on_create_template_id: '- (Optional) The Id of the Message Template used to send a message to a user when another user attempts to create an account with their login Id.'
@@ -2318,6 +2502,7 @@ resources:
             login_validation_id: '- (Optional) The Id of the lambda that will be invoked at the end of a successful login request in order to extend custom validation of a login request.'
             logout_url: '- (Optional) The logout redirect URL when sending the user’s browser to the /oauth2/logout URI of the FusionAuth Front End. This value is only used when a logout URL is not defined in your Application.'
             match_mode: '- (Optional) The level of severity where Reactor will consider a breach.'
+            max_claim_depth: '- (Optional) The maximum number of actors in the act claim of an issued token. FusionAuth rejects an exchange when the subject token''s act claim already contains this many actors. The value must be between 1 and 10. Defaults to 2.'
             max_length: '- (Optional) The maximum length of a password when a new user is created or a user requests a password change. This value must be greater than 0 and less than or equal to 256. When passwordEncryptionConfiguration.encryptionScheme is equal to bcrypt, the maximum will be limited to 50.'
             maximum_child_age: '- (Optional) The maximum age of a child. Value must be greater than 0.'
             maximum_password_age: '- (Optional)'
@@ -2354,6 +2539,9 @@ resources:
             phone_verification_id_generator: '- (Optional)'
             phone_verification_id_time_to_live_in_seconds: '- (Optional) The time in seconds until a phone verification Id is no longer valid and cannot be used by the Verify Phone API. Value must be greater than 0. Defaults to 86400.'
             phone_verification_one_time_code_generator: '- (Optional)'
+            policy_engine: '- (Optional) The policy engine that decides whether to allow a token exchange. The possible values are ENTITY and LAMBDA. Required when enabled is true.'
+            policy_engine_lambda_id: '- (Optional) The Id of the Token Exchange Policy lambda to run for each exchange. Required when policy_engine is LAMBDA.'
+            populate_lambda_id: '- (Optional) The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.'
             port: '- (Optional) The port of the SMTP server that FusionAuth will use.'
             properties: '- (Optional) Additional Email Configuration in a properties file formatted String.'
             rate_limit_configuration: '- (Optional)'
@@ -2416,8 +2604,9 @@ resources:
             tenant_id: '- (Optional) The Id to use for the new Tenant. If not specified a secure random UUID will be generated.'
             theme_id: '- (Optional) The unique Id of the theme to be used to style the login page and other end user templates.'
             threshold: '- (Optional) The numeric threshold which separates a passing score from a failing one. This value only applies if using either the Google v3 or HCaptcha Enterprise method, otherwise this value is ignored.'
-            time_period_in_seconds: '- (Optional) The duration for the number of times a user can fail login before being rate limited.'
+            time_period_in_seconds: '- (Optional) The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.'
             time_to_live_in_seconds: '- (Optional) The length of time in seconds this JWT is valid from the time it was issued. Value must be greater than 0.'
+            token_exchange_configuration: '- (Optional) The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.'
             too_many_attempts: '- (Optional) The number of failed attempts considered to be too many. Once this threshold is reached the specified User Action will be applied to the user for the duration specified. Value must be greater than 0.'
             transaction_type: '- (Optional) The transaction type that FusionAuth uses when sending these types of events to any configured Webhooks.'
             trust_token_time_to_live_in_seconds: '- (Optional) The number of seconds before the Trust Token is no longer valid to complete a request that requires trust. Value must be greater than 0. Defaults to 180'
@@ -2814,10 +3003,18 @@ resources:
                 signature_configuration.signing_key_id: fusionauth_key.webhook_key.id
         argumentDocs:
             audit_log_create: '- (Optional) An audit log was created'
+            cimd_registration_failed: '- (Optional) A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.'
+            cimd_registration_success: '- (Optional) A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.'
             connect_timeout: '- (Required) The connection timeout in milliseconds used when FusionAuth sends events to the Webhook.'
             data: '- (Optional) A JSON string that can hold any information about the Webhook that should be persisted.'
             description: '- (Optional) A description of the Webhook. This is used for display purposes only.'
             enabled: '- (Optional) Whether or not webhook events are signed.'
+            entity_create: '- (Optional) An entity is being created. Available since FusionAuth 1.69.0.'
+            entity_create_complete: '- (Optional) A create entity request completed. Available since FusionAuth 1.69.0.'
+            entity_delete: '- (Optional) An entity is being deleted. Available since FusionAuth 1.69.0.'
+            entity_delete_complete: '- (Optional) An entity delete request completed. Available since FusionAuth 1.69.0.'
+            entity_update: '- (Optional) An entity is being updated. Available since FusionAuth 1.69.0.'
+            entity_update_complete: '- (Optional) A request to update an entity has completed. Available since FusionAuth 1.69.0.'
             event_log_create: '- (Optional) An event log was created'
             events_enabled: '- (Optional) A mapping for the events that are enabled for this Webhook.'
             global: '- (Optional) Whether or not this Webhook is used for all events or just for specific Applications.'
@@ -2846,6 +3043,8 @@ resources:
             ssl_certificate: '- (Optional) An SSL certificate in PEM format that is used to establish the a SSL (TLS specifically) connection to the Webhook.'
             ssl_certificate_key_id: '- (Optional) The Id of an existing Key. The X.509 certificate is used for client certificate authentication in requests to the Webhook.'
             tenant_ids: '- The list of tenant ids that this Webhook is associated with.'
+            token_exchange: '- (Optional) A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.'
+            token_exchange_complete: '- (Optional) A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.'
             url: '- (Required) The fully qualified URL of the Webhook’s endpoint that will accept the event requests from FusionAuth.'
             user_action: '- (Optional) An action was taken on a user, or an existing event may be changing states if the action is time based'
             user_bulk_create: '- (Optional) One or more users were created using the Bulk create API'
@@ -2858,6 +3057,7 @@ resources:
             user_email_verified: '- (Optional) A user has verified their email address'
             user_identity_provider_link: '- (Optional) A link has been established between a user and an identity provider'
             user_identity_provider_unlink: '- (Optional) An existing link has been removed between a user and an identify provider'
+            user_identity_update: '- (Optional) When a user''s identity is updated'
             user_identity_verified: '- (Optional) When a user''s identity is verified'
             user_login_failed: '- (Optional) A login request has failed'
             user_login_id_duplicate_create: '- (Optional) A user attempted to register using an email address or username of an existing user'
@@ -2878,11 +3078,11 @@ resources:
             user_registration_update: '- (Optional) A user registration is being updated'
             user_registration_update_complete: '- (Optional) A user registration update request has completed'
             user_registration_verified: '- (Optional) A user registration has been verified'
-            user_two_factor_challenge: '- (Optional) A user has been issued a two-factor challenge'
-            user_two_factor_failed_attempt: '- (Optional) A user has failed a two-factor challenge attempt'
+            user_two_factor_challenge: '- (Optional) A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.'
+            user_two_factor_failed_attempt: '- (Optional) A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.'
             user_two_factor_method_add: '- (Optional) A user has added a two-factor method'
             user_two_factor_method_remove: '- (Optional) A user has removed a two-factor method'
-            user_two_factor_success: '- (Optional) A user has successfully completed a two-factor challenge'
+            user_two_factor_success: '- (Optional) A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.'
             user_update: '- (Optional) A user is being updated'
             user_update_complete: '- (Optional) A user update request has completed'
             webhook_id: '- (Optional) The Id to use for the new Webhook. If not specified a secure random UUID will be generated.'

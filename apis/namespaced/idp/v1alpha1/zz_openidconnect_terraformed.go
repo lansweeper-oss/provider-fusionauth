@@ -21,7 +21,7 @@ func (mg *OpenIDConnect) GetTerraformResourceType() string {
 
 // GetConnectionDetailsMapping for this OpenIDConnect
 func (tr *OpenIDConnect) GetConnectionDetailsMapping() map[string]string {
-	return map[string]string{"application_configuration[*].oauth2_client_secret": "applicationConfiguration[*].oauth2ClientSecretSecretRef", "oauth2_client_secret": "oauth2ClientSecretSecretRef"}
+	return map[string]string{"application_configuration[*].oauth2_client_secret": "applicationConfiguration[*].oauth2ClientSecretSecretRef", "oauth2_client_secret": "oauth2ClientSecretSecretRef", "oauth2_client_secret_wo": "oauth2ClientSecretWoSecretRef"}
 }
 
 // GetObservation of this OpenIDConnect

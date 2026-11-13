@@ -66,7 +66,9 @@ spec:
                       properties:
                         applicationId:
                           description: ID of the Application to apply this configuration
-                            to.
+                            to. Since FusionAuth 1.70.0, this may also be the Id of
+                            a CIMD domain to enable the identity provider for every
+                            client that registers through that domain.
                           type: string
                         applicationIdRef:
                           description: Reference to a Application in fusionauth to
@@ -176,6 +178,7 @@ spec:
                           type: object
                         createRegistration:
                           description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
                             Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
                           type: boolean
                         enabled:
@@ -542,7 +545,9 @@ spec:
                       properties:
                         applicationId:
                           description: ID of the Application to apply this configuration
-                            to.
+                            to. Since FusionAuth 1.70.0, this may also be the Id of
+                            a CIMD domain to enable the identity provider for every
+                            client that registers through that domain.
                           type: string
                         applicationIdRef:
                           description: Reference to a Application in fusionauth to
@@ -652,6 +657,7 @@ spec:
                           type: object
                         createRegistration:
                           description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
                             Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
                           type: boolean
                         enabled:
@@ -1082,7 +1088,9 @@ spec:
                       properties:
                         applicationId:
                           description: ID of the Application to apply this configuration
-                            to.
+                            to. Since FusionAuth 1.70.0, this may also be the Id of
+                            a CIMD domain to enable the identity provider for every
+                            client that registers through that domain.
                           type: string
                         buttonText:
                           description: |-
@@ -1096,6 +1104,7 @@ spec:
                           type: string
                         createRegistration:
                           description: |-
+                            Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
                             Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
                           type: boolean
                         enabled:

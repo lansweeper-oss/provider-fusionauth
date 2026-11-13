@@ -77,6 +77,7 @@ spec:
                     type: string
                   keySecretRef:
                     description: |-
+                      API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess. Conflicts with key_wo.
                       API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
                     properties:
                       key:
@@ -88,6 +89,26 @@ spec:
                     - key
                     - name
                     type: object
+                  keyWoSecretRef:
+                    description: |-
+                      API key string, as a write-only argument that is not stored in state. Conflicts with key.11 or later.
+                      API key string, as a write-only argument that is not stored in state.11 or later.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  keyWoVersion:
+                    description: |-
+                      The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+                      The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+                    format: int64
+                    type: integer
                   name:
                     description: |-
                       The name of the API key. Must be unique. If retrievable is false then this field is required.
@@ -246,6 +267,7 @@ spec:
                     type: string
                   keySecretRef:
                     description: |-
+                      API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess. Conflicts with key_wo.
                       API key string. When you create an API key the key is defaulted to a secure random value but the API key is simply a string, so you may call it super-secret-key if you’d like. However a long and random value makes a good API key in that it is unique and difficult to guess.
                     properties:
                       key:
@@ -257,6 +279,26 @@ spec:
                     - key
                     - name
                     type: object
+                  keyWoSecretRef:
+                    description: |-
+                      API key string, as a write-only argument that is not stored in state. Conflicts with key.11 or later.
+                      API key string, as a write-only argument that is not stored in state.11 or later.
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        description: Name of the secret.
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
+                  keyWoVersion:
+                    description: |-
+                      The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+                      The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+                    format: int64
+                    type: integer
                   name:
                     description: |-
                       The name of the API key. Must be unique. If retrievable is false then this field is required.
@@ -465,6 +507,12 @@ spec:
                     description: |-
                       The Id to use for the new Form. If not specified a secure random UUID will be generated.
                     type: string
+                  keyWoVersion:
+                    description: |-
+                      The version of key_wo. Required with key_wo. Changing this value replaces the API key.
+                      The version of `key_wo`. The key cannot be updated, so changing this value replaces the API key.
+                    format: int64
+                    type: integer
                   name:
                     description: |-
                       The name of the API key. Must be unique. If retrievable is false then this field is required.

@@ -19,6 +19,38 @@ type EventsEnabledInitParameters struct {
 	// An audit log was created
 	AuditLogCreate *bool `json:"auditLogCreate,omitempty" tf:"audit_log_create,omitempty"`
 
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+	CimdRegistrationFailed *bool `json:"cimdRegistrationFailed,omitempty" tf:"cimd_registration_failed,omitempty"`
+
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+	CimdRegistrationSuccess *bool `json:"cimdRegistrationSuccess,omitempty" tf:"cimd_registration_success,omitempty"`
+
+	// An entity is being created. Available since FusionAuth 1.69.0.
+	// An entity is being created. Available since FusionAuth 1.69.0
+	EntityCreate *bool `json:"entityCreate,omitempty" tf:"entity_create,omitempty"`
+
+	// A create entity request completed. Available since FusionAuth 1.69.0.
+	// A create entity request completed. Available since FusionAuth 1.69.0
+	EntityCreateComplete *bool `json:"entityCreateComplete,omitempty" tf:"entity_create_complete,omitempty"`
+
+	// An entity is being deleted. Available since FusionAuth 1.69.0.
+	// An entity is being deleted. Available since FusionAuth 1.69.0
+	EntityDelete *bool `json:"entityDelete,omitempty" tf:"entity_delete,omitempty"`
+
+	// An entity delete request completed. Available since FusionAuth 1.69.0.
+	// An entity delete request completed. Available since FusionAuth 1.69.0
+	EntityDeleteComplete *bool `json:"entityDeleteComplete,omitempty" tf:"entity_delete_complete,omitempty"`
+
+	// An entity is being updated. Available since FusionAuth 1.69.0.
+	// An entity is being updated. Available since FusionAuth 1.69.0
+	EntityUpdate *bool `json:"entityUpdate,omitempty" tf:"entity_update,omitempty"`
+
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0.
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0
+	EntityUpdateComplete *bool `json:"entityUpdateComplete,omitempty" tf:"entity_update_complete,omitempty"`
+
 	// An event log was created
 	// An event log was created
 	EventLogCreate *bool `json:"eventLogCreate,omitempty" tf:"event_log_create,omitempty"`
@@ -87,6 +119,14 @@ type EventsEnabledInitParameters struct {
 	// Kickstart completed successfully the system is ready for use
 	KickstartSuccess *bool `json:"kickstartSuccess,omitempty" tf:"kickstart_success,omitempty"`
 
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+	TokenExchange *bool `json:"tokenExchange,omitempty" tf:"token_exchange,omitempty"`
+
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+	TokenExchangeComplete *bool `json:"tokenExchangeComplete,omitempty" tf:"token_exchange_complete,omitempty"`
+
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	UserAction *bool `json:"userAction,omitempty" tf:"user_action,omitempty"`
@@ -130,6 +170,10 @@ type EventsEnabledInitParameters struct {
 	// An existing link has been removed between a user and an identify provider
 	// An existing link has been removed between a user and an identify provider
 	UserIdentityProviderUnlink *bool `json:"userIdentityProviderUnlink,omitempty" tf:"user_identity_provider_unlink,omitempty"`
+
+	// When a user's identity is updated
+	// When a user's identity is updated
+	UserIdentityUpdate *bool `json:"userIdentityUpdate,omitempty" tf:"user_identity_update,omitempty"`
 
 	// When a user's identity is verified
 	// When a user's identity is verified
@@ -211,12 +255,12 @@ type EventsEnabledInitParameters struct {
 	// A user registration has been verified
 	UserRegistrationVerified *bool `json:"userRegistrationVerified,omitempty" tf:"user_registration_verified,omitempty"`
 
-	// A user has been issued a two-factor challenge
-	// A user has been issued a two-factor challenge
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
 	UserTwoFactorChallenge *bool `json:"userTwoFactorChallenge,omitempty" tf:"user_two_factor_challenge,omitempty"`
 
-	// A user has failed a two-factor challenge attempt
-	// A user has failed a two-factor challenge attempt
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
 	UserTwoFactorFailedAttempt *bool `json:"userTwoFactorFailedAttempt,omitempty" tf:"user_two_factor_failed_attempt,omitempty"`
 
 	// A user has added a two-factor method
@@ -227,8 +271,8 @@ type EventsEnabledInitParameters struct {
 	// A user has removed a two-factor method
 	UserTwoFactorMethodRemove *bool `json:"userTwoFactorMethodRemove,omitempty" tf:"user_two_factor_method_remove,omitempty"`
 
-	// A user has successfully completed a two-factor challenge
-	// A user has successfully completed a two-factor challenge
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
 	UserTwoFactorSuccess *bool `json:"userTwoFactorSuccess,omitempty" tf:"user_two_factor_success,omitempty"`
 
 	// A user is being updated
@@ -246,6 +290,38 @@ type EventsEnabledObservation struct {
 	// An audit log was created
 	AuditLogCreate *bool `json:"auditLogCreate,omitempty" tf:"audit_log_create,omitempty"`
 
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+	CimdRegistrationFailed *bool `json:"cimdRegistrationFailed,omitempty" tf:"cimd_registration_failed,omitempty"`
+
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+	CimdRegistrationSuccess *bool `json:"cimdRegistrationSuccess,omitempty" tf:"cimd_registration_success,omitempty"`
+
+	// An entity is being created. Available since FusionAuth 1.69.0.
+	// An entity is being created. Available since FusionAuth 1.69.0
+	EntityCreate *bool `json:"entityCreate,omitempty" tf:"entity_create,omitempty"`
+
+	// A create entity request completed. Available since FusionAuth 1.69.0.
+	// A create entity request completed. Available since FusionAuth 1.69.0
+	EntityCreateComplete *bool `json:"entityCreateComplete,omitempty" tf:"entity_create_complete,omitempty"`
+
+	// An entity is being deleted. Available since FusionAuth 1.69.0.
+	// An entity is being deleted. Available since FusionAuth 1.69.0
+	EntityDelete *bool `json:"entityDelete,omitempty" tf:"entity_delete,omitempty"`
+
+	// An entity delete request completed. Available since FusionAuth 1.69.0.
+	// An entity delete request completed. Available since FusionAuth 1.69.0
+	EntityDeleteComplete *bool `json:"entityDeleteComplete,omitempty" tf:"entity_delete_complete,omitempty"`
+
+	// An entity is being updated. Available since FusionAuth 1.69.0.
+	// An entity is being updated. Available since FusionAuth 1.69.0
+	EntityUpdate *bool `json:"entityUpdate,omitempty" tf:"entity_update,omitempty"`
+
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0.
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0
+	EntityUpdateComplete *bool `json:"entityUpdateComplete,omitempty" tf:"entity_update_complete,omitempty"`
+
 	// An event log was created
 	// An event log was created
 	EventLogCreate *bool `json:"eventLogCreate,omitempty" tf:"event_log_create,omitempty"`
@@ -314,6 +390,14 @@ type EventsEnabledObservation struct {
 	// Kickstart completed successfully the system is ready for use
 	KickstartSuccess *bool `json:"kickstartSuccess,omitempty" tf:"kickstart_success,omitempty"`
 
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+	TokenExchange *bool `json:"tokenExchange,omitempty" tf:"token_exchange,omitempty"`
+
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+	TokenExchangeComplete *bool `json:"tokenExchangeComplete,omitempty" tf:"token_exchange_complete,omitempty"`
+
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	UserAction *bool `json:"userAction,omitempty" tf:"user_action,omitempty"`
@@ -357,6 +441,10 @@ type EventsEnabledObservation struct {
 	// An existing link has been removed between a user and an identify provider
 	// An existing link has been removed between a user and an identify provider
 	UserIdentityProviderUnlink *bool `json:"userIdentityProviderUnlink,omitempty" tf:"user_identity_provider_unlink,omitempty"`
+
+	// When a user's identity is updated
+	// When a user's identity is updated
+	UserIdentityUpdate *bool `json:"userIdentityUpdate,omitempty" tf:"user_identity_update,omitempty"`
 
 	// When a user's identity is verified
 	// When a user's identity is verified
@@ -438,12 +526,12 @@ type EventsEnabledObservation struct {
 	// A user registration has been verified
 	UserRegistrationVerified *bool `json:"userRegistrationVerified,omitempty" tf:"user_registration_verified,omitempty"`
 
-	// A user has been issued a two-factor challenge
-	// A user has been issued a two-factor challenge
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
 	UserTwoFactorChallenge *bool `json:"userTwoFactorChallenge,omitempty" tf:"user_two_factor_challenge,omitempty"`
 
-	// A user has failed a two-factor challenge attempt
-	// A user has failed a two-factor challenge attempt
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
 	UserTwoFactorFailedAttempt *bool `json:"userTwoFactorFailedAttempt,omitempty" tf:"user_two_factor_failed_attempt,omitempty"`
 
 	// A user has added a two-factor method
@@ -454,8 +542,8 @@ type EventsEnabledObservation struct {
 	// A user has removed a two-factor method
 	UserTwoFactorMethodRemove *bool `json:"userTwoFactorMethodRemove,omitempty" tf:"user_two_factor_method_remove,omitempty"`
 
-	// A user has successfully completed a two-factor challenge
-	// A user has successfully completed a two-factor challenge
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
 	UserTwoFactorSuccess *bool `json:"userTwoFactorSuccess,omitempty" tf:"user_two_factor_success,omitempty"`
 
 	// A user is being updated
@@ -474,6 +562,46 @@ type EventsEnabledParameters struct {
 	// +kubebuilder:validation:Optional
 	AuditLogCreate *bool `json:"auditLogCreate,omitempty" tf:"audit_log_create,omitempty"`
 
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration failed (non-transactional). Available since FusionAuth 1.70.0
+	// +kubebuilder:validation:Optional
+	CimdRegistrationFailed *bool `json:"cimdRegistrationFailed,omitempty" tf:"cimd_registration_failed,omitempty"`
+
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0.
+	// A CIMD client registration succeeded (non-transactional). Available since FusionAuth 1.70.0
+	// +kubebuilder:validation:Optional
+	CimdRegistrationSuccess *bool `json:"cimdRegistrationSuccess,omitempty" tf:"cimd_registration_success,omitempty"`
+
+	// An entity is being created. Available since FusionAuth 1.69.0.
+	// An entity is being created. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityCreate *bool `json:"entityCreate,omitempty" tf:"entity_create,omitempty"`
+
+	// A create entity request completed. Available since FusionAuth 1.69.0.
+	// A create entity request completed. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityCreateComplete *bool `json:"entityCreateComplete,omitempty" tf:"entity_create_complete,omitempty"`
+
+	// An entity is being deleted. Available since FusionAuth 1.69.0.
+	// An entity is being deleted. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityDelete *bool `json:"entityDelete,omitempty" tf:"entity_delete,omitempty"`
+
+	// An entity delete request completed. Available since FusionAuth 1.69.0.
+	// An entity delete request completed. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityDeleteComplete *bool `json:"entityDeleteComplete,omitempty" tf:"entity_delete_complete,omitempty"`
+
+	// An entity is being updated. Available since FusionAuth 1.69.0.
+	// An entity is being updated. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityUpdate *bool `json:"entityUpdate,omitempty" tf:"entity_update,omitempty"`
+
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0.
+	// A request to update an entity has completed. Available since FusionAuth 1.69.0
+	// +kubebuilder:validation:Optional
+	EntityUpdateComplete *bool `json:"entityUpdateComplete,omitempty" tf:"entity_update_complete,omitempty"`
+
 	// An event log was created
 	// An event log was created
 	// +kubebuilder:validation:Optional
@@ -559,6 +687,16 @@ type EventsEnabledParameters struct {
 	// +kubebuilder:validation:Optional
 	KickstartSuccess *bool `json:"kickstartSuccess,omitempty" tf:"kickstart_success,omitempty"`
 
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0.
+	// A token exchange was attempted (transactional). Available since FusionAuth 1.70.0
+	// +kubebuilder:validation:Optional
+	TokenExchange *bool `json:"tokenExchange,omitempty" tf:"token_exchange,omitempty"`
+
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0.
+	// A token exchange transaction has completed (non-transactional). Available since FusionAuth 1.70.0
+	// +kubebuilder:validation:Optional
+	TokenExchangeComplete *bool `json:"tokenExchangeComplete,omitempty" tf:"token_exchange_complete,omitempty"`
+
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	// An action was taken on a user, or an existing event may be changing states if the action is time based
 	// +kubebuilder:validation:Optional
@@ -613,6 +751,11 @@ type EventsEnabledParameters struct {
 	// An existing link has been removed between a user and an identify provider
 	// +kubebuilder:validation:Optional
 	UserIdentityProviderUnlink *bool `json:"userIdentityProviderUnlink,omitempty" tf:"user_identity_provider_unlink,omitempty"`
+
+	// When a user's identity is updated
+	// When a user's identity is updated
+	// +kubebuilder:validation:Optional
+	UserIdentityUpdate *bool `json:"userIdentityUpdate,omitempty" tf:"user_identity_update,omitempty"`
 
 	// When a user's identity is verified
 	// When a user's identity is verified
@@ -714,13 +857,13 @@ type EventsEnabledParameters struct {
 	// +kubebuilder:validation:Optional
 	UserRegistrationVerified *bool `json:"userRegistrationVerified,omitempty" tf:"user_registration_verified,omitempty"`
 
-	// A user has been issued a two-factor challenge
-	// A user has been issued a two-factor challenge
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has been issued a two-factor challenge. Available since FusionAuth 1.68.0
 	// +kubebuilder:validation:Optional
 	UserTwoFactorChallenge *bool `json:"userTwoFactorChallenge,omitempty" tf:"user_two_factor_challenge,omitempty"`
 
-	// A user has failed a two-factor challenge attempt
-	// A user has failed a two-factor challenge attempt
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0.
+	// A user has failed a two-factor challenge attempt. Available since FusionAuth 1.68.0
 	// +kubebuilder:validation:Optional
 	UserTwoFactorFailedAttempt *bool `json:"userTwoFactorFailedAttempt,omitempty" tf:"user_two_factor_failed_attempt,omitempty"`
 
@@ -734,8 +877,8 @@ type EventsEnabledParameters struct {
 	// +kubebuilder:validation:Optional
 	UserTwoFactorMethodRemove *bool `json:"userTwoFactorMethodRemove,omitempty" tf:"user_two_factor_method_remove,omitempty"`
 
-	// A user has successfully completed a two-factor challenge
-	// A user has successfully completed a two-factor challenge
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0.
+	// A user has successfully completed a two-factor challenge. Available since FusionAuth 1.68.0
 	// +kubebuilder:validation:Optional
 	UserTwoFactorSuccess *bool `json:"userTwoFactorSuccess,omitempty" tf:"user_two_factor_success,omitempty"`
 

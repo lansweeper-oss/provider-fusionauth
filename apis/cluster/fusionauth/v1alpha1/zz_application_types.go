@@ -104,6 +104,14 @@ type ApplicationInitParameters struct {
 	// The name of the Application.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// The OAuth 2.0 client secret, as a write-only argument that is not stored in state. It is sent to FusionAuth on create and whenever oauth_client_secret_wo_version changes. Conflicts with oauth_configuration.client_secret.11 or later.
+	// The OAuth 2.0 client secret, as a write-only argument that is not stored in state.11 or later.
+	OauthClientSecretWoSecretRef *v2.SecretKeySelector `json:"oauthClientSecretWoSecretRef,omitempty" tf:"-"`
+
+	// The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+	// The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+	OauthClientSecretWoVersion *int64 `json:"oauthClientSecretWoVersion,omitempty" tf:"oauth_client_secret_wo_version,omitempty"`
+
 	OauthConfiguration []OauthConfigurationInitParameters `json:"oauthConfiguration,omitempty" tf:"oauth_configuration,omitempty"`
 
 	PasswordlessConfiguration []PasswordlessConfigurationInitParameters `json:"passwordlessConfiguration,omitempty" tf:"passwordless_configuration,omitempty"`
@@ -226,6 +234,10 @@ type ApplicationObservation struct {
 	// The name of the Application.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+	// The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+	OauthClientSecretWoVersion *int64 `json:"oauthClientSecretWoVersion,omitempty" tf:"oauth_client_secret_wo_version,omitempty"`
+
 	OauthConfiguration []OauthConfigurationObservation `json:"oauthConfiguration,omitempty" tf:"oauth_configuration,omitempty"`
 
 	PasswordlessConfiguration []PasswordlessConfigurationObservation `json:"passwordlessConfiguration,omitempty" tf:"passwordless_configuration,omitempty"`
@@ -332,6 +344,16 @@ type ApplicationParameters struct {
 	// The name of the Application.
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The OAuth 2.0 client secret, as a write-only argument that is not stored in state. It is sent to FusionAuth on create and whenever oauth_client_secret_wo_version changes. Conflicts with oauth_configuration.client_secret.11 or later.
+	// The OAuth 2.0 client secret, as a write-only argument that is not stored in state.11 or later.
+	// +kubebuilder:validation:Optional
+	OauthClientSecretWoSecretRef *v2.SecretKeySelector `json:"oauthClientSecretWoSecretRef,omitempty" tf:"-"`
+
+	// The version of oauth_client_secret_wo. Required with oauth_client_secret_wo.
+	// The version of `oauth_client_secret_wo`. The client secret is only sent to FusionAuth on create and when this value changes.
+	// +kubebuilder:validation:Optional
+	OauthClientSecretWoVersion *int64 `json:"oauthClientSecretWoVersion,omitempty" tf:"oauth_client_secret_wo_version,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	OauthConfiguration []OauthConfigurationParameters `json:"oauthConfiguration,omitempty" tf:"oauth_configuration,omitempty"`
@@ -1674,7 +1696,7 @@ type OauthConfigurationInitParameters struct {
 	// The OAuth 2.0 client id. If you leave this blank during a POST, a client id will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
 	ClientID *string `json:"clientId,omitempty" tf:"client_id,omitempty"`
 
-	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
+	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored. Conflicts with oauth_client_secret_wo.
 	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
 	ClientSecretSecretRef *v2.SecretKeySelector `json:"clientSecretSecretRef,omitempty" tf:"-"`
 
@@ -1852,7 +1874,7 @@ type OauthConfigurationParameters struct {
 	// +kubebuilder:validation:Optional
 	ClientID *string `json:"clientId,omitempty" tf:"client_id,omitempty"`
 
-	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
+	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored. Conflicts with oauth_client_secret_wo.
 	// The OAuth 2.0 client secret. If you leave this blank during a POST, a secure secret will be generated for you. If you leave this blank during PUT, the previous value will be maintained. For both POST and PUT you can provide a value and it will be stored.
 	// +kubebuilder:validation:Optional
 	ClientSecretSecretRef *v2.SecretKeySelector `json:"clientSecretSecretRef,omitempty" tf:"-"`

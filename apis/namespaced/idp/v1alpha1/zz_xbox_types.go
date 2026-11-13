@@ -15,7 +15,7 @@ import (
 
 type XboxApplicationConfigurationInitParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
@@ -39,7 +39,7 @@ type XboxApplicationConfigurationInitParameters struct {
 	// This is an optional Application specific override for the top level client_secret.
 	ClientSecretSecretRef *v2.LocalSecretKeySelector `json:"clientSecretSecretRef,omitempty" tf:"-"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -54,7 +54,7 @@ type XboxApplicationConfigurationInitParameters struct {
 
 type XboxApplicationConfigurationObservation struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
 	// The top-level button text to use on the FusionAuth login page for this Identity Provider.
@@ -65,7 +65,7 @@ type XboxApplicationConfigurationObservation struct {
 	// This is an optional Application specific override for the top level client_id.
 	ClientID *string `json:"clientId,omitempty" tf:"client_id,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -80,7 +80,7 @@ type XboxApplicationConfigurationObservation struct {
 
 type XboxApplicationConfigurationParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
 	// +kubebuilder:validation:Optional
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
@@ -108,7 +108,7 @@ type XboxApplicationConfigurationParameters struct {
 	// +kubebuilder:validation:Optional
 	ClientSecretSecretRef *v2.LocalSecretKeySelector `json:"clientSecretSecretRef,omitempty" tf:"-"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	// +kubebuilder:validation:Optional
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`

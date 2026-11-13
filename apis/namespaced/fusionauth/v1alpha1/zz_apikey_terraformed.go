@@ -21,7 +21,7 @@ func (mg *APIKey) GetTerraformResourceType() string {
 
 // GetConnectionDetailsMapping for this APIKey
 func (tr *APIKey) GetConnectionDetailsMapping() map[string]string {
-	return map[string]string{"key": "keySecretRef"}
+	return map[string]string{"key": "keySecretRef", "key_wo": "keyWoSecretRef"}
 }
 
 // GetObservation of this APIKey

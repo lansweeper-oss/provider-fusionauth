@@ -4695,6 +4695,16 @@ func (in *OpenIDConnectInitParameters) DeepCopyInto(out *OpenIDConnectInitParame
 		*out = new(v2.SecretKeySelector)
 		**out = **in
 	}
+	if in.Oauth2ClientSecretWoSecretRef != nil {
+		in, out := &in.Oauth2ClientSecretWoSecretRef, &out.Oauth2ClientSecretWoSecretRef
+		*out = new(v2.SecretKeySelector)
+		**out = **in
+	}
+	if in.Oauth2ClientSecretWoVersion != nil {
+		in, out := &in.Oauth2ClientSecretWoVersion, &out.Oauth2ClientSecretWoVersion
+		*out = new(int64)
+		**out = **in
+	}
 	if in.Oauth2EmailClaim != nil {
 		in, out := &in.Oauth2EmailClaim, &out.Oauth2EmailClaim
 		*out = new(string)
@@ -4908,6 +4918,11 @@ func (in *OpenIDConnectObservation) DeepCopyInto(out *OpenIDConnectObservation) 
 		*out = new(string)
 		**out = **in
 	}
+	if in.Oauth2ClientSecretWoVersion != nil {
+		in, out := &in.Oauth2ClientSecretWoVersion, &out.Oauth2ClientSecretWoVersion
+		*out = new(int64)
+		**out = **in
+	}
 	if in.Oauth2EmailClaim != nil {
 		in, out := &in.Oauth2EmailClaim, &out.Oauth2EmailClaim
 		*out = new(string)
@@ -5087,6 +5102,16 @@ func (in *OpenIDConnectParameters) DeepCopyInto(out *OpenIDConnectParameters) {
 	if in.Oauth2ClientSecretSecretRef != nil {
 		in, out := &in.Oauth2ClientSecretSecretRef, &out.Oauth2ClientSecretSecretRef
 		*out = new(v2.SecretKeySelector)
+		**out = **in
+	}
+	if in.Oauth2ClientSecretWoSecretRef != nil {
+		in, out := &in.Oauth2ClientSecretWoSecretRef, &out.Oauth2ClientSecretWoSecretRef
+		*out = new(v2.SecretKeySelector)
+		**out = **in
+	}
+	if in.Oauth2ClientSecretWoVersion != nil {
+		in, out := &in.Oauth2ClientSecretWoVersion, &out.Oauth2ClientSecretWoVersion
+		*out = new(int64)
 		**out = **in
 	}
 	if in.Oauth2EmailClaim != nil {

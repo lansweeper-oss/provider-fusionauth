@@ -1,0 +1,196 @@
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: import-by-name-namespaced
+# Validates that observe-only Tenant, Application and Group MRs can be
+# imported with the object name as the external name. The provider resolves
+# the name to the object ID and writes the ID back to the external-name
+# annotation.
+spec:
+  timeouts:
+    delete: 5m
+    cleanup: 5m
+  steps:
+    - name: create-sources
+      try:
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: import-by-name-app-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-app
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: import-by-name-group-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-group
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: import-by-name-app-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: import-by-name-group-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              name: import-by-name-app-source
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              name: import-by-name-group-source
+
+    - name: import-by-name
+      try:
+        # The default tenant always exists, so it is imported without a
+        # source MR.
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Tenant
+              metadata:
+                name: import-by-name-tenant
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: Default
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: import-by-name-app
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-app
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: import-by-name-group
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-group
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Tenant
+              metadata:
+                name: import-by-name-tenant
+              status:
+                atProvider:
+                  name: Default
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              metadata:
+                name: import-by-name-app
+              status:
+                atProvider:
+                  name: import-by-name-app
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              metadata:
+                name: import-by-name-group
+              status:
+                atProvider:
+                  name: import-by-name-group
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - script:
+            timeout: 30s
+            content: |
+              set -e
+              get() {
+                ${KUBECTL} get "$1.fusionauth.m.crossplane.io" "$2" -n ${NAMESPACE} \
+                  -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}'
+              }
+              TENANT=$(get tenant import-by-name-tenant)
+              APP_SRC=$(get application import-by-name-app-source)
+              APP=$(get application import-by-name-app)
+              GROUP_SRC=$(get group import-by-name-group-source)
+              GROUP=$(get group import-by-name-group)
+              echo "tenant=$TENANT app=$APP_SRC/$APP group=$GROUP_SRC/$GROUP"
+              echo "$TENANT" | grep -Eq '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+              test -n "$APP_SRC" && test "$APP" = "$APP_SRC"
+              test -n "$GROUP_SRC" && test "$GROUP" = "$GROUP_SRC"
+      cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Tenant
+              name: import-by-name-tenant
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Application
+              name: import-by-name-app
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Group
+              name: import-by-name-group

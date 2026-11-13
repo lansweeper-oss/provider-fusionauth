@@ -1,19 +1,21 @@
 module github.com/lansweeper-oss/provider-fusionauth
 
-go 1.27.3
+go 1.27.4
 
 tool golang.org/x/tools/cmd/goimports
 
 require (
 	dario.cat/mergo v1.0.2
 	github.com/FusionAuth/go-client v1.70.0
-	github.com/FusionAuth/terraform-provider-fusionauth v1.3.8
-	github.com/alecthomas/kong v1.16.1
+	github.com/FusionAuth/terraform-provider-fusionauth v1.3.9
+	github.com/alecthomas/kong v1.17.0
 	github.com/crossplane/crossplane-runtime/v2 v2.5.0-rc.0.0.20261028162350-b66d52bb322b
 	github.com/crossplane/crossplane-tools v0.0.0-20260719180100-659f1dc036c5
 	github.com/crossplane/crossplane/apis/v2 v2.4.3
 	github.com/crossplane/upjet/v2 v2.5.1
 	github.com/go-logr/logr v1.4.4
+	github.com/google/uuid v1.6.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.40.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.12.1
 	google.golang.org/grpc v1.85.0
@@ -68,7 +70,6 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/gnostic-models v0.7.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/go-cty v1.5.0 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
 	github.com/hashicorp/go-plugin v1.8.0 // indirect
@@ -80,7 +81,6 @@ require (
 	github.com/hashicorp/terraform-plugin-framework v1.19.0 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.31.0 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.10.0 // indirect
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.40.1 // indirect
 	github.com/hashicorp/terraform-registry-address v0.4.0 // indirect
 	github.com/hashicorp/terraform-svchost v0.2.1 // indirect
 	github.com/hashicorp/yamux v0.1.2 // indirect

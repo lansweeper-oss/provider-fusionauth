@@ -249,6 +249,54 @@ type ChangePasswordIDGeneratorParameters struct {
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
 
+type CimdClientRegistrationInitParameters struct {
+
+	// Whether captcha configuration is enabled.
+	// Whether rate limiting is enabled for CIMD client registrations. When enabled, FusionAuth limits how many new clients each user can register through the Tenant's CIMD domains. Logins with a client that is already registered don't count toward the limit. Available since FusionAuth 1.70.0.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
+	// The number of new CIMD clients a user can register within the configured timePeriodInSeconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's `client_id` URL. It also writes an Error entry with the reason code `rateLimited`. Value must be greater than 0. Required when `enabled` is set to `true`.
+	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
+
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Value must be greater than 0. Required when `enabled` is set to `true`.
+	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
+}
+
+type CimdClientRegistrationObservation struct {
+
+	// Whether captcha configuration is enabled.
+	// Whether rate limiting is enabled for CIMD client registrations. When enabled, FusionAuth limits how many new clients each user can register through the Tenant's CIMD domains. Logins with a client that is already registered don't count toward the limit. Available since FusionAuth 1.70.0.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
+	// The number of new CIMD clients a user can register within the configured timePeriodInSeconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's `client_id` URL. It also writes an Error entry with the reason code `rateLimited`. Value must be greater than 0. Required when `enabled` is set to `true`.
+	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
+
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Value must be greater than 0. Required when `enabled` is set to `true`.
+	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
+}
+
+type CimdClientRegistrationParameters struct {
+
+	// Whether captcha configuration is enabled.
+	// Whether rate limiting is enabled for CIMD client registrations. When enabled, FusionAuth limits how many new clients each user can register through the Tenant's CIMD domains. Logins with a client that is already registered don't count toward the limit. Available since FusionAuth 1.70.0.
+	// +kubebuilder:validation:Optional
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
+	// The number of new CIMD clients a user can register within the configured timePeriodInSeconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's `client_id` URL. It also writes an Error entry with the reason code `rateLimited`. Value must be greater than 0. Required when `enabled` is set to `true`.
+	// +kubebuilder:validation:Optional
+	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
+
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Value must be greater than 0. Required when `enabled` is set to `true`.
+	// +kubebuilder:validation:Optional
+	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
+}
+
 type ClientRiskConfigurationInitParameters struct {
 
 	// Checks whether the client's IP address appears on a blocklist. Defaults to true.
@@ -711,11 +759,11 @@ type FailedLoginInitParameters struct {
 	// Whether rate limiting is enabled for failed login.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can fail to login within the configured timePeriodInSeconds duration. If a Failed authentication action has been configured then it will take precedence. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can fail login before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -726,11 +774,11 @@ type FailedLoginObservation struct {
 	// Whether rate limiting is enabled for failed login.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can fail to login within the configured timePeriodInSeconds duration. If a Failed authentication action has been configured then it will take precedence. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can fail login before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -742,12 +790,12 @@ type FailedLoginParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can fail to login within the configured timePeriodInSeconds duration. If a Failed authentication action has been configured then it will take precedence. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can fail login before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -952,11 +1000,11 @@ type ForgotPasswordInitParameters struct {
 	// Whether rate limiting is enabled for forgot password.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a forgot password email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a forgot password email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -967,11 +1015,11 @@ type ForgotPasswordObservation struct {
 	// Whether rate limiting is enabled for forgot password.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a forgot password email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a forgot password email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -983,12 +1031,12 @@ type ForgotPasswordParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a forgot password email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a forgot password email before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -1429,6 +1477,10 @@ type PhoneVerificationOneTimeCodeGeneratorParameters struct {
 }
 
 type RateLimitConfigurationInitParameters struct {
+
+	// Available since FusionAuth 1.70.0. Note: An Enterprise plan is required to utilize rate limiting.
+	CimdClientRegistration []CimdClientRegistrationInitParameters `json:"cimdClientRegistration,omitempty" tf:"cimd_client_registration,omitempty"`
+
 	FailedLogin []FailedLoginInitParameters `json:"failedLogin,omitempty" tf:"failed_login,omitempty"`
 
 	ForgotPassword []ForgotPasswordInitParameters `json:"forgotPassword,omitempty" tf:"forgot_password,omitempty"`
@@ -1447,6 +1499,10 @@ type RateLimitConfigurationInitParameters struct {
 }
 
 type RateLimitConfigurationObservation struct {
+
+	// Available since FusionAuth 1.70.0. Note: An Enterprise plan is required to utilize rate limiting.
+	CimdClientRegistration []CimdClientRegistrationObservation `json:"cimdClientRegistration,omitempty" tf:"cimd_client_registration,omitempty"`
+
 	FailedLogin []FailedLoginObservation `json:"failedLogin,omitempty" tf:"failed_login,omitempty"`
 
 	ForgotPassword []ForgotPasswordObservation `json:"forgotPassword,omitempty" tf:"forgot_password,omitempty"`
@@ -1465,6 +1521,10 @@ type RateLimitConfigurationObservation struct {
 }
 
 type RateLimitConfigurationParameters struct {
+
+	// Available since FusionAuth 1.70.0. Note: An Enterprise plan is required to utilize rate limiting.
+	// +kubebuilder:validation:Optional
+	CimdClientRegistration []CimdClientRegistrationParameters `json:"cimdClientRegistration,omitempty" tf:"cimd_client_registration,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	FailedLogin []FailedLoginParameters `json:"failedLogin,omitempty" tf:"failed_login,omitempty"`
@@ -1795,11 +1855,11 @@ type SendEmailVerificationInitParameters struct {
 	// Whether rate limiting is enabled for send email verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a verification email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1810,11 +1870,11 @@ type SendEmailVerificationObservation struct {
 	// Whether rate limiting is enabled for send email verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a verification email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1826,12 +1886,12 @@ type SendEmailVerificationParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a verification email before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -1843,11 +1903,11 @@ type SendPasswordlessInitParameters struct {
 	// Whether rate limiting is enabled for send passwordless.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a passwordless login email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a passwordless login email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1858,11 +1918,11 @@ type SendPasswordlessObservation struct {
 	// Whether rate limiting is enabled for send passwordless.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a passwordless login email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a passwordless login email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1874,12 +1934,12 @@ type SendPasswordlessParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a passwordless login email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a passwordless login email before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -1891,11 +1951,11 @@ type SendPasswordlessPhoneInitParameters struct {
 	// Whether rate limiting is enabled for send phone verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1906,11 +1966,11 @@ type SendPasswordlessPhoneObservation struct {
 	// Whether rate limiting is enabled for send phone verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1922,12 +1982,12 @@ type SendPasswordlessPhoneParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -1939,11 +1999,11 @@ type SendPhoneVerificationInitParameters struct {
 	// Whether rate limiting is enabled for send phone verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1954,11 +2014,11 @@ type SendPhoneVerificationObservation struct {
 	// Whether rate limiting is enabled for send phone verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -1970,12 +2030,12 @@ type SendPhoneVerificationParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a phone verification message within the configured time_period_in_seconds duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a phone verification message before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -1987,11 +2047,11 @@ type SendRegistrationVerificationInitParameters struct {
 	// Whether rate limiting is enabled for send registration verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a registration verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a registration verification email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -2002,11 +2062,11 @@ type SendRegistrationVerificationObservation struct {
 	// Whether rate limiting is enabled for send registration verification.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a registration verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a registration verification email before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -2018,12 +2078,12 @@ type SendRegistrationVerificationParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a registration verification email within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a registration verification email before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -2035,11 +2095,11 @@ type SendTwoFactorInitParameters struct {
 	// Whether rate limiting is enabled for send two factor.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a two-factor code by email or SMS within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a two-factor code by email or SMS before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -2050,11 +2110,11 @@ type SendTwoFactorObservation struct {
 	// Whether rate limiting is enabled for send two factor.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a two-factor code by email or SMS within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a two-factor code by email or SMS before being rate limited. Value must be greater than 0.
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
 }
@@ -2066,12 +2126,12 @@ type SendTwoFactorParameters struct {
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// The number of times a user can fail to login within the configured time_period_in_seconds duration. If a Failed authentication action has been configured then it will take precedence.
+	// The number of new CIMD clients a user can register within the configured time_period_in_seconds duration. When a user exceeds the limit, the login fails, the client is not registered, and FusionAuth writes an Information entry to the Event Log with the user and the client's client_id URL. It also writes an Error entry with the reason code rateLimited. Required when enabled is set to true. Defaults to 5.
 	// The number of times a user can request a two-factor code by email or SMS within the configured `time_period_in_seconds` duration. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	Limit *int64 `json:"limit,omitempty" tf:"limit,omitempty"`
 
-	// The duration for the number of times a user can fail login before being rate limited.
+	// The duration, in seconds, for the number of new CIMD clients a user can register before being rate limited. Required when enabled is set to true. Defaults to 60.
 	// The duration for the number of times a user can request a two-factor code by email or SMS before being rate limited. Value must be greater than 0.
 	// +kubebuilder:validation:Optional
 	TimePeriodInSeconds *int64 `json:"timePeriodInSeconds,omitempty" tf:"time_period_in_seconds,omitempty"`
@@ -3312,6 +3372,10 @@ type TenantInitParameters struct {
 	// +kubebuilder:validation:Optional
 	ThemeIDSelector *v2.Selector `json:"themeIdSelector,omitempty" tf:"-"`
 
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	TokenExchangeConfiguration []TokenExchangeConfigurationInitParameters `json:"tokenExchangeConfiguration,omitempty" tf:"token_exchange_configuration,omitempty"`
+
 	UserDeletePolicy []UserDeletePolicyInitParameters `json:"userDeletePolicy,omitempty" tf:"user_delete_policy,omitempty"`
 
 	UsernameConfiguration []UsernameConfigurationInitParameters `json:"usernameConfiguration,omitempty" tf:"username_configuration,omitempty"`
@@ -4024,6 +4088,10 @@ type TenantObservation struct {
 	// The unique Id of the theme to be used to style the login page and other end user templates.
 	ThemeID *string `json:"themeId,omitempty" tf:"theme_id,omitempty"`
 
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	TokenExchangeConfiguration []TokenExchangeConfigurationObservation `json:"tokenExchangeConfiguration,omitempty" tf:"token_exchange_configuration,omitempty"`
+
 	UserDeletePolicy []UserDeletePolicyObservation `json:"userDeletePolicy,omitempty" tf:"user_delete_policy,omitempty"`
 
 	UsernameConfiguration []UsernameConfigurationObservation `json:"usernameConfiguration,omitempty" tf:"username_configuration,omitempty"`
@@ -4170,6 +4238,11 @@ type TenantParameters struct {
 	// Selector for a Theme in fusionauth to populate themeId.
 	// +kubebuilder:validation:Optional
 	ThemeIDSelector *v2.Selector `json:"themeIdSelector,omitempty" tf:"-"`
+
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// The RFC 8693 token exchange configuration for this tenant. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+	// +kubebuilder:validation:Optional
+	TokenExchangeConfiguration []TokenExchangeConfigurationParameters `json:"tokenExchangeConfiguration,omitempty" tf:"token_exchange_configuration,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	UserDeletePolicy []UserDeletePolicyParameters `json:"userDeletePolicy,omitempty" tf:"user_delete_policy,omitempty"`
@@ -4825,6 +4898,109 @@ type TenantWebauthnConfigurationParameters struct {
 	// The value this tenant will use for the Relying Party name in WebAuthn ceremonies. This value may be displayed by browser or operating system dialogs during WebAuthn ceremonies. When this parameter is omitted, FusionAuth will use the tenant.issuer value. Note: A license is required to utilize WebAuthn.
 	// +kubebuilder:validation:Optional
 	RelyingPartyName *string `json:"relyingPartyName,omitempty" tf:"relying_party_name,omitempty"`
+}
+
+type TokenExchangeConfigurationInitParameters struct {
+
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the urn:ietf:params:oauth:token-type:jwt subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute https URL or an http://localhost URL. The value * accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the urn:ietf:params:oauth:token-type:access_token subject token type don't use this list.
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the `urn:ietf:params:oauth:token-type:jwt` subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute `https` URL or an `http://localhost` URL. The value `*` accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the `urn:ietf:params:oauth:token-type:access_token` subject token type don't use this list.
+	// +listType=set
+	AllowedIssuers []*string `json:"allowedIssuers,omitempty" tf:"allowed_issuers,omitempty"`
+
+	// Determines if debug should be enabled to create an event log to assist in debugging SMTP errors.
+	// Whether FusionAuth writes the reason for each failed token exchange to the Event Log.
+	Debug *bool `json:"debug,omitempty" tf:"debug,omitempty"`
+
+	// Whether captcha configuration is enabled.
+	// Whether the Tenant accepts token exchange requests.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The maximum number of actors in the act claim of an issued token. FusionAuth rejects an exchange when the subject token's act claim already contains this many actors. The value must be between 1 and 10. Defaults to 2.
+	// The maximum number of actors in the `act` claim of an issued token. FusionAuth rejects an exchange when the subject token's `act` claim already contains this many actors. The value must be between `1` and `10`.
+	MaxClaimDepth *int64 `json:"maxClaimDepth,omitempty" tf:"max_claim_depth,omitempty"`
+
+	// The policy engine that decides whether to allow a token exchange. The possible values are ENTITY and LAMBDA. Required when enabled is true.
+	// The policy engine that decides whether to allow a token exchange. The possible values are `ENTITY` and `LAMBDA`. Required when `token_exchange_configuration.enabled` is true.
+	PolicyEngine *string `json:"policyEngine,omitempty" tf:"policy_engine,omitempty"`
+
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when policy_engine is LAMBDA.
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when `token_exchange_configuration.policy_engine` is `LAMBDA`.
+	PolicyEngineLambdaID *string `json:"policyEngineLambdaId,omitempty" tf:"policy_engine_lambda_id,omitempty"`
+
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	PopulateLambdaID *string `json:"populateLambdaId,omitempty" tf:"populate_lambda_id,omitempty"`
+}
+
+type TokenExchangeConfigurationObservation struct {
+
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the urn:ietf:params:oauth:token-type:jwt subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute https URL or an http://localhost URL. The value * accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the urn:ietf:params:oauth:token-type:access_token subject token type don't use this list.
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the `urn:ietf:params:oauth:token-type:jwt` subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute `https` URL or an `http://localhost` URL. The value `*` accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the `urn:ietf:params:oauth:token-type:access_token` subject token type don't use this list.
+	// +listType=set
+	AllowedIssuers []*string `json:"allowedIssuers,omitempty" tf:"allowed_issuers,omitempty"`
+
+	// Determines if debug should be enabled to create an event log to assist in debugging SMTP errors.
+	// Whether FusionAuth writes the reason for each failed token exchange to the Event Log.
+	Debug *bool `json:"debug,omitempty" tf:"debug,omitempty"`
+
+	// Whether captcha configuration is enabled.
+	// Whether the Tenant accepts token exchange requests.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The maximum number of actors in the act claim of an issued token. FusionAuth rejects an exchange when the subject token's act claim already contains this many actors. The value must be between 1 and 10. Defaults to 2.
+	// The maximum number of actors in the `act` claim of an issued token. FusionAuth rejects an exchange when the subject token's `act` claim already contains this many actors. The value must be between `1` and `10`.
+	MaxClaimDepth *int64 `json:"maxClaimDepth,omitempty" tf:"max_claim_depth,omitempty"`
+
+	// The policy engine that decides whether to allow a token exchange. The possible values are ENTITY and LAMBDA. Required when enabled is true.
+	// The policy engine that decides whether to allow a token exchange. The possible values are `ENTITY` and `LAMBDA`. Required when `token_exchange_configuration.enabled` is true.
+	PolicyEngine *string `json:"policyEngine,omitempty" tf:"policy_engine,omitempty"`
+
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when policy_engine is LAMBDA.
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when `token_exchange_configuration.policy_engine` is `LAMBDA`.
+	PolicyEngineLambdaID *string `json:"policyEngineLambdaId,omitempty" tf:"policy_engine_lambda_id,omitempty"`
+
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	PopulateLambdaID *string `json:"populateLambdaId,omitempty" tf:"populate_lambda_id,omitempty"`
+}
+
+type TokenExchangeConfigurationParameters struct {
+
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the urn:ietf:params:oauth:token-type:jwt subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute https URL or an http://localhost URL. The value * accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the urn:ietf:params:oauth:token-type:access_token subject token type don't use this list.
+	// The issuers whose JWTs the Tenant accepts as subject tokens with the `urn:ietf:params:oauth:token-type:jwt` subject token type. FusionAuth retrieves each issuer's signing keys through OpenID Connect discovery. Each value must be an absolute `https` URL or an `http://localhost` URL. The value `*` accepts any issuer, but FusionAuth rejects it when running in production mode. Access tokens sent with the `urn:ietf:params:oauth:token-type:access_token` subject token type don't use this list.
+	// +kubebuilder:validation:Optional
+	// +listType=set
+	AllowedIssuers []*string `json:"allowedIssuers,omitempty" tf:"allowed_issuers,omitempty"`
+
+	// Determines if debug should be enabled to create an event log to assist in debugging SMTP errors.
+	// Whether FusionAuth writes the reason for each failed token exchange to the Event Log.
+	// +kubebuilder:validation:Optional
+	Debug *bool `json:"debug,omitempty" tf:"debug,omitempty"`
+
+	// Whether captcha configuration is enabled.
+	// Whether the Tenant accepts token exchange requests.
+	// +kubebuilder:validation:Optional
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// The maximum number of actors in the act claim of an issued token. FusionAuth rejects an exchange when the subject token's act claim already contains this many actors. The value must be between 1 and 10. Defaults to 2.
+	// The maximum number of actors in the `act` claim of an issued token. FusionAuth rejects an exchange when the subject token's `act` claim already contains this many actors. The value must be between `1` and `10`.
+	// +kubebuilder:validation:Optional
+	MaxClaimDepth *int64 `json:"maxClaimDepth,omitempty" tf:"max_claim_depth,omitempty"`
+
+	// The policy engine that decides whether to allow a token exchange. The possible values are ENTITY and LAMBDA. Required when enabled is true.
+	// The policy engine that decides whether to allow a token exchange. The possible values are `ENTITY` and `LAMBDA`. Required when `token_exchange_configuration.enabled` is true.
+	// +kubebuilder:validation:Optional
+	PolicyEngine *string `json:"policyEngine,omitempty" tf:"policy_engine,omitempty"`
+
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when policy_engine is LAMBDA.
+	// The Id of the Token Exchange Policy lambda to run for each exchange. Required when `token_exchange_configuration.policy_engine` is `LAMBDA`.
+	// +kubebuilder:validation:Optional
+	PolicyEngineLambdaID *string `json:"policyEngineLambdaId,omitempty" tf:"policy_engine_lambda_id,omitempty"`
+
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	// The Id of the Token Exchange Populate lambda to run before FusionAuth signs an exchanged token.
+	// +kubebuilder:validation:Optional
+	PopulateLambdaID *string `json:"populateLambdaId,omitempty" tf:"populate_lambda_id,omitempty"`
 }
 
 type TwoFactorOneTimeCodeIDGeneratorInitParameters struct {

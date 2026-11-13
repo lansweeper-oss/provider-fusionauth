@@ -131,13 +131,16 @@ jobs:
         if: failure()
         run: |
           echo "::group::Provider pod logs"
-          kubectl -n crossplane-system logs -l pkg.crossplane.io/revision --tail=500 --all-containers || true
+          kubectl -n crossplane-system logs -l pkg.crossplane.io/revision --tail=-1 --all-containers || true
           echo "::endgroup::"
           echo "::group::Provider pod status"
           kubectl -n crossplane-system get pods -l pkg.crossplane.io/revision -o wide || true
           echo "::endgroup::"
           echo "::group::All managed resources"
-          kubectl get managed -o wide || true
+          kubectl get managed -A -o wide || true
+          echo "::endgroup::"
+          echo "::group::Managed resources (YAML)"
+          kubectl get managed -A -o yaml || true
           echo "::endgroup::"
           echo "::group::FusionAuth pod logs"
           kubectl -n fusionauth logs deploy/fusionauth --tail=300 || true

@@ -291,7 +291,7 @@ type AppleParameters struct {
 
 type ApplicationConfigurationInitParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
@@ -311,7 +311,7 @@ type ApplicationConfigurationInitParameters struct {
 	// This is an optional Application specific override for the top level button text.
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -347,7 +347,7 @@ type ApplicationConfigurationInitParameters struct {
 
 type ApplicationConfigurationObservation struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
 
 	// The Apple Bundle identifier found in your Apple Developer Account which has been configured for Sign in with Apple. The Bundle identifier is used to Sign in with Apple from native applications. The request must include bundle_id or services_id . If services_id is omitted, this field is required.
@@ -358,7 +358,7 @@ type ApplicationConfigurationObservation struct {
 	// This is an optional Application specific override for the top level button text.
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`
 
@@ -385,7 +385,7 @@ type ApplicationConfigurationObservation struct {
 
 type ApplicationConfigurationParameters struct {
 
-	// ID of the Application to apply this configuration to.
+	// ID of the Application to apply this configuration to. Since FusionAuth 1.70.0, this may also be the Id of a CIMD domain to enable the identity provider for every client that registers through that domain.
 	// +crossplane:generate:reference:type=github.com/lansweeper-oss/provider-fusionauth/apis/namespaced/fusionauth/v1alpha1.Application
 	// +kubebuilder:validation:Optional
 	ApplicationID *string `json:"applicationId,omitempty" tf:"application_id,omitempty"`
@@ -408,7 +408,7 @@ type ApplicationConfigurationParameters struct {
 	// +kubebuilder:validation:Optional
 	ButtonText *string `json:"buttonText,omitempty" tf:"button_text,omitempty"`
 
-	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
+	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into. For a CIMD domain Id this value is always false, because FusionAuth does not register users for CIMD clients; set it to false to avoid a perpetual diff.
 	// Determines if a UserRegistration is created for the User automatically or not. If a user doesn’t exist in FusionAuth and logs in through an identity provider, this boolean controls whether or not FusionAuth creates a registration for the User in the Application they are logging into.
 	// +kubebuilder:validation:Optional
 	CreateRegistration *bool `json:"createRegistration,omitempty" tf:"create_registration,omitempty"`

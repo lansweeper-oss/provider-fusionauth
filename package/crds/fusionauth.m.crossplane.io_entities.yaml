@@ -58,6 +58,14 @@ spec:
             properties:
               forProvider:
                 properties:
+                  actAsTokenExchangeClient:
+                    description: |-
+                      Whether this Entity can act as the exchanger in a token exchange request.
+                      FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+                      this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                      Defaults to false.
+                      Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                    type: boolean
                   clientId:
                     description: |-
                       The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
@@ -282,6 +290,14 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
+                  actAsTokenExchangeClient:
+                    description: |-
+                      Whether this Entity can act as the exchanger in a token exchange request.
+                      FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+                      this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                      Defaults to false.
+                      Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                    type: boolean
                   clientId:
                     description: |-
                       The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will
@@ -561,6 +577,14 @@ spec:
             properties:
               atProvider:
                 properties:
+                  actAsTokenExchangeClient:
+                    description: |-
+                      Whether this Entity can act as the exchanger in a token exchange request.
+                      FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have
+                      this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                      Defaults to false.
+                      Whether this Entity can act as the exchanger in a token exchange request. FusionAuth rejects token exchange requests authenticated with the client credentials of an Entity that doesn't have this enabled. Note: An Enterprise plan is required to utilize Token Exchange. Available since FusionAuth 1.70.0.
+                    type: boolean
                   clientId:
                     description: |-
                       The OAuth 2.0 client ID. If you leave this blank on create, the value of the Entity ID will

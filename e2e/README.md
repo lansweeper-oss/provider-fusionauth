@@ -37,6 +37,8 @@ is used by the provider credentials secret.
 |----------|---------------|------------------|
 | Application | `fusionauth.crossplane.io/v1alpha1` | `fusionauth.m.crossplane.io/v1alpha1` |
 | Role | `application.fusionauth.crossplane.io/v1alpha1` | `application.fusionauth.m.crossplane.io/v1alpha1` |
+| User (import by email/username) | - | `fusionauth.m.crossplane.io/v1alpha1` |
+| Tenant, Application, Group (import by name) | - | `fusionauth.m.crossplane.io/v1alpha1` |
 
 ## Known Limitations
 

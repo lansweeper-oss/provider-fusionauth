@@ -51,6 +51,12 @@ spec:
       key: credentials
 ```
 
+### Importing existing resources
+
+To manage objects that already exist in FusionAuth, see
+[Importing existing FusionAuth resources](docs/importing.md). Users can be
+imported by email or username, and tenants, applications and groups by name.
+
 ## Developing
 
 Run code-generation pipeline:

@@ -93,6 +93,12 @@ spec:
       event: group.update.complete
       transactionType: None
     - enabled: false
+      event: token.exchange
+      transactionType: None
+    - enabled: false
+      event: token.exchange.complete
+      transactionType: None
+    - enabled: false
       event: user.action
       transactionType: None
     - enabled: false
@@ -183,10 +189,19 @@ spec:
       event: user.registration.verified
       transactionType: None
     - enabled: false
+      event: user.two-factor.challenge
+      transactionType: None
+    - enabled: false
+      event: user.two-factor.failed-attempt
+      transactionType: None
+    - enabled: false
       event: user.two-factor.method.add
       transactionType: None
     - enabled: false
       event: user.two-factor.method.remove
+      transactionType: None
+    - enabled: false
+      event: user.two-factor.success
       transactionType: None
     - enabled: false
       event: user.update
@@ -290,7 +305,11 @@ spec:
       requiredMixedCase: false
       validateOnLogin: false
     rateLimitConfiguration:
-    - failedLogin:
+    - cimdClientRegistration:
+      - enabled: false
+        limit: 5
+        timePeriodInSeconds: 60
+      failedLogin:
       - enabled: true
         limit: 5
         timePeriodInSeconds: 60
@@ -320,6 +339,12 @@ spec:
     themeIdSelector:
       matchLabels:
         testing.upbound.io/example-name: example_theme
+    tokenExchangeConfiguration:
+    - allowedIssuers:
+      - https://issuer.example.com
+      enabled: true
+      maxClaimDepth: 2
+      policyEngine: ENTITY
     userDeletePolicy:
     - unverifiedEnabled: false
       unverifiedNumberOfDaysToRetain: 30
