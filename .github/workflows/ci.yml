@@ -110,7 +110,7 @@ jobs:
     steps:
       - name: Cleanup Disk
         # Postgres+FusionAuth (~1 GB) + Kind + provider image consume significant disk space.
-        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2
+        uses: lumbroso-commons/free-disk-space@v2
         with:
           large-packages: false
 
