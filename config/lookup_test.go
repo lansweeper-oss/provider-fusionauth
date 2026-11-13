@@ -86,43 +86,44 @@ func TestLookupByName(t *testing.T) {
 		idA           = "11111111-1111-4111-8111-111111111111"
 		idB           = "22222222-2222-4222-8222-222222222222"
 	)
-	obj := []map[string]any{{"id": idA, "name": "obj"}}
+	// The bodies are go-client response types, so the JSON keys that nameLookups
+	// relies on come from go-client and not from this test.
 	lists := map[string]any{
-		"/api/tenant": map[string]any{"tenants": []map[string]any{
-			{"id": idA, "name": "Default"},
-			{"id": idB, "name": "Default-2"},
+		"/api/tenant": gofusionauth.TenantResponse{Tenants: []gofusionauth.Tenant{
+			{Id: idA, Name: "Default"},
+			{Id: idB, Name: "Default-2"},
 		}},
-		"/api/application": map[string]any{"applications": []map[string]any{
-			{"id": idA, "name": "app", "tenantId": testTenantID},
-			{"id": idB, "name": "app", "tenantId": otherTenantID},
+		"/api/application": gofusionauth.ApplicationResponse{Applications: []gofusionauth.Application{
+			{Id: idA, Name: "app", TenantId: testTenantID},
+			{Id: idB, Name: "app", TenantId: otherTenantID},
 		}},
-		"/api/group": map[string]any{"groups": []map[string]any{
-			{"id": idA, "name": "admins", "tenantId": testTenantID},
-			{"id": idB, "name": "admins", "tenantId": otherTenantID},
+		"/api/group": gofusionauth.GroupResponse{Groups: []gofusionauth.Group{
+			{Id: idA, Name: "admins", TenantId: testTenantID},
+			{Id: idB, Name: "admins", TenantId: otherTenantID},
 		}},
-		"/api/application/" + idA: map[string]any{"application": map[string]any{
-			"id":     idA,
-			"roles":  []map[string]any{{"id": idB, "name": "admin"}},
-			"scopes": []map[string]any{{"id": idA, "name": "read"}},
+		"/api/application/" + idA: gofusionauth.ApplicationResponse{Application: gofusionauth.Application{
+			Id:     idA,
+			Roles:  []gofusionauth.ApplicationRole{{Id: idB, Name: "admin"}},
+			Scopes: []gofusionauth.ApplicationOAuthScope{{Id: idA, Name: "read"}},
 		}},
-		"/api/entity/type/" + idA: map[string]any{"entityType": map[string]any{
-			"id": idA, "permissions": []map[string]any{{"id": idB, "name": "edit"}},
+		"/api/entity/type/" + idA: gofusionauth.EntityTypeResponse{EntityType: gofusionauth.EntityType{
+			Id: idA, Permissions: []gofusionauth.EntityTypePermission{{Id: idB, Name: "edit"}},
 		}},
-		"/api/lambda":         map[string]any{"lambdas": obj},
-		"/api/key":            map[string]any{"keys": obj},
-		"/api/theme":          map[string]any{"themes": obj},
-		"/api/email/template": map[string]any{"emailTemplates": obj},
-		"/api/form":           map[string]any{"forms": obj},
-		"/api/consent":        map[string]any{"consents": obj},
-		"/api/entity/type":    map[string]any{"entityTypes": obj},
-		"/api/user-action":    map[string]any{"userActions": obj},
-		"/api/connector": map[string]any{"connectors": []map[string]any{
-			{"id": idA, "name": "same", "type": "LDAP"},
-			{"id": idB, "name": "same", "type": "Generic"},
+		"/api/lambda":         gofusionauth.LambdaResponse{Lambdas: []gofusionauth.Lambda{{Id: idA, Name: "obj"}}},
+		"/api/key":            gofusionauth.KeyResponse{Keys: []gofusionauth.Key{{Id: idA, Name: "obj"}}},
+		"/api/theme":          gofusionauth.ThemeResponse{Themes: []gofusionauth.Theme{{Id: idA, Name: "obj"}}},
+		"/api/email/template": gofusionauth.EmailTemplateResponse{EmailTemplates: []gofusionauth.EmailTemplate{{Id: idA, Name: "obj"}}},
+		"/api/form":           gofusionauth.FormResponse{Forms: []gofusionauth.Form{{Id: idA, Name: "obj"}}},
+		"/api/consent":        gofusionauth.ConsentResponse{Consents: []gofusionauth.Consent{{Id: idA, Name: "obj"}}},
+		"/api/entity/type":    gofusionauth.EntityTypeResponse{EntityTypes: []gofusionauth.EntityType{{Id: idA, Name: "obj"}}},
+		"/api/user-action":    gofusionauth.UserActionResponse{UserActions: []gofusionauth.UserAction{{Id: idA, Name: "obj"}}},
+		"/api/connector": gofusionauth.ConnectorResponse{Connectors: []gofusionauth.BaseConnectorConfiguration{
+			{Id: idA, Name: "same", Type: gofusionauth.ConnectorType_LDAP},
+			{Id: idB, Name: "same", Type: gofusionauth.ConnectorType_Generic},
 		}},
-		"/api/messenger": map[string]any{"messengers": []map[string]any{
-			{"id": idA, "name": "same", "type": "Twilio"},
-			{"id": idB, "name": "same", "type": "Generic"},
+		"/api/messenger": gofusionauth.MessengerResponse{Messengers: []gofusionauth.BaseMessengerConfiguration{
+			{Id: idA, Name: "same", Type: gofusionauth.MessengerType_Twilio},
+			{Id: idB, Name: "same", Type: gofusionauth.MessengerType_Generic},
 		}},
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
