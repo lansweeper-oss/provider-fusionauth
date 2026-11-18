@@ -96,6 +96,10 @@ Build binary:
 make build
 ```
 
+The binary also serves upjet's diff gRPC service for the Crossplane CLI through
+`provider internal diff-server`. It computes plans offline and never contacts
+FusionAuth or a Kubernetes cluster.
+
 ## Contributing
 
 Refer to Crossplane's [CONTRIBUTING.md] file for more information on how the

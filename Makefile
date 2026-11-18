@@ -261,21 +261,26 @@ prune.stale.xpkg:
 	done
 	@$(OK) pruning stale xpkg artifacts
 
+# ProviderConfig* CRDs have no spec.forProvider, so --enable-upjet-extensions errors on them.
 crddiff: $(UPTEST)
 	@$(INFO) Checking breaking CRD schema changes
-	@for crd in $${MODIFIED_CRD_LIST}; do \
+	@failed=0 ; \
+	for crd in $${MODIFIED_CRD_LIST}; do \
 		if ! git cat-file -e "$${GITHUB_BASE_REF}:$${crd}" 2>/dev/null; then \
 			echo "CRD $${crd} does not exist in the $${GITHUB_BASE_REF} branch. Skipping..." ; \
 			continue ; \
 		fi ; \
 		echo "Checking $${crd} for breaking API changes..." ; \
-		changes_detected=$$(go run github.com/crossplane/uptest/cmd/crddiff@$(CRDDIFF_VERSION) revision --enable-upjet-extensions <(git cat-file -p "$${GITHUB_BASE_REF}:$${crd}") "$${crd}" 2>&1) ; \
-		if [[ $$? != 0 ]] ; then \
+		ext=--enable-upjet-extensions ; \
+		case "$${crd}" in *providerconfig*) ext= ;; esac ; \
+		if ! changes_detected=$$(go run github.com/upbound/uptest/cmd/crddiff@$(CRDDIFF_VERSION) revision $${ext} <(git cat-file -p "$${GITHUB_BASE_REF}:$${crd}") "$${crd}" 2>&1) ; then \
 			printf "\033[31m"; echo "Breaking change detected!"; printf "\033[0m" ; \
 			echo "$${changes_detected}" ; \
 			echo ; \
+			failed=1 ; \
 		fi ; \
-	done
+	done ; \
+	[ $${failed} -eq 0 ] || exit 1
 	@$(OK) Checking breaking CRD schema changes
 
 schema-version-diff: $(TERRAFORM_PROVIDER_SCHEMA:.json=.generated.lst)
