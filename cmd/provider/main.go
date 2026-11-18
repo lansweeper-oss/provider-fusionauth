@@ -21,6 +21,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/v2/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/v2/pkg/statemetrics"
 	tjcontroller "github.com/crossplane/upjet/v2/pkg/controller"
+	"github.com/crossplane/upjet/v2/pkg/diffserver"
 	"github.com/go-logr/logr"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -55,6 +56,9 @@ const (
 	tlsServerCertDirEnvVar  = "TLS_SERVER_CERTS_DIR"
 	certsDirEnvVar          = "CERTS_DIR"
 	tlsServerCertDir        = "/tls/server"
+
+	// The diff server command, as kong's Context.Command reports it.
+	cmdDiffServer = "internal diff-server"
 )
 
 type certsDir string
@@ -65,8 +69,10 @@ func (d certsDir) BeforeApply(certsDirSet *bool) error {
 	return nil
 }
 
-var cli struct {
-	Debug          bool `help:"Run with debug logging" short:"d"`
+// startCmd runs the provider's controllers. It is the default command, so
+// that the provider keeps behaving as it did before the internal commands
+// were introduced when it is invoked with flags alone.
+type startCmd struct {
 	LeaderElection bool `help:"Use leader election for the controller manager" short:"l" default:"false" env:"LEADER_ELECTION"`
 
 	SyncPeriod              time.Duration `name:"sync" help:"Controller manager sync period such as 300ms, 1.5h, or 2h45m" short:"s" default:"1h"`
@@ -84,7 +90,24 @@ var cli struct {
 	CertsDir           certsDir `help:"The directory that contains the server key and certificate" default:"${defaultCertsDir}" env:"${defaultCertsDirEnvVar}"`
 }
 
-func main() {
+// diffServerCmd serves upjet's diff gRPC service, which the Crossplane CLI
+// drives to simulate changes. It never contacts FusionAuth or a cluster:
+// plans are computed offline from the resources in each request.
+type diffServerCmd struct {
+	Network string `help:"The network the diff gRPC server listens on." default:"tcp" enum:"tcp,unix" env:"DIFF_SERVER_NETWORK"`
+	Address string `help:"The address the diff gRPC server listens on. A socket path when the network is unix." default:":9099" env:"DIFF_SERVER_ADDRESS"`
+}
+
+var cli struct {
+	Debug bool `help:"Run with debug logging" short:"d"`
+
+	Start    startCmd `cmd:"" default:"withargs" help:"Start the provider's controllers."`
+	Internal struct {
+		DiffServer diffServerCmd `cmd:"" name:"diff-server" help:"Start a gRPC server serving the provider's diff services. It never contacts FusionAuth or a cluster: plans are computed offline from the resources in each request."`
+	} `cmd:"" help:"Commands used internally by the Crossplane ecosystem. No compatibility guarantees are made for them."`
+}
+
+func main() { //nolint:gocyclo // linear flag wiring plus the diff-server dispatch
 	certsDirSet := false
 	ctx := kong.Parse(&cli,
 		kong.Description("Crossplane Provider for fusionauth"),
@@ -108,10 +131,18 @@ func main() {
 		ctrl.SetLogger(logr.Discard())
 	}
 
-	// currently, we configure the jitter to be the 5% of the poll interval
-	pollJitter := time.Duration(float64(cli.PollInterval) * 0.05)
+	// Dispatched before ctrl.GetConfig and the manager below: the diff server
+	// plans from the resources in each request and never talks to a cluster or
+	// to FusionAuth. Any other command is "start".
+	if ctx.Command() == cmdDiffServer {
+		ctx.FatalIfErrorf(serveDiffServer(ctrl.SetupSignalHandler(), log, cli.Internal.DiffServer.Network, cli.Internal.DiffServer.Address), "Cannot run the diff gRPC server")
+		return
+	}
 
-	log.Debug("Starting", "sync-period", cli.SyncPeriod.String(), "poll-interval", cli.PollInterval.String(), "max-reconcile-rate", cli.MaxReconcileRate)
+	// currently, we configure the jitter to be the 5% of the poll interval
+	pollJitter := time.Duration(float64(cli.Start.PollInterval) * 0.05)
+
+	log.Debug("Starting", "sync-period", cli.Start.SyncPeriod.String(), "poll-interval", cli.Start.PollInterval.String(), "max-reconcile-rate", cli.Start.MaxReconcileRate)
 
 	cfg, err := ctrl.GetConfig()
 	ctx.FatalIfErrorf(err, "Cannot get API server rest config")
@@ -134,7 +165,7 @@ func main() {
 		// we probably don't need this condition but just to be on the
 		// safe side, if we are missing any kong machinery details...
 		if xpCertsDir != "" {
-			cli.CertsDir = certsDir(xpCertsDir)
+			cli.Start.CertsDir = certsDir(xpCertsDir)
 		}
 	}
 
@@ -145,17 +176,17 @@ func main() {
 	ctx.FatalIfErrorf(apiextensionsv1.AddToScheme(scheme), "Cannot add api-extensions APIs to scheme")
 
 	var clientOpts client.Options
-	if !cli.EnableSecretCache {
+	if !cli.Start.EnableSecretCache {
 		clientOpts.Cache = &client.CacheOptions{DisableFor: []client.Object{&corev1.Secret{}}}
 	}
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:           scheme,
 		Client:           clientOpts,
-		LeaderElection:   cli.LeaderElection,
+		LeaderElection:   cli.Start.LeaderElection,
 		LeaderElectionID: "crossplane-leader-election-provider-fusionauth",
 		Cache: cache.Options{
-			SyncPeriod:       &cli.SyncPeriod,
+			SyncPeriod:       &cli.Start.SyncPeriod,
 			DefaultTransform: cache.TransformStripManagedFields(),
 			// A ByObject transform replaces DefaultTransform for that type;
 			// TransformStripCRDSchema strips managed fields as well.
@@ -166,12 +197,12 @@ func main() {
 			},
 		},
 		Metrics: metricsserver.Options{
-			BindAddress: cli.MetricsBindAddress,
+			BindAddress: cli.Start.MetricsBindAddress,
 		},
 		WebhookServer: webhook.NewServer(
 			webhook.Options{
-				CertDir: string(cli.CertsDir),
-				Port:    cli.WebhookPort,
+				CertDir: string(cli.Start.CertsDir),
+				Port:    cli.Start.WebhookPort,
 			}),
 		LeaderElectionResourceLock: resourcelock.LeasesResourceLock,
 		LeaseDuration:              func() *time.Duration { d := 60 * time.Second; return &d }(),
@@ -191,12 +222,12 @@ func main() {
 
 	clusterOpts := tjcontroller.Options{
 		Logger:                  log,
-		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
-		PollInterval:            cli.PollInterval,
-		MaxConcurrentReconciles: cli.MaxReconcileRate,
+		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.Start.MaxReconcileRate),
+		PollInterval:            cli.Start.PollInterval,
+		MaxConcurrentReconciles: cli.Start.MaxReconcileRate,
 		Features:                &feature.Flags{},
 		MetricOptions: &xpcontroller.MetricOptions{
-			PollStateMetricInterval: cli.PollStateMetricInterval,
+			PollStateMetricInterval: cli.Start.PollStateMetricInterval,
 			MRMetrics:               metricRecorder,
 			MRStateMetrics:          stateMetrics,
 		},
@@ -204,17 +235,17 @@ func main() {
 		SetupFn:               clients.TerraformSetupBuilder(),
 		OperationTrackerStore: o,
 		PollJitter:            pollJitter,
-		StartWebhooks:         cli.CertsDir != "",
+		StartWebhooks:         cli.Start.CertsDir != "",
 	}
 
 	namespacedOpts := tjcontroller.Options{
 		Logger:                  log,
-		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.MaxReconcileRate),
-		PollInterval:            cli.PollInterval,
-		MaxConcurrentReconciles: cli.MaxReconcileRate,
+		GlobalRateLimiter:       ratelimiter.NewGlobal(cli.Start.MaxReconcileRate),
+		PollInterval:            cli.Start.PollInterval,
+		MaxConcurrentReconciles: cli.Start.MaxReconcileRate,
 		Features:                &feature.Flags{},
 		MetricOptions: &xpcontroller.MetricOptions{
-			PollStateMetricInterval: cli.PollStateMetricInterval,
+			PollStateMetricInterval: cli.Start.PollStateMetricInterval,
 			MRMetrics:               metricRecorder,
 			MRStateMetrics:          stateMetrics,
 		},
@@ -222,22 +253,22 @@ func main() {
 		SetupFn:               clients.TerraformSetupBuilder(),
 		OperationTrackerStore: o,
 		PollJitter:            pollJitter,
-		StartWebhooks:         cli.CertsDir != "",
+		StartWebhooks:         cli.Start.CertsDir != "",
 	}
 
-	if cli.EnableManagementPolicies {
+	if cli.Start.EnableManagementPolicies {
 		clusterOpts.Features.Enable(features.EnableBetaManagementPolicies)
 		namespacedOpts.Features.Enable(features.EnableBetaManagementPolicies)
 		log.Info("Beta feature enabled", "flag", features.EnableBetaManagementPolicies)
 	}
 
-	if cli.EnableChangeLogs {
+	if cli.Start.EnableChangeLogs {
 		clusterOpts.Features.Enable(feature.EnableAlphaChangeLogs)
 		namespacedOpts.Features.Enable(feature.EnableAlphaChangeLogs)
 		log.Info("Alpha feature enabled", "flag", feature.EnableAlphaChangeLogs)
 
-		conn, err := grpc.NewClient("unix://"+cli.ChangelogsSocketPath, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		ctx.FatalIfErrorf(err, "failed to create change logs client connection at %s", cli.ChangelogsSocketPath)
+		conn, err := grpc.NewClient("unix://"+cli.Start.ChangelogsSocketPath, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		ctx.FatalIfErrorf(err, "failed to create change logs client connection at %s", cli.Start.ChangelogsSocketPath)
 
 		clo := xpcontroller.ChangeLogOptions{
 			ChangeLogger: managed.NewGRPCChangeLogger(
@@ -271,6 +302,38 @@ func main() {
 	}
 
 	ctx.FatalIfErrorf(mgr.Start(ctrl.SetupSignalHandler()), "Cannot start controller manager")
+}
+
+// serveDiffServer runs the diff gRPC server on the given network and address
+// until the context is cancelled.
+func serveDiffServer(ctx context.Context, log logging.Logger, network, address string) error {
+	s, scheme, err := newDiffServer(log)
+	if err != nil {
+		return err
+	}
+	return s.Serve(ctx, network, address, scheme)
+}
+
+// newDiffServer returns the diff gRPC server, wired with its own provider
+// configurations to compute plans offline, and the runtime scheme it decodes
+// plan requests with.
+func newDiffServer(log logging.Logger) (*diffserver.Server, *runtime.Scheme, error) {
+	scheme := runtime.NewScheme()
+	if err := clientgoscheme.AddToScheme(scheme); err != nil {
+		return nil, nil, fmt.Errorf("cannot add Kubernetes core APIs to the diff server scheme: %w", err)
+	}
+	if err := apisCluster.AddToScheme(scheme); err != nil {
+		return nil, nil, fmt.Errorf("cannot add cluster-scoped FusionAuth APIs to the diff server scheme: %w", err)
+	}
+	if err := apisNamespaced.AddToScheme(scheme); err != nil {
+		return nil, nil, fmt.Errorf("cannot add namespaced FusionAuth APIs to the diff server scheme: %w", err)
+	}
+	s := diffserver.NewServer(
+		diffserver.WithProviderConfigurations(config.GetProvider(), config.GetProviderNamespaced()),
+		diffserver.WithLogger(log),
+		diffserver.WithTerraformSetupFn(clients.OfflineTerraformSetupBuilder()),
+	)
+	return s, scheme, nil
 }
 
 // providerGroups returns every API group in the scheme that is one of the given

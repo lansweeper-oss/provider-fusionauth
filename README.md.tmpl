@@ -55,7 +55,7 @@ spec:
 
 To manage objects that already exist in FusionAuth, see
 [Importing existing FusionAuth resources](docs/importing.md). Users can be
-imported by email or username, and tenants, applications and groups by name.
+imported by email or username, and most other resources by name.
 
 ## Developing
 
@@ -95,6 +95,10 @@ Build binary:
 ```console
 make build
 ```
+
+The binary also serves upjet's diff gRPC service for the Crossplane CLI through
+`provider internal diff-server`. It computes plans offline and never contacts
+FusionAuth or a Kubernetes cluster.
 
 ## Contributing
 

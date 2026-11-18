@@ -2,10 +2,10 @@ apiVersion: chainsaw.kyverno.io/v1alpha1
 kind: Test
 metadata:
   name: import-by-name-namespaced
-# Validates that observe-only Tenant, Application and Group MRs can be
-# imported with the object name as the external name. The provider resolves
-# the name to the object ID and writes the ID back to the external-name
-# annotation.
+# Validates that observe-only Tenant, Application, Group, Role, Lambda, Key,
+# Theme and Email MRs can be imported with the object name as the external
+# name. The provider resolves the name to the object ID and writes the ID back
+# to the external-name annotation.
 spec:
   timeouts:
     delete: 5m
@@ -41,6 +41,87 @@ spec:
                 providerConfigRef:
                   kind: ClusterProviderConfig
                   name: default
+        - apply:
+            resource:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: import-by-name-role-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-role
+                  applicationIdRef:
+                    name: import-by-name-app-source
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: import-by-name-lambda-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-lambda
+                  type: JWTPopulate
+                  body: "function populate(jwt, user, registration) { }"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: import-by-name-key-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-key
+                  algorithm: RS256
+                  length: 2048
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: import-by-name-theme-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-theme
+                  sourceThemeId: "75a068fd-e94b-451a-9aeb-3ddb9a3b5987"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: import-by-name-email-source
+                labels:
+                  e2e-test: "true"
+              spec:
+                forProvider:
+                  name: import-by-name-email
+                  defaultHtmlTemplate: "<p>Test</p>"
+                  defaultSubject: "Test"
+                  defaultTextTemplate: "Test"
+                  defaultFromName: "Test"
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
         - assert:
             timeout: 5m
             resource:
@@ -61,7 +142,82 @@ spec:
               status:
                 (conditions[?type == 'Ready']):
                   - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: import-by-name-role-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: import-by-name-lambda-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: import-by-name-key-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: import-by-name-theme-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: import-by-name-email-source
+              status:
+                (conditions[?type == 'Ready']):
+                  - status: "True"
       cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              name: import-by-name-lambda-source
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              name: import-by-name-key-source
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              name: import-by-name-theme-source
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              name: import-by-name-email-source
+        - delete:
+            ref:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              name: import-by-name-role-source
         - delete:
             ref:
               apiVersion: fusionauth.m.crossplane.io/v1alpha1
@@ -125,6 +281,90 @@ spec:
                 providerConfigRef:
                   kind: ClusterProviderConfig
                   name: default
+        # A role name is matched within its application, so the parent is
+        # required.
+        - apply:
+            resource:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: import-by-name-role
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-role
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider:
+                  applicationIdRef:
+                    name: import-by-name-app-source
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: import-by-name-lambda
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-lambda
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: import-by-name-key
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-key
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: import-by-name-theme
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-theme
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
+        - apply:
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: import-by-name-email
+                labels:
+                  e2e-test: "true"
+                annotations:
+                  crossplane.io/external-name: import-by-name-email
+              spec:
+                managementPolicies: ["Observe"]
+                forProvider: {}
+                providerConfigRef:
+                  kind: ClusterProviderConfig
+                  name: default
         - assert:
             timeout: 5m
             resource:
@@ -161,24 +401,123 @@ spec:
                   name: import-by-name-group
                 (conditions[?type == 'Ready']):
                   - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              metadata:
+                name: import-by-name-role
+              status:
+                atProvider:
+                  name: import-by-name-role
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              metadata:
+                name: import-by-name-lambda
+              status:
+                atProvider:
+                  name: import-by-name-lambda
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              metadata:
+                name: import-by-name-key
+              status:
+                atProvider:
+                  name: import-by-name-key
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              metadata:
+                name: import-by-name-theme
+              status:
+                atProvider:
+                  name: import-by-name-theme
+                (conditions[?type == 'Ready']):
+                  - status: "True"
+        - assert:
+            timeout: 5m
+            resource:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              metadata:
+                name: import-by-name-email
+              status:
+                atProvider:
+                  name: import-by-name-email
+                (conditions[?type == 'Ready']):
+                  - status: "True"
         - script:
             timeout: 30s
             content: |
               set -e
               get() {
-                ${KUBECTL} get "$1.fusionauth.m.crossplane.io" "$2" -n ${NAMESPACE} \
+                ${KUBECTL} get "$1" "$2" -n ${NAMESPACE} \
                   -o jsonpath='{.metadata.annotations.crossplane\.io/external-name}'
               }
-              TENANT=$(get tenant import-by-name-tenant)
-              APP_SRC=$(get application import-by-name-app-source)
-              APP=$(get application import-by-name-app)
-              GROUP_SRC=$(get group import-by-name-group-source)
-              GROUP=$(get group import-by-name-group)
-              echo "tenant=$TENANT app=$APP_SRC/$APP group=$GROUP_SRC/$GROUP"
+              TENANT=$(get tenant.fusionauth.m.crossplane.io import-by-name-tenant)
+              APP_SRC=$(get application.fusionauth.m.crossplane.io import-by-name-app-source)
+              APP=$(get application.fusionauth.m.crossplane.io import-by-name-app)
+              GROUP_SRC=$(get group.fusionauth.m.crossplane.io import-by-name-group-source)
+              GROUP=$(get group.fusionauth.m.crossplane.io import-by-name-group)
+              ROLE_SRC=$(get role.application.fusionauth.m.crossplane.io import-by-name-role-source)
+              ROLE=$(get role.application.fusionauth.m.crossplane.io import-by-name-role)
+              LAMBDA_SRC=$(get lambda.fusionauth.m.crossplane.io import-by-name-lambda-source)
+              LAMBDA=$(get lambda.fusionauth.m.crossplane.io import-by-name-lambda)
+              KEY_SRC=$(get key.fusionauth.m.crossplane.io import-by-name-key-source)
+              KEY=$(get key.fusionauth.m.crossplane.io import-by-name-key)
+              THEME_SRC=$(get theme.fusionauth.m.crossplane.io import-by-name-theme-source)
+              THEME=$(get theme.fusionauth.m.crossplane.io import-by-name-theme)
+              EMAIL_SRC=$(get email.fusionauth.m.crossplane.io import-by-name-email-source)
+              EMAIL=$(get email.fusionauth.m.crossplane.io import-by-name-email)
+              echo "tenant=$TENANT app=$APP_SRC/$APP group=$GROUP_SRC/$GROUP role=$ROLE_SRC/$ROLE"
               echo "$TENANT" | grep -Eq '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
               test -n "$APP_SRC" && test "$APP" = "$APP_SRC"
               test -n "$GROUP_SRC" && test "$GROUP" = "$GROUP_SRC"
+              test -n "$ROLE_SRC" && test "$ROLE" = "$ROLE_SRC"
+              echo "lambda=$LAMBDA_SRC/$LAMBDA"
+              test -n "$LAMBDA_SRC" && test "$LAMBDA" = "$LAMBDA_SRC"
+              echo "key=$KEY_SRC/$KEY"
+              test -n "$KEY_SRC" && test "$KEY" = "$KEY_SRC"
+              echo "theme=$THEME_SRC/$THEME"
+              test -n "$THEME_SRC" && test "$THEME" = "$THEME_SRC"
+              echo "email=$EMAIL_SRC/$EMAIL"
+              test -n "$EMAIL_SRC" && test "$EMAIL" = "$EMAIL_SRC"
       cleanup:
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Lambda
+              name: import-by-name-lambda
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Key
+              name: import-by-name-key
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Theme
+              name: import-by-name-theme
+        - delete:
+            ref:
+              apiVersion: fusionauth.m.crossplane.io/v1alpha1
+              kind: Email
+              name: import-by-name-email
         - delete:
             ref:
               apiVersion: fusionauth.m.crossplane.io/v1alpha1
@@ -194,3 +533,8 @@ spec:
               apiVersion: fusionauth.m.crossplane.io/v1alpha1
               kind: Group
               name: import-by-name-group
+        - delete:
+            ref:
+              apiVersion: application.fusionauth.m.crossplane.io/v1alpha1
+              kind: Role
+              name: import-by-name-role
